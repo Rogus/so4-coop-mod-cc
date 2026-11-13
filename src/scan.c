@@ -191,6 +191,7 @@ static int obj_class_at(uintptr_t a)
 static uint32_t scan_no;
 static void dump_objects(void);
 static void dump_one(const char *tag, uintptr_t o, uintptr_t size);
+static void dump_path(uint16_t *path, const char *nm);
 
 static int mem_readable(uintptr_t p, uintptr_t n)
 {
@@ -230,6 +231,88 @@ static void describe_fields(const char *tag, uintptr_t o, uintptr_t span)
         const char *k = class_of(v);
         if (k) { wsprintfA(b, "     +0x%04lx -> %p %s\r\n", (unsigned long)f, (void *)v, k); logs(b); }
     }
+}
+
+/* class_of() without VirtualQuery for the object itself (caller knows it is readable) */
+static const char *class_of_fast(uintptr_t obj)
+{
+    uintptr_t vt = *(const uintptr_t *)obj;
+    if (vt < game_base + 8 || vt >= game_end) return 0;
+    uintptr_t col = *(const uintptr_t *)(vt - 8);
+    if (col < game_base || col + 24 > game_end) return 0;
+    const uint32_t *c = (const uint32_t *)col;
+    if (c[0] != 1 || c[5] != (uint32_t)(col - game_base)) return 0;
+    uintptr_t td = game_base + c[3];
+    if (td + 0x14 >= game_end) return 0;
+    const char *name = (const char *)(td + 0x10);
+    return (name[0] == '.' && name[1] == '?') ? name + 4 : 0;
+}
+
+/* ---- reference search: every qword in writable memory that points to a party character ---- */
+#define MAXCHR 8
+static uintptr_t ref_chr[MAXCHR];
+static const char *ref_name[MAXCHR];
+static uint32_t nref_chr;
+static HANDLE ref_file;
+static uint32_t ref_hits;
+
+static void ref_line(uintptr_t loc, uintptr_t region_lo, uint32_t ci, uintptr_t delta)
+{
+    char b[256], where[160];
+    if (loc >= game_base && loc < game_end)
+        wsprintfA(where, "game+0x%08lx", (unsigned long)(loc - game_base));
+    else {
+        where[0] = 0;
+        for (uintptr_t q = loc & ~(uintptr_t)7; q >= region_lo && loc - q < 0x4000; q -= 8) {
+            const char *cn = class_of_fast(q);
+            if (cn) { wsprintfA(where, "%p in %s@%p+0x%lx", (void *)loc, cn, (void *)q, (unsigned long)(loc - q)); break; }
+            if (q < 8) break;
+        }
+        if (!where[0]) wsprintfA(where, "%p (heap)", (void *)loc);
+    }
+    wsprintfA(b, "%s -> %s+0x%lx\r\n", where, ref_name[ci], (unsigned long)delta);
+    DWORD n = 0, w;
+    while (b[n]) n++;
+    WriteFile(ref_file, b, n, &w, 0);
+}
+
+static void find_refs(uintptr_t a, uintptr_t b, void *ctx)
+{
+    (void)ctx;
+    if (a >= self_base && a < self_end) return;
+    for (uintptr_t p = (a + 7) & ~(uintptr_t)7; p + 8 <= b; p += 8) {
+        uintptr_t v = *(const uintptr_t *)p;
+        for (uint32_t i = 0; i < nref_chr; i++) {
+            uintptr_t d = v - ref_chr[i];
+            if (d == 0 || d == 0x770 || d == 0x778) {
+                if (p >= ref_chr[i] && p < ref_chr[i] + 0x40000) break;   /* the character's own fields */
+                if (ref_hits++ < 20000) ref_line(p, a, i, d);
+                break;
+            }
+        }
+    }
+}
+
+static void search_refs(void)
+{
+    nref_chr = 0;
+    for (uint32_t i = 0; i < nobj && nref_chr < MAXCHR; i++)
+        if (objs[i].cls <= 8) { ref_chr[nref_chr] = objs[i].addr; ref_name[nref_chr] = CLASSES[objs[i].cls]; nref_chr++; }
+    if (!nref_chr) return;
+    char nm[64];
+    wsprintfA(nm, "\\s%02u_refs.txt", scan_no);
+    uint16_t path[700];
+    dump_path(path, nm);
+    ref_file = CreateFileW(path, GENERIC_WRITE, FILE_SHARE_READ, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+    if (ref_file == (HANDLE)-1) return;
+    ref_hits = 0;
+    uint64_t t0 = GetTickCount64();
+    each_region(0x10000, (uintptr_t)0x7fffffff0000ULL, 1, find_refs, 0);   /* includes the game's globals */
+    CloseHandle(ref_file);
+    char b[128];
+    wsprintfA(b, "  references to party characters: %u (%lu ms) -> s%02u_refs.txt\r\n", ref_hits,
+              (unsigned long)(GetTickCount64() - t0), scan_no);
+    logs(b);
 }
 
 static void analyse_operator(void)
@@ -295,6 +378,7 @@ static void scan_now(void)
         if (any) logs("\r\n");
     }
     analyse_operator();
+    search_refs();
     dump_objects();
 }
 

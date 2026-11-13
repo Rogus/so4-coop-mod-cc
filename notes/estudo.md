@@ -52,3 +52,12 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
 - Hipótese para o co-op: X é o "operador do jogador" ligado ao controle; o co-op precisaria de
   um X por jogador, cada um ligado a um controle diferente.
 - v0.5: identifica a classe (RTTI) de X, Y e dos objetos para onde apontam, e os copia.
+
+### Execução 4 (v0.5)
+- O objeto X do bloco do personagem controlado é `Battle::CCm146` (família de 60 câmeras CCmNNN):
+  o bloco +0x129a0 é a **câmera** presa ao personagem controlado (+ juntas do esqueleto
+  `JointObject`/`HierarchicalObject`). Bom indicador de "controlado", mas não é o caminho da entrada.
+- `CBattleMainTask+0x410` desta vez continha lixo: não é um ponteiro confiável.
+- Nenhum objeto já mapeado (gerente, CBtlPad, WindowsPad, táticas, alvo) aponta para o controlado.
+- v0.6: procura em toda a memória gravável (inclusive globais do executável) os ponteiros para cada
+  personagem do grupo e identifica a classe do objeto que os contém (s<NN>_refs.txt).
