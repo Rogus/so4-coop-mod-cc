@@ -190,6 +190,74 @@ static int obj_class_at(uintptr_t a)
 
 static uint32_t scan_no;
 static void dump_objects(void);
+static void dump_one(const char *tag, uintptr_t o, uintptr_t size);
+
+static int mem_readable(uintptr_t p, uintptr_t n)
+{
+    MBI64 m;
+    if (p < 0x10000 || p > (uintptr_t)0x7fffffff0000ULL) return 0;
+    if (!VirtualQuery((void *)p, &m, sizeof m)) return 0;
+    if (m.State != MEM_COMMIT || !readable(m.Protect)) return 0;
+    return p + n <= (uintptr_t)m.BaseAddress + m.RegionSize;
+}
+
+/* MSVC x64 RTTI: *obj = vtable, vtable[-1] = COL{sig=1,...,TD rva @12,..., self rva @20} */
+static const char *class_of(uintptr_t obj)
+{
+    if (!mem_readable(obj, 8)) return 0;
+    uintptr_t vt = *(const uintptr_t *)obj;
+    if (vt < game_base + 8 || vt >= game_end) return 0;
+    uintptr_t col = *(const uintptr_t *)(vt - 8);
+    if (col < game_base || col + 24 > game_end) return 0;
+    const uint32_t *c = (const uint32_t *)col;
+    if (c[0] != 1 || c[5] != (uint32_t)(col - game_base)) return 0;
+    uintptr_t td = game_base + c[3];
+    if (td + 0x14 >= game_end) return 0;
+    const char *name = (const char *)(td + 0x10);
+    return (name[0] == '.' && name[1] == '?') ? name + 4 : 0;   /* skip ".?AV" */
+}
+
+/* logs the class of every pointer field of an object, one level deep */
+static void describe_fields(const char *tag, uintptr_t o, uintptr_t span)
+{
+    char b[256];
+    const char *cn = class_of(o);
+    wsprintfA(b, "  %s @%p class=%s\r\n", tag, (void *)o, cn ? cn : "?");
+    logs(b);
+    if (!mem_readable(o, span)) return;
+    for (uintptr_t f = 0; f < span; f += 8) {
+        uintptr_t v = *(const uintptr_t *)(o + f);
+        const char *k = class_of(v);
+        if (k) { wsprintfA(b, "     +0x%04lx -> %p %s\r\n", (unsigned long)f, (void *)v, k); logs(b); }
+    }
+}
+
+static void analyse_operator(void)
+{
+    char b[200];
+    for (uint32_t i = 0; i < nobj; i++) {
+        uint32_t k = objs[i].cls;
+        uintptr_t o = objs[i].addr;
+        if (k == 21 /* CBattleMainTask */ && mem_readable(o, 0x420)) {
+            uintptr_t x = *(const uintptr_t *)(o + 0x410);
+            wsprintfA(b, "  CBattleMainTask@%p +0x410 (operator X) = %p\r\n", (void *)o, (void *)x); logs(b);
+            if (x) { describe_fields("X", x, 0x800); dump_one("X", x, 0x4000); }
+        }
+        if (k <= 8 /* player characters */ && mem_readable(o + 0x12990, 0xb0)) {
+            uintptr_t x = *(const uintptr_t *)(o + 0x129a0), y = *(const uintptr_t *)(o + 0x129c0);
+            if (!x) continue;
+            wsprintfA(b, "  CONTROLLED: %s@%p  +0x129a0=%p  +0x129c0=%p  +0x129d8=%08lx\r\n", CLASSES[k], (void *)o,
+                      (void *)x, (void *)y, (unsigned long)*(const uint32_t *)(o + 0x129d8));
+            logs(b);
+            for (uintptr_t f = 0x12990; f < 0x12a40; f += 8) {
+                uintptr_t v = *(const uintptr_t *)(o + f);
+                const char *cn = class_of(v);
+                if (cn) { wsprintfA(b, "     chr+0x%05lx -> %p %s\r\n", (unsigned long)f, (void *)v, cn); logs(b); }
+            }
+            if (y) { describe_fields("Y", y, 0x800); dump_one("Y", y, 0x4000); }
+        }
+    }
+}
 
 static void scan_now(void)
 {
@@ -226,7 +294,35 @@ static void scan_now(void)
         }
         if (any) logs("\r\n");
     }
+    analyse_operator();
     dump_objects();
+}
+
+static void dump_path(uint16_t *path, const char *nm)
+{
+    DWORD n = GetModuleFileNameW(self_module, path, 512);
+    while (n && path[n - 1] != '\\' && path[n - 1] != '/') n--;
+    path[n] = 0;
+    wcat(path, "so4coop_dumps");
+    CreateDirectoryW(path, 0);
+    wcat(path, nm);
+}
+
+static void dump_one(const char *tag, uintptr_t o, uintptr_t size)
+{
+    MBI64 m;
+    if (!VirtualQuery((void *)o, &m, sizeof m)) return;
+    uintptr_t lim = (uintptr_t)m.BaseAddress + m.RegionSize;
+    if (o + size > lim) size = lim - o;
+    char nm[96];
+    wsprintfA(nm, "\\s%02u_%s_%p.bin", scan_no, tag, (void *)o);
+    uint16_t path[700];
+    dump_path(path, nm);
+    HANDLE h = CreateFileW(path, GENERIC_WRITE, FILE_SHARE_READ, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+    if (h == (HANDLE)-1) return;
+    DWORD w;
+    WriteFile(h, (const void *)o, (DWORD)size, &w, 0);
+    CloseHandle(h);
 }
 
 /* raw dumps for offline diffing: so4coop_dumps/s<scan>_<class>_<addr>.bin */

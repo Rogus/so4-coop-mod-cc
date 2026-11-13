@@ -36,3 +36,19 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   com o Steam aberto, ele deve ler pela API SteamController005 (Steam Input).
 - Erro da sonda: F9/F10 só eram lidos durante chamadas de XInputGetState -> nada foi capturado.
   Corrigido na v0.3 (thread própria para as teclas + registro da 1ª chamada de cada função).
+
+### Execução 2 (v0.3) e 3 (v0.4)
+- O jogo não lê controle por XInput com o Steam aberto (nenhum XInputGetState): usa
+  `Aska::WindowsPad` (2 instâncias) alimentado pelo Steam Input.
+- Grupo: lista ligada de personagens (`+0x8` anterior, `+0x10` próximo).
+- `CBattleMainTask` (gerente da batalha): `+0x90` -> `CBtlPad`; `+0x410` -> objeto **X**.
+  (O `+0x420` visto na execução 2 era a seleção do menu tático, não o controle.)
+- **Personagem controlado** (execução 3: tática "Don't do anything" em todos, troca por L1/R1,
+  sequência Edge,Edge,Edge,Sarah,Arumat,Myuria,Edge - batida exata):
+  bloco no próprio personagem, zerado nos não controlados:
+  - `+0x129a0` e `+0x12a20` -> X (o mesmo apontado por CBattleMainTask+0x410)
+  - `+0x129c0` -> objeto **Y**;  `+0x129d8` = 120.0f
+  - X e Y são recriados a cada troca (endereços mudam).
+- Hipótese para o co-op: X é o "operador do jogador" ligado ao controle; o co-op precisaria de
+  um X por jogador, cada um ligado a um controle diferente.
+- v0.5: identifica a classe (RTTI) de X, Y e dos objetos para onde apontam, e os copia.
