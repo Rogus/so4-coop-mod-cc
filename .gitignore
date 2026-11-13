@@ -1,0 +1,4 @@
+build/
+recon/*.txt
+recon/*.asm
+__pycache__/
