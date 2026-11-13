@@ -41,6 +41,8 @@ static const char *const CLASSES[] = {
 #define K_CHR_LAST 11      /* 0..11: battle characters (players + enemies) */
 #define K_BTLPAD 12
 
+static uintptr_t self_base, self_end;   /* the probe's own image, skipped by the scan */
+
 #define MAXVT 64
 static struct { uintptr_t vt; uint32_t cls; } vtabs[MAXVT];
 static uint32_t nvt;
@@ -187,7 +189,6 @@ static int obj_class_at(uintptr_t a)
 }
 
 static uint32_t scan_no;
-static uintptr_t self_base, self_end;
 static void dump_objects(void);
 
 static void scan_now(void)
