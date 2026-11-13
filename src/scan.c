@@ -171,6 +171,7 @@ static void find_objs(uintptr_t a, uintptr_t b, void *ctx)
 {
     (void)ctx;
     if (a >= game_base && a < game_end) return;      /* skip the module's own data (vtables live there) */
+    if (a >= self_base && a < self_end) return;      /* skip the probe itself (its vtable table) */
     for (uintptr_t p = (a + 7) & ~(uintptr_t)7; p + 8 <= b; p += 8) {
         int k = vt_class(*(const uintptr_t *)p);
         if (k < 0) continue;
@@ -186,6 +187,7 @@ static int obj_class_at(uintptr_t a)
 }
 
 static uint32_t scan_no;
+static uintptr_t self_base, self_end;
 static void dump_objects(void);
 
 static void scan_now(void)
@@ -238,7 +240,7 @@ static void dump_objects(void)
     uint32_t files = 0;
     for (uint32_t i = 0; i < nobj && files < 64; i++) {
         uint32_t k = objs[i].cls;
-        uintptr_t size = k <= K_CHR_LAST ? 0x4000 : 0x1000;
+        uintptr_t size = k <= K_CHR_LAST ? 0x40000 : 0x2000;   /* characters are big objects */
         uintptr_t o = objs[i].addr;
         MBI64 m;
         if (!VirtualQuery((void *)o, &m, sizeof m)) continue;
