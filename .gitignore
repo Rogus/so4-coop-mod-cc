@@ -2,3 +2,4 @@ build/
 recon/*.txt
 recon/*.asm
 __pycache__/
+backups/

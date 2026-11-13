@@ -43,6 +43,8 @@ __declspec(dllimport) DWORD WINAPI GetCurrentThreadId(void);
 __declspec(dllimport) BOOL WINAPI DisableThreadLibraryCalls(HMODULE);
 __declspec(dllimport) int __cdecl wsprintfA(char *, LPCSTR, ...);
 __declspec(dllimport) BOOL WINAPI CreateDirectoryW(LPCWSTR, void *);
+__declspec(dllimport) HANDLE WINAPI CreateThread(void *, uint64_t, DWORD (WINAPI *)(LPVOID), LPVOID, DWORD, DWORD *);
+__declspec(dllimport) void WINAPI Sleep(DWORD);
 
 typedef struct { WORD wButtons; BYTE bLeftTrigger, bRightTrigger; short sThumbLX, sThumbLY, sThumbRX, sThumbRY; } XINPUT_GAMEPAD;
 typedef struct { DWORD dwPacketNumber; XINPUT_GAMEPAD Gamepad; } XINPUT_STATE;
@@ -106,7 +108,7 @@ static void wcat(uint16_t *d, const char *s)
 /* ---- statistics (written from the game's input thread, flushed every 2 s) ---- */
 #define MAXCALLERS 16
 typedef struct { uintptr_t ret; uint32_t hits; } caller_t;
-static volatile long st_calls[4], st_ok[4], st_ex[4], st_set[4];
+static volatile long st_calls[4], st_ok[4], st_ex[4], st_set[4], total_getstate;
 static caller_t callers[MAXCALLERS];
 static uint32_t ncallers;
 static uint64_t last_flush, first_call;
@@ -139,6 +141,21 @@ static void note_thread(void)
     }
 }
 
+/* logs the first call of each export (which XInput path the game really uses) */
+static volatile long first_seen[16];
+static void first_call_of(int id, const char *name, uintptr_t ret)
+{
+    if (first_seen[id]) return;
+    first_seen[id] = 1;
+    char b[160];
+    if (ret >= game_base && ret < game_end)
+        wsprintfA(b, "first call: %s from game+0x%08lx\r\n", name, (unsigned long)(ret - game_base));
+    else
+        wsprintfA(b, "first call: %s from %p\r\n", name, (void *)ret);
+    logs(b);
+}
+#define FIRST(id, name) first_call_of(id, name, (uintptr_t)__builtin_return_address(0))
+
 static void maybe_flush(void)
 {
     uint64_t now = GetTickCount64();
@@ -167,14 +184,15 @@ static void note_buttons(DWORD slot, const XINPUT_STATE *s)
 /* ---- exports ---- */
 __declspec(dllexport) DWORD WINAPI XInputGetState(DWORD slot, XINPUT_STATE *s)
 {
+    FIRST(0, "XInputGetState");
     ENSURE();
     uintptr_t ret = (uintptr_t)__builtin_return_address(0);
     DWORD r = r_GetState ? r_GetState(slot, s) : ERROR_DEVICE_NOT_CONNECTED;
+    total_getstate++;
     if (slot < 4) { st_calls[slot]++; if (r == 0) { st_ok[slot]++; note_buttons(slot, s); } }
     note_caller(ret);
     note_thread();
     maybe_flush();
-    poll_hotkeys();          /* F9 = scan objects, F10 = mark */
     return r;
 }
 
@@ -183,6 +201,7 @@ __declspec(dllexport) void WINAPI so4coop_scan(void) { scan_now(); }
 
 DWORD WINAPI XInputGetStateEx(DWORD slot, XINPUT_STATE *s)   /* ordinal 100 */
 {
+    FIRST(1, "XInputGetStateEx");
     ENSURE();
     uintptr_t ret = (uintptr_t)__builtin_return_address(0);
     DWORD r = r_GetStateEx ? r_GetStateEx(slot, s) : (r_GetState ? r_GetState(slot, s) : ERROR_DEVICE_NOT_CONNECTED);
@@ -194,6 +213,7 @@ DWORD WINAPI XInputGetStateEx(DWORD slot, XINPUT_STATE *s)   /* ordinal 100 */
 
 __declspec(dllexport) DWORD WINAPI XInputSetState(DWORD slot, XINPUT_VIBRATION *v)
 {
+    FIRST(2, "XInputSetState");
     ENSURE();
     if (slot < 4) st_set[slot]++;
     note_caller((uintptr_t)__builtin_return_address(0));
@@ -202,12 +222,14 @@ __declspec(dllexport) DWORD WINAPI XInputSetState(DWORD slot, XINPUT_VIBRATION *
 
 __declspec(dllexport) DWORD WINAPI XInputGetCapabilities(DWORD slot, DWORD flags, void *caps)
 {
+    FIRST(3, "XInputGetCapabilities");
     ENSURE();
     return r_GetCaps ? r_GetCaps(slot, flags, caps) : ERROR_DEVICE_NOT_CONNECTED;
 }
 
 __declspec(dllexport) void WINAPI XInputEnable(BOOL e)
 {
+    FIRST(4, "XInputEnable");
     ENSURE();
     char b[48]; wsprintfA(b, "XInputEnable(%d)\r\n", e); logs(b);
     if (r_Enable) r_Enable(e);
@@ -215,18 +237,21 @@ __declspec(dllexport) void WINAPI XInputEnable(BOOL e)
 
 __declspec(dllexport) DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD slot, void *a, void *b)
 {
+    FIRST(5, "XInputGetDSoundAudioDeviceGuids");
     ENSURE();
     return r_GetGuids ? r_GetGuids(slot, a, b) : ERROR_DEVICE_NOT_CONNECTED;
 }
 
 __declspec(dllexport) DWORD WINAPI XInputGetBatteryInformation(DWORD slot, BYTE type, void *info)
 {
+    FIRST(6, "XInputGetBatteryInformation");
     ENSURE();
     return r_GetBattery ? r_GetBattery(slot, type, info) : ERROR_DEVICE_NOT_CONNECTED;
 }
 
 __declspec(dllexport) DWORD WINAPI XInputGetKeystroke(DWORD slot, DWORD res, void *ks)
 {
+    FIRST(7, "XInputGetKeystroke");
     ENSURE();
     return r_GetKeystroke ? r_GetKeystroke(slot, res, ks) : ERROR_DEVICE_NOT_CONNECTED;
 }
@@ -290,6 +315,25 @@ static void load_real(void)
     r_GetKeystroke = (pGetKeystroke)GetProcAddress(real, "XInputGetKeystroke");
 }
 
+/* own thread: hotkeys work no matter how (or whether) the game reads controllers */
+static DWORD WINAPI hotkey_thread(LPVOID unused)
+{
+    (void)unused;
+    uint64_t t0 = GetTickCount64(), last = 0;
+    for (;;) {
+        Sleep(30);
+        poll_hotkeys();
+        uint64_t now = GetTickCount64();
+        if (now - last >= 30000) {            /* heartbeat: shows the game is still running */
+            last = now;
+            char b[96];
+            wsprintfA(b, "[alive t=%lus] GetState calls so far: %ld\r\n", (unsigned long)((now - t0) / 1000), total_getstate);
+            logs(b);
+        }
+    }
+    return 0;
+}
+
 BOOL WINAPI DllMain(HMODULE self, DWORD reason, LPVOID unused)
 {
     (void)unused;
@@ -297,8 +341,9 @@ BOOL WINAPI DllMain(HMODULE self, DWORD reason, LPVOID unused)
         DisableThreadLibraryCalls(self);
         self_module = self;
         open_log(self);
-        logs("so4coop probe v0.2 loaded (F9 = scan battle objects, F10 = mark)\r\n");
+        logs("so4coop probe v0.3 loaded (F9 = scan battle objects, F10 = mark)\r\n");
         describe_game_module();   /* the real XInput is loaded on the first call, not under the loader lock */
+        CreateThread(0, 0, hotkey_thread, 0, 0, 0);
     }
     return 1;
 }

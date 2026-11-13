@@ -28,3 +28,11 @@ de personagem), (2) se o Aska::Pad lê mais de um controle, (3) como o CBtlPad e
 
 ## Critério de viabilidade
 Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move o líder.
+
+### Execução 1 (sonda v0.2) - notes/run1_v0.2.log
+- A sonda carregou pelo override no registro do prefixo (AppDefaults\StarOceanTheLastHope.exe).
+- O código real do jogo fica na seção `.data1` (flags RX); `.text` é minúscula.
+- O jogo fez UMA chamada de XInput (game+0x3786cd) e não leu controles por XInput depois:
+  com o Steam aberto, ele deve ler pela API SteamController005 (Steam Input).
+- Erro da sonda: F9/F10 só eram lidos durante chamadas de XInputGetState -> nada foi capturado.
+  Corrigido na v0.3 (thread própria para as teclas + registro da 1ª chamada de cada função).
