@@ -587,3 +587,15 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   jogo termina o sumiço). Só dados, sem mexer em código.
 - Correção 2 (proposta, pedir autorização): remendar o GetLeader do jogo na memória para que as funções de
   interface acima vejam um "líder de exibição" estável (primeira alteração de código do jogo).
+- Correção 2 (v0.35, src/displayfix.c, coop_display_fix=1 / coop_display_pos=): 8 chamadas de interface a
+  GetLeader redirecionadas (só o alvo rel32 das instruções call; GetLeader e jogabilidade intocados):
+  0x6075e1/0x609372 CMinimapCharacterMarkerElement vf41/vf42, 0x6080bd/0x609e30 CMinimapPlayerMarkerElement
+  vf41/vf42, 0x6161f1/0x616911 CSightInCursor vf32, 0x61b150 CEftSightOutLine vf12, 0x6593a8 ajudante usado só
+  pelo CTargetBoard vf29/vf32. Destino: gl_display() = mesmo cálculo do GetLeader, mas com co-op ativo devolve o
+  membro de coop_display_pos (padrão: menor posição mapeada). CBattleCamp (menu) fica com o líder real.
+- Aplicação: salto de 14 bytes perto do jogo (alcance rel32), página com escrita liberada ANTES de pausar
+  threads, threads pausadas com SuspendThread (sem ptrace), handles guardados para retomar sem novo snapshot
+  (snapshot usa o heap; uma thread pausada pode ter a trava do heap), cada local conferido (E8 -> GetLeader)
+  antes e durante a pausa ou nada muda, cache de instruções descarregado, proteção restaurada. Uma vez por
+  sessão, quando o co-op liga.
+- Autoteste (chamada dentro da própria sonda): antes 4, depois 2002 -> funciona.

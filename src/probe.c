@@ -119,6 +119,7 @@ static void wcat(uint16_t *d, const char *s)
 #include "steamctl.c"
 #include "steamhook.c"
 #include "coopslice.c"
+#include "displayfix.c"
 
 /* ---- statistics (written from the game's input thread, flushed every 2 s) ---- */
 #define MAXCALLERS 16
@@ -375,6 +376,7 @@ static DWORD WINAPI hotkey_thread(LPVOID unused)
         steamctl_poll();
         steamhook_poll();
         coop_slice_poll();
+        display_fix_poll();
         if (now - last >= 30000) {            /* heartbeat: shows the game is still running */
             last = now;
             char b[96];
@@ -400,7 +402,7 @@ BOOL WINAPI DllMain(HMODULE self, DWORD reason, LPVOID unused)
 #ifdef SO4COOP_RELEASE
         logs("so4coop co-op 1.2 loaded (battle co-op for up to 4 players: each controller drives its own character; R3 = tag-team; F3/F4 = keyboard; settings in so4coop.ini)\r\n");
 #else
-        logs("so4coop probe v0.34 loaded (CO-OP: up to 4 players, time-sliced leader for active players, quiet popup; F2 toggles, coop_auto=1 starts with battles; TAG-TEAM: R3 = Steam action 10 per controller; hook_steam=1 + leader_only_input=1: only the leader's controller drives; R3 via XInput, F3/F4 = player 1/2; F3/F4 = player 1/2; hotkeys after 45 s; F5 disabled; F6 = stick capture (neutral,up,right,down,left x2); F7 = auto-capture, F8 = WRITE TEST on the leader block at *(CBattleMainTask+0x68) (3 checks), F9 = scan + dump, F10 = mark)\r\n");
+        logs("so4coop probe v0.35 loaded (CO-OP: up to 4 players, time-sliced leader for active players, quiet popup, steady UI leader; F2 toggles, coop_auto=1 starts with battles; TAG-TEAM: R3 = Steam action 10 per controller; hook_steam=1 + leader_only_input=1: only the leader's controller drives; R3 via XInput, F3/F4 = player 1/2; F3/F4 = player 1/2; hotkeys after 45 s; F5 disabled; F6 = stick capture (neutral,up,right,down,left x2); F7 = auto-capture, F8 = WRITE TEST on the leader block at *(CBattleMainTask+0x68) (3 checks), F9 = scan + dump, F10 = mark)\r\n");
 #endif
         describe_game_module();   /* the real XInput is loaded on the first call, not under the loader lock */
         CreateThread(0, 0, hotkey_thread, 0, 0, 0);

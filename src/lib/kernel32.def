@@ -32,3 +32,5 @@ MoveFileW
 GetLocalTime
 VirtualProtect
 ReadFile
+VirtualAlloc
+FlushInstructionCache

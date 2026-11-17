@@ -16,6 +16,7 @@
 
 static uint32_t cs_ms = 40, cs_idle = 1500, cs_auto, cs_active_only = 1;
 static int cs_loaded, cs_thread_started;
+static DWORD cs_tid;
 static volatile int cs_on;
 static uint64_t cs_t0, cs_report;
 static volatile long cs_slices, cs_skips, cs_per[SC_MAXCTL];
@@ -138,7 +139,7 @@ static void cs_start_thread(void)
 {
     if (cs_thread_started) return;
     cs_thread_started = 1;
-    CreateThread(0, 0, cs_thread, 0, 0, 0);
+    CreateThread(0, 0, cs_thread, 0, 0, &cs_tid);
 }
 
 static void coop_toggle(void)
