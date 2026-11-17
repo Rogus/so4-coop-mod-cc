@@ -186,3 +186,16 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
 - Próximo: (1) achar a lista de membros na ordem desta batalha (posição -> personagem);
   (2) teste de escrita: a sonda grava +0x3c4 e vemos se o controle troca sem R1 (primeira
   escrita na memória do jogo: só com autorização explícita).
+
+### Execução 13 (v0.13) - notes/run13_v0.13
+- Teste de escrita (F8): **recusou, nada foi gravado**. CBattleMainTask+0x3c0/+0x3c4 = 0 / 256 nesta
+  batalha e não acompanham a troca (capturas Edge, Edge, Arumat, Edge): a coincidência das
+  execuções 11-12 era outro estado. **Não usar o F8 da v0.13** (alvo errado; desligar na próxima versão).
+- CStatusBoardWindow+0x1f0 continua coerente (x = 70 + 283 × posição), mas na captura #2 já marcava
+  1 com a câmera ainda no Edge (igual à captura no meio da troca da execução 12): o painel muda **ao
+  apertar R1** e o personagem controlado só muda depois da animação. O painel mostra o membro
+  pedido/destino.
+- Estático: 6 funções usam +0x1f0 e +0x1f4; o "setter" game+0x3b7e460 grava 4 inteiros em
+  +0x1f0..+0x1fc (último = 0) e não tem chamadas diretas (virtual); não bate com o layout do painel.
+- Próximo: captura automática (a sonda detecta a troca pela câmera e captura sozinha depois de 1,5 s
+  estável) para ter 4 personagens sem depender do tempo do F9.

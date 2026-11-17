@@ -1,0 +1,21 @@
+game pid 90870 started 02:06:46
+===== 02:07:16  default sink: alsa_output.pci-0000_03_00.1.hdmi-stereo-extra1
+threads:      74 S       2 swapchain 
+  stream #3918 Sink: 56 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=-3.3 dBFS rms=-16.4 dBFS
+  default sink state: RUNNING
+===== 02:07:35  default sink: alsa_output.pci-0000_03_00.1.hdmi-stereo-extra1
+threads:      74 S       2 swapchain 
+  stream #3918 Sink: 56 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=-0.5 dBFS rms=-14.0 dBFS
+  default sink state: RUNNING
+===== 02:07:53  default sink: alsa_output.pci-0000_03_00.1.hdmi-stereo-extra1
+threads:       1 R      73 S       2 swapchain 
+  stream #3918 Sink: 56 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=-0.1 dBFS rms=-14.4 dBFS
+  default sink state: RUNNING
+===== 02:08:12  default sink: alsa_output.pci-0000_03_00.1.hdmi-stereo-extra1
+threads:      74 S       2 swapchain 
+  stream #3918 Sink: 56 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=0.0 dBFS rms=-13.6 dBFS
+  default sink state: RUNNING
+===== 02:08:30  default sink: alsa_output.pci-0000_03_00.1.hdmi-stereo-extra1
+threads:       2 R      39 S 
+  default sink state: IDLE
+game exited 02:08:45

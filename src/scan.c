@@ -524,13 +524,17 @@ static void dump_objects(void)
     logs(b);
 }
 
-static int f8_was, f9_was, f10_was, f11_was;
+static int f7_was, f8_was, f9_was, f10_was, f11_was;
 static uint32_t marks;
 #define VK_F11 0x7a
 static void write_test(void);
+static void autocap_toggle(void);
 
 static void poll_hotkeys(void)
 {
+    int f7 = (GetAsyncKeyState(0x76 /* VK_F7 */) & 0x8000) != 0;
+    if (f7 && !f7_was) autocap_toggle();
+    f7_was = f7;
     int f8 = (GetAsyncKeyState(0x77 /* VK_F8 */) & 0x8000) != 0;
     int f9 = (GetAsyncKeyState(VK_F9) & 0x8000) != 0;
     int f10 = (GetAsyncKeyState(VK_F10) & 0x8000) != 0;

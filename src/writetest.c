@@ -60,10 +60,15 @@ static void log_state(const char *tag, uintptr_t mt, uintptr_t board)
     logs(b);
 }
 
+/* v0.14: OFF. Run 13 showed CBattleMainTask+0x3c4 does not follow the switch in every battle
+ * (0/256 there); the matches of runs 11-12 were another state. Never write it. */
+#define WRITE_TEST 0
+
 static void write_test(void)
 {
     char b[300];
     logs("=== WRITE TEST (F8) ===\r\n");
+    if (!WRITE_TEST) { logs("  disabled since v0.14 (run 13: wrong target); nothing written\r\n"); return; }
     if (!rtti_done) rtti_init();
     nobj = 0;
     for (uint32_t k = 0; k < NCLASS; k++) cls_count[k] = 0;

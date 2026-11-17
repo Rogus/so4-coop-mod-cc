@@ -112,6 +112,7 @@ static void wcat(uint16_t *d, const char *s)
 #include "watch.c"
 #include "allrtti.c"
 #include "writetest.c"
+#include "autocap.c"
 
 /* ---- statistics (written from the game's input thread, flushed every 2 s) ---- */
 #define MAXCALLERS 16
@@ -348,6 +349,7 @@ static DWORD WINAPI hotkey_thread(LPVOID unused)
         Sleep(30);
         poll_hotkeys();
         watch_poll();
+        autocap_poll();
         uint64_t now = GetTickCount64();
         if (now - last >= 30000) {            /* heartbeat: shows the game is still running */
             last = now;
@@ -371,7 +373,7 @@ BOOL WINAPI DllMain(HMODULE self, DWORD reason, LPVOID unused)
             self_end = self_base + *(uint32_t *)(sb + *(int32_t *)(sb + 0x3c) + 24 + 56);
         }
         open_log(self);
-        logs("so4coop probe v0.13 loaded (F8 = WRITE TEST: next controlled position, F9 = scan + dump Battle:: objects, F10 = mark)\r\n");
+        logs("so4coop probe v0.14 loaded (F7 = auto-capture on/off, F9 = scan + dump Battle:: objects, F10 = mark; F8 write test disabled)\r\n");
         describe_game_module();   /* the real XInput is loaded on the first call, not under the loader lock */
         CreateThread(0, 0, hotkey_thread, 0, 0, 0);
     }
