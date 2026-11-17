@@ -1,5 +1,5 @@
 /*
- * so4coop - co-op flicker fix 2: steady "display leader" for the mini-map (v0.35; v0.36 F5 modes + per-site counts; v0.37 mini-map sites only; v0.38 F5 = map / +target board / +sight cursor / off).  Included after coopslice.c.
+ * so4coop - co-op flicker fix 2: steady "display leader" for the mini-map (v0.35; v0.36 F5 modes + per-site counts; v0.37 mini-map sites only; v0.38 F5 = map / +target board / +sight cursor / off; v0.39 F5 = all on / off).  Included after coopslice.c.
  *
  * The mini-map markers, sight cursor, sight outline effect and target board ask GetLeader
  * (game+0x5000d0) for the leader every frame; during co-op the leader alternates ~25x/s, so they
@@ -36,13 +36,14 @@ static volatile long gl_calls, gl_shown, gl_cnt[GL_NSITES];
 #define GL_MAP 0x0f
 #define GL_BOARD 0x80
 #define GL_SIGHT 0x30
-static volatile uint32_t gl_mask = GL_MAP;
+#define GL_BOTH (GL_MAP | GL_BOARD | GL_SIGHT)
+static volatile uint32_t gl_mask = GL_BOTH;      /* v0.39: everything that helped in round 38 */
 static uint64_t gl_report_t;
 
 static const char *gl_mode_name(uint32_t m)
 {
-    return m == GL_MAP ? "MODE 1: MAP" : m == (GL_MAP | GL_BOARD) ? "MODE 2: MAP + TARGET BOARD" : m == (GL_MAP | GL_SIGHT) ? "MODE 3: MAP + SIGHT CURSOR"
-         : m == 0 ? "MODE 4: OFF (real leader)" : m == (GL_MAP | GL_BOARD | GL_SIGHT) ? "ALL" : "custom";
+    return m == GL_BOTH ? "ON: MAP + TARGET BOARD + SIGHT CURSOR" : m == 0 ? "OFF (real leader)" : m == GL_MAP ? "MAP only"
+         : m == (GL_MAP | GL_BOARD) ? "MAP + TARGET BOARD" : m == (GL_MAP | GL_SIGHT) ? "MAP + SIGHT CURSOR" : "custom";
 }
 
 /* same result as GetLeader, except a steady member while co-op runs (for the enabled sites) */
@@ -170,12 +171,15 @@ static void gl_load(void)
         for (int k = 0; k < SC_MAXCTL; k++) if (sc_pos[k] < gl_pos) gl_pos = sc_pos[k];
 }
 
-/* F5 (research build): MAP -> MAP + TARGET BOARD -> MAP + SIGHT CURSOR -> OFF -> MAP */
+/* F5 (research build), v0.39: ON (map + target board + sight cursor) <-> OFF.
+ * Round 38: map + sight cursor = mini-map steady, movement normal; map + target board = white flashing on the
+ * characters gone, movement normal. Round 35 (all sites) had movement "pulled back": v0.39 tests the two
+ * together. */
 static void display_fix_cycle(void)
 {
     char b[200];
     if (!gl_applied) { logs("=== F5: display fix not applied yet (it is applied when co-op first starts) ===\r\n"); return; }
-    gl_mask = gl_mask == GL_MAP ? (GL_MAP | GL_BOARD) : gl_mask == (GL_MAP | GL_BOARD) ? (GL_MAP | GL_SIGHT) : gl_mask == (GL_MAP | GL_SIGHT) ? 0 : GL_MAP;
+    gl_mask = gl_mask ? 0 : GL_BOTH;
     wsprintfA(b, "=== F5: display fix now %s (t=%lu ms) ===\r\n", gl_mode_name(gl_mask), (unsigned long)GetTickCount64());
     logs(b);
 }

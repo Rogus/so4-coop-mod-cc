@@ -626,3 +626,10 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   Controle 1 ficou sem uso até o R3 (nenhum botão/analógico antes). Usuário prefere fatia padrão de 40 ms.
 - v0.38: os 8 locais remendados de novo; F5 percorre MODO 1 MAPA -> 2 MAPA + QUADRO DE ALVO -> 3 MAPA +
   CURSOR DE MIRA -> 4 DESLIGADO, para achar qual deles acalma o visual sem puxar os personagens.
+- Rodada 38 (v0.38, 40 ms, 3 jogadores; log em notes/run38_probe.log), respostas do usuário:
+  MODO 2 (mapa + quadro de alvo): minimapa pisca, movimento normal, **branco nos personagens sumiu**;
+  MODO 3 (mapa + cursor de mira): **minimapa estável**, movimento normal, branco continua.
+  -> o cursor de mira (CSightInCursor vf32) desenha os cursores brancos do minimapa; o quadro de alvo
+  (ajudante do CTargetBoard) causa o branco nos personagens. Nenhum dos dois sozinho puxa os personagens.
+- v0.39: liga os dois juntos (máscara 0xbf) por padrão; F5 = ligado/desligado. Testa se a combinação (como
+  na rodada 35) é o que puxava os personagens de volta.
