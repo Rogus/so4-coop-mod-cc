@@ -524,8 +524,9 @@ static void dump_code_section(void)
 static void watch_after_scan(void)
 {
     char b[300];
-    if (!xref_done) xref_scan();
-    if (!code_dumped) dump_code_section();
+#define STATIC_ONCE 0           /* v0.12: the code section was saved in run 10; analysis is offline now */
+    if (STATIC_ONCE && !xref_done) xref_scan();
+    if (STATIC_ONCE && !code_dumped) dump_code_section();
     if (WATCH_HW && controlled_cur && !w_any) watch_arm_fixed();
     if (!controlled_cur) {
         logs("  watch: no controlled character in this scan (press F9 during a battle, not mid-switch)\r\n");

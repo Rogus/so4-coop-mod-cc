@@ -210,6 +210,7 @@ static void dump_objects(void);
 static void dump_one(const char *tag, uintptr_t o, uintptr_t size);
 static void dump_path(uint16_t *path, const char *nm);
 static void dump_globals(void);
+static void battle_dump(void);
 
 static int mem_readable(uintptr_t p, uintptr_t n)
 {
@@ -418,6 +419,7 @@ static void scan_now(void)
     analyse_operator();
     search_refs();
     dump_objects();
+    battle_dump();
     dump_globals();
     watch_after_scan();
 }

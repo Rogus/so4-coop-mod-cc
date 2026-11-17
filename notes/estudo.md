@@ -144,3 +144,19 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
 - Fato firme que resta: só o personagem controlado tem o bloco da câmera em +0x129a0.
   v0.11: salva a seção de código inteira uma vez (68 MB, fica no disco, nunca no git) para buscar
   offline quem escreve +0x129a0 e subir pelos chamadores até a rotina de troca de personagem.
+
+### Execução 10 (v0.11) - notes/run10_v0.11
+- Seção de código salva: game+0x013a2000-0x05829932 (71,8 MB, 0 páginas ilegíveis), confere byte a
+  byte com a função salva na execução 9. Fica só no disco (code_full_013a2000.bin), nunca no git.
+- analysis/static_xref.py: busca offline de deslocamentos (disp) e de chamadas diretas (E8),
+  com limites de função pelo .pdata do exe (não cifrado) e disassembly pelo objdump.
+- **Nenhuma instrução usa 0x129a0/0x129c0/0x12a20** como deslocamento a partir do personagem; os
+  20 achados vizinhos (0x12984, 0x12998...) são falsos (bytes de saltos ou dados).
+- O bloco da câmera é um registro sem vtable em chr+0x12998 (1º campo = dono), logo antes de um
+  CFaceMorphManager embutido (vtable em chr+0x12a28). Só o sistema de câmera mexe nele, por ponteiro.
+  Sintoma da troca, não o mecanismo. Ele também some poucos segundos depois (dump do Arumat = 0).
+- Classes de interface que precisam saber quem é controlado: CArrowCursorManager,
+  CMinimapPlayerMarkerElement, CMemberBoardChangeArrowElement. Nenhuma aparece nas buscas de
+  ponteiro -> o controlado deve estar guardado como **índice**.
+- Próximo: v0.12 com o mapa RTTI de todas as classes Battle:: (não só 24), dump de todas as
+  instâncias por F9 e diff de campos inteiros que sigam a sequência Edge, Sarah, Arumat, Edge, Sarah.
