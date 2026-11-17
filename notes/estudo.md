@@ -415,3 +415,13 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   game+0x1059080 / game+0x1059768) a cada 30 ms; registra toda mudança (até 600 linhas) para calibrar;
   botão de troca configurável no so4coop.ini: take_word=<0-5>, take_mask=<hex>. XInput continua como
   alternativa. Teste local: ini lido (word 2, mask 0x40); fora do jogo os objetos não existem e são ignorados.
+
+### Execução 25 (v0.25) - notes/run25_v0.25 — calibração
+- 237 mudanças de botão, **todas no objeto de controle 1** (pad1); o objeto 2 (game+0x1059768) nunca mudou.
+  Com Steam Input ligado, os dois controles físicos parecem cair no mesmo objeto do jogo (ou o 2º não foi usado).
+- Layout das 6 palavras: [0] = seguradas, [1] = quadro anterior, [3] e [5] = recém-pressionadas.
+  Bits pressionados: 0x0001 x3, 0x0004 x2, 0x0008 x1, 0x0080 x11, 0x0400 x8, 0x0800 x4, 0x1000 x8,
+  0x2000 x4, 0x4000 x36, 0x8000 x3 -> R3 não identificável (muitos outros botões na sessão).
+- L3 = trava de alvo; R3 = recentraliza a câmera no controlado (aceitável para trocar de jogador).
+- v0.26: o caminho XInput usa R3 (0x0080). Proposta: **desligar o Steam Input só para este jogo**; aí o
+  XInput do Proton vê cada controle num slot próprio e o mod distingue jogador 1 e 2.

@@ -20,7 +20,7 @@
 __declspec(dllimport) BOOL WINAPI ReadFile(HANDLE, void *, DWORD, DWORD *, void *);
 #define GENERIC_READ 0x80000000
 #define OPEN_EXISTING 3
-#define XI_L3 0x0040
+#define XI_TAKE 0x0080          /* XInput R3 (right stick click); run 25: L3 is lock-on in battle */
 
 /* v0.25: run 24 showed XInput sees no controller under Proton (the game uses Steam Input), so the
  * buttons are read from the game's own controller objects: game+0x1059080 (controller 1) and
@@ -192,7 +192,7 @@ static void tagteam_poll(void)
         DWORD s = tt_slot[p];
         if (s > 3) continue;
         WORD bt = st[s].Gamepad.wButtons;
-        if ((bt & XI_L3) && !(tt_prev[s] & XI_L3)) tt_take(p);
+        if ((bt & XI_TAKE) && !(tt_prev[s] & XI_TAKE)) tt_take(p);
         tt_prev[s] = bt;
     }
 }
