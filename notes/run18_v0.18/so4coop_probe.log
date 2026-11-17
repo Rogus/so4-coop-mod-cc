@@ -1,0 +1,29 @@
+
+===== session 20261117_024248 =====
+so4coop probe v0.18 loaded (F7 = auto-capture, F8 = WRITE TEST on CBattleMainTask+0x3a4 (3 checks, all CThisIs), F9 = scan + dump, F10 = mark)
+game module base=0000000140000000 size=0x0585d000 sections=10
+  .data1   rva=0x00001000 vsize=0x0090b000 flags=0x60000020
+  .xdata   rva=0x0090c000 vsize=0x00320800 flags=0x40000040
+  .arch    rva=0x00c2d000 vsize=0x0070ed68 flags=0xc0000020
+  .pdata   rva=0x0133c000 vsize=0x00065e00 flags=0x40000040
+  .xpdata  rva=0x013a2000 vsize=0x04487932 flags=0xe0000020
+  .text    rva=0x0582a000 vsize=0x00002d3b flags=0x60000020
+  .link    rva=0x0582d000 vsize=0x00000b1b flags=0x60000020
+  .srdata  rva=0x0582e000 vsize=0x000015da flags=0x40000040
+  .xtext   rva=0x05830000 vsize=0x000014b0 flags=0x40000040
+  .bind    rva=0x05832000 vsize=0x0002acd0 flags=0x60000000
+watch: code game+0x013a2000-0x05829932, 34735 function entries
+watch: hardware watchpoints disabled (v0.10)
+[alive t=0s] GetState calls so far: 0
+first call: XInputGetCapabilities from game+0x01f15bc0
+real XInput: system32\xinput1_3.dll
+first call: XInputSetState from game+0x003786cd
+new caller: game+0x003786cd
+[alive t=30s] GetState calls so far: 0
+[alive t=60s] GetState calls so far: 0
+[alive t=90s] GetState calls so far: 0
+[alive t=120s] GetState calls so far: 0
+[alive t=150s] GetState calls so far: 0
+[alive t=180s] GetState calls so far: 0
+[alive t=210s] GetState calls so far: 0
+[alive t=240s] GetState calls so far: 0

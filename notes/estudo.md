@@ -242,3 +242,13 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   O usuário relatou "yes it does" (o destaque/câmera mudou?), mas não foi efeito da sonda.
 - v0.18: a checagem 3 percorre todas as instâncias de CThisIs e identifica o personagem pelo RTTI
   (class_of), sem depender da lista limitada a 256 objetos; se falhar, registra cada instância e o alvo.
+
+### Execução 18 (v0.18) - travou antes do título
+- Tela cinza + 1280x720 preto de novo (02:42), **com só `DXVK_FRAME_RATE=60 %command%`**: a hipótese de
+  que o WINEDLLOVERRIDES causava isso estava errada. Terceiro travamento (01:15, 01:27, 02:42) em ~20
+  inícios, todos com a sonda. Sem processos restantes da sessão anterior; threads dormindo, áudio em
+  silêncio; o heartbeat da sonda continuou.
+- Suspeita: a thread da sonda chama GetAsyncKeyState a cada 30 ms desde 0,5 s após carregar, junto com
+  a criação da janela/dispositivo do jogo (possível corrida no Wine).
+- v0.19: nenhuma chamada de teclado nos primeiros 45 s ("hotkeys active" no log). Se travar de novo,
+  o próximo passo é iniciar sem a sonda (WINEDLLOVERRIDES=xinput1_3=b) para descartá-la.

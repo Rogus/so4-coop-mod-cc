@@ -343,14 +343,23 @@ static DWORD WINAPI hotkey_thread(LPVOID unused)
 {
     (void)unused;
     uint64_t t0 = GetTickCount64(), last = 0;
+    int keys_on = 0;
     Sleep(500);
     watch_setup();
     for (;;) {
         Sleep(30);
+        uint64_t now = GetTickCount64();
+        /* v0.19: no user32 call (GetAsyncKeyState) during the game's startup. Runs at 01:15, 01:27
+         * and 02:42 hung before the title screen; polling keys every 30 ms from 0.5 s after load
+         * overlaps the game's window/device setup, a possible race inside Wine. */
+        if (!keys_on) {
+            if (now - t0 < 45000) continue;
+            keys_on = 1;
+            logs("hotkeys active (45 s after load)\r\n");
+        }
         poll_hotkeys();
         watch_poll();
         autocap_poll();
-        uint64_t now = GetTickCount64();
         if (now - last >= 30000) {            /* heartbeat: shows the game is still running */
             last = now;
             char b[96];
@@ -373,7 +382,7 @@ BOOL WINAPI DllMain(HMODULE self, DWORD reason, LPVOID unused)
             self_end = self_base + *(uint32_t *)(sb + *(int32_t *)(sb + 0x3c) + 24 + 56);
         }
         open_log(self);
-        logs("so4coop probe v0.18 loaded (F7 = auto-capture, F8 = WRITE TEST on CBattleMainTask+0x3a4 (3 checks, all CThisIs), F9 = scan + dump, F10 = mark)\r\n");
+        logs("so4coop probe v0.19 loaded (hotkeys after 45 s; F7 = auto-capture, F8 = WRITE TEST on CBattleMainTask+0x3a4 (3 checks, all CThisIs), F9 = scan + dump, F10 = mark)\r\n");
         describe_game_module();   /* the real XInput is loaded on the first call, not under the loader lock */
         CreateThread(0, 0, hotkey_thread, 0, 0, 0);
     }
