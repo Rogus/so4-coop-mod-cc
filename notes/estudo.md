@@ -174,3 +174,15 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
 - O único acesso com deslocamento 0x3c4 (game+0x3704a30) grava a constante 2 num objeto passado
   como argumento (outra classe?). Partes do código têm lixo anti-disassembly depois de saltos
   incondicionais: é preciso seguir os saltos, não ler em sequência.
+
+### Execução 12 (v0.12) - notes/run12_v0.12
+- Capturas: Edge, Sarah, (meio da troca). **Previsão confirmada para a Sarah**: +0x3c4 = 2 e
+  destaque do painel em x = 636.
+- Ajuste: o Edge veio 0 (x = 70) nesta batalha e 1 (x = 353) na execução 11. Os 5 pontos seguem
+  x = 70 + 283 × posição. Logo `CBattleMainTask+0x3c4` = **posição do membro controlado na ordem
+  do grupo desta batalha, base 0 (0-3)**, não um número fixo por personagem; +0x3c0 = 3 = maior
+  posição. `CStatusBoardWindow+0x1f0` é a cópia que a interface usa.
+- A captura no meio da troca já tem o valor novo: o campo muda antes da câmera.
+- Próximo: (1) achar a lista de membros na ordem desta batalha (posição -> personagem);
+  (2) teste de escrita: a sonda grava +0x3c4 e vemos se o controle troca sem R1 (primeira
+  escrita na memória do jogo: só com autorização explícita).

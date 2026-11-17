@@ -1,0 +1,227 @@
+===== session 20261117_015957 ===== (previous so4coop_dumps renamed to so4coop_dumps_before_<session>)
+so4coop probe v0.12 loaded (F9 = scan battle objects + dump every Battle:: instance, F10 = mark)
+game module base=0000000140000000 size=0x0585d000 sections=10
+  .data1   rva=0x00001000 vsize=0x0090b000 flags=0x60000020
+  .xdata   rva=0x0090c000 vsize=0x00320800 flags=0x40000040
+  .arch    rva=0x00c2d000 vsize=0x0070ed68 flags=0xc0000020
+  .pdata   rva=0x0133c000 vsize=0x00065e00 flags=0x40000040
+  .xpdata  rva=0x013a2000 vsize=0x04487932 flags=0xe0000020
+  .text    rva=0x0582a000 vsize=0x00002d3b flags=0x60000020
+  .link    rva=0x0582d000 vsize=0x00000b1b flags=0x60000020
+  .srdata  rva=0x0582e000 vsize=0x000015da flags=0x40000040
+  .xtext   rva=0x05830000 vsize=0x000014b0 flags=0x40000040
+  .bind    rva=0x05832000 vsize=0x0002acd0 flags=0x60000000
+watch: code game+0x013a2000-0x05829932, 34735 function entries
+watch: hardware watchpoints disabled (v0.10)
+[alive t=0s] GetState calls so far: 0
+first call: XInputGetCapabilities from game+0x01f15bc0
+real XInput: system32\xinput1_3.dll
+first call: XInputSetState from game+0x003786cd
+new caller: game+0x003786cd
+[alive t=30s] GetState calls so far: 0
+[alive t=60s] GetState calls so far: 0
+[alive t=90s] GetState calls so far: 0
+RTTI map built in 252 ms, 24 vtables:
+  CPlayerEdge@Battle       TD=+0x00f0c380 vtable=game+0x009f48b8
+  CPlayerReimi@Battle      TD=+0x00f0c508 vtable=game+0x009f59a8
+  CPlayerFaiz@Battle       TD=+0x00f0c6a8 vtable=game+0x009f6b78
+  CPlayerLymle@Battle      TD=+0x00f0d080 vtable=game+0x009fcf58
+  CPlayerBackus@Battle     TD=+0x00f0c830 vtable=game+0x009f7bf8
+  CPlayerArumat@Battle     TD=+0x00f0cf00 vtable=game+0x009fbe98
+  CPlayerMelicle@Battle    TD=+0x00f0c9b0 vtable=game+0x009f8dd8
+  CPlayerMuria@Battle      TD=+0x00f0ccf8 vtable=game+0x009fae98
+  CPlayerSarah@Battle      TD=+0x00f0cb38 vtable=game+0x009f9e88
+  CPlayerChr@Battle        TD=+0x00efeda0 vtable=game+0x009e01d8
+  CPlayerThinkChr@Battle   TD=+0x00efed70 vtable=game+0x009dcc78
+  CEnemyThinkChr@Battle    TD=+0x00f0c1c8 vtable=game+0x009f3a28
+  CBtlPad@Battle           TD=+0x00efb5f0 vtable=game+0x009d6c78
+  Pad@Aska                 TD=+0x00c30df8 vtable=game+0x00913418
+  PadXe@Aska               TD=+0x00c30e40 vtable=game+0x009134b8
+  WindowsPad@Aska          TD=+0x00c30e68 vtable=game+0x00913558
+  BasePad@Aska             TD=+0x00c30e18 (no vtable found)
+  PadTask@Peripheral       TD=+0x00f39740 vtable=game+0x00a8e538
+  CTacticsMode@Battle      TD=+0x00f15d50 vtable=game+0x00a3f548
+  CReplaceMember@Battle    TD=+0x00f16340 vtable=game+0x00a400f8
+  CMemberBoard@Battle      TD=+0x00f224f8 vtable=game+0x00a577c8
+  CBattleMainTask@Battle   TD=+0x00efb078 vtable=game+0x009d5af8
+  CBattleCampMember@Battle TD=+0x00f22528 vtable=game+0x00a579f8
+  CTacticsChoice@Battle    TD=+0x00f22298 vtable=game+0x00a57018
+  CSelectTarget@Battle     TD=+0x00f22748 vtable=game+0x00a57c68
+=== SCAN #1 (933 ms) === (probe stack 0000000000B30000-0000000000C30000 skipped)
+  CPlayerEdge@Battle       x1: 00000001CD3701B0
+  CPlayerArumat@Battle     x1: 00000001CD4901B0
+  CPlayerMuria@Battle      x1: 00000001CD6001B0
+  CPlayerSarah@Battle      x1: 00000001CD3C01B0
+  CBtlPad@Battle           x1: 000000014722D100
+  WindowsPad@Aska          x2: 000000014975C570 000000014975E370
+  PadTask@Peripheral       x1: 000000014722DE90
+  CTacticsMode@Battle      x1: 00000001DAB196C0
+  CBattleMainTask@Battle   x1: 00000001459FA6F0
+  CSelectTarget@Battle     x1: 00000001DB18C400
+  CBattleMainTask@Battle@00000001459FA6F0 -> +0x90=CBtlPad@Battle@000000014722D100 +0xbe8=CBattleMainTask@Battle@00000001459FA6F0
+  WindowsPad@Aska@000000014975E370 -> +0xf30=PadTask@Peripheral@000000014722DE90
+  CPlayerEdge@Battle@00000001CD3701B0 -> +0x10=CPlayerSarah@Battle@00000001CD3C01B0
+  CPlayerSarah@Battle@00000001CD3C01B0 -> +0x8=CPlayerEdge@Battle@00000001CD3701B0 +0x10=CPlayerArumat@Battle@00000001CD4901B0
+  CPlayerArumat@Battle@00000001CD4901B0 -> +0x8=CPlayerSarah@Battle@00000001CD3C01B0 +0x10=CPlayerMuria@Battle@00000001CD6001B0
+  CPlayerMuria@Battle@00000001CD6001B0 -> +0x8=CPlayerArumat@Battle@00000001CD4901B0
+  CTacticsMode@Battle@00000001DAB196C0 -> +0xab8=CSelectTarget@Battle@00000001DB18C400
+  CSelectTarget@Battle@00000001DB18C400 -> +0xc48=CSelectTarget@Battle@00000001DB18C400 +0xdd8=CSelectTarget@Battle@00000001DB18C400 +0xed8=CSelectTarget@Battle@00000001DB18C400
+  CBattleMainTask@00000001459FA6F0 +0x410 (operator X) = 00000001DA5901B0
+  X @00000001DA5901B0 class=CCm109@Battle@@
+     +0x0008 -> 00000001DA5701B0 CCm109@Battle@@
+     +0x0010 -> 00000001DA5B01B0 CCm109@Battle@@
+     +0x0018 -> 0000000149B4D8D0 CChrManager@Battle@@
+     +0x0050 -> 00000001D8BFFF40 HierarchicalObject@Aska@@
+     +0x0058 -> 00000001D769F570 CBattleAsfHandler@Battle@@
+     +0x0060 -> 00000001D769F570 CBattleAsfHandler@Battle@@
+     +0x00f8 -> 00000001D9201F30 CBattleCollisionHandler@Battle@@
+     +0x0100 -> 00000001D9201F30 CBattleCollisionHandler@Battle@@
+     +0x0158 -> 00000001D769F570 CBattleAsfHandler@Battle@@
+     +0x0160 -> 00000001D769F570 CBattleAsfHandler@Battle@@
+     +0x0360 -> 00000001D9224840 HierarchicalObject@Aska@@
+     +0x0368 -> 00000001D9228990 HierarchicalObject@Aska@@
+     +0x0370 -> 00000001D9201B90 HierarchicalObject@Aska@@
+     +0x0378 -> 00000001D920BA10 HierarchicalObject@Aska@@
+     +0x0400 -> 00000001D908FC40 HierarchicalObject@Aska@@
+     +0x0448 -> 00000001D922FF80 HierarchicalObject@Aska@@
+  CONTROLLED: CPlayerEdge@Battle@00000001CD3701B0  +0x129a0=00000001DA5901B0  +0x129c0=00000001D907AB70  +0x129d8=42f00000
+     chr+0x12998 -> 00000001CD3701B0 CPlayerEdge@Battle@@
+     chr+0x129a0 -> 00000001DA5901B0 CCm109@Battle@@
+     chr+0x129a8 -> 00000001DAECC100 HierarchicalObject@Aska@@
+     chr+0x129b0 -> 00000001DAED97C0 HierarchicalObject@Aska@@
+     chr+0x129b8 -> 00000001DAED9420 HierarchicalObject@Aska@@
+     chr+0x129c0 -> 00000001D907AB70 JointObject@Aska@@
+     chr+0x12a20 -> 00000001DA5901B0 CCm109@Battle@@
+  Y @00000001D907AB70 class=JointObject@Aska@@
+     +0x00e0 -> 00000001D907A990 JointObject@Aska@@
+     +0x00e8 -> 00000001D907AD50 JointObject@Aska@@
+     +0x00f0 -> 00000001D907AB70 JointObject@Aska@@
+     +0x00f8 -> 00000001D907AB70 JointObject@Aska@@
+     +0x01c8 -> 0000000145860050 MemoryManager@Aska@@
+     +0x02c0 -> 00000001D907AB70 JointObject@Aska@@
+     +0x02d0 -> 00000001D90A01B0 CBattleAofObject@Battle@@
+     +0x02d8 -> 00000001D90801B0 JointObject@Aska@@
+     +0x03a8 -> 0000000145860050 MemoryManager@Aska@@
+     +0x0478 -> 0000000145860050 MemoryManager@Aska@@
+  references to party characters: 386 (2797 ms) -> s01_refs.txt
+  11 objects dumped to so4coop_dumps\
+all Battle classes: 542 type descriptors, 527 locators, 527 vtables (114 ms)
+  battle objects: 1239 instances (2517 over the cap) of 542 classes, 4956 KB -> s01_battle_objects.bin (894 ms)
+  globals: rva 0x00c2d000 size 0x0070ed68 -> s01_globals_00c2d000.bin (0 unreadable pages)
+  watch: references saved; switch character (R1/L1) and press F9 again to arm the watchpoints
+=== SCAN #2 (838 ms) === (probe stack 0000000000B30000-0000000000C30000 skipped)
+  CPlayerEdge@Battle       x1: 00000001CD3701B0
+  CPlayerArumat@Battle     x1: 00000001CD4901B0
+  CPlayerMuria@Battle      x1: 00000001CD6001B0
+  CPlayerSarah@Battle      x1: 00000001CD3C01B0
+  CBtlPad@Battle           x1: 000000014722D100
+  WindowsPad@Aska          x2: 000000014975C570 000000014975E370
+  PadTask@Peripheral       x1: 000000014722DE90
+  CTacticsMode@Battle      x1: 00000001DAB196C0
+  CBattleMainTask@Battle   x1: 00000001459FA6F0
+  CSelectTarget@Battle     x1: 00000001DB18C400
+  CBattleMainTask@Battle@00000001459FA6F0 -> +0x90=CBtlPad@Battle@000000014722D100 +0xbe8=CBattleMainTask@Battle@00000001459FA6F0
+  WindowsPad@Aska@000000014975E370 -> +0xf30=PadTask@Peripheral@000000014722DE90
+  CPlayerEdge@Battle@00000001CD3701B0 -> +0x10=CPlayerSarah@Battle@00000001CD3C01B0
+  CPlayerSarah@Battle@00000001CD3C01B0 -> +0x8=CPlayerEdge@Battle@00000001CD3701B0 +0x10=CPlayerArumat@Battle@00000001CD4901B0
+  CPlayerArumat@Battle@00000001CD4901B0 -> +0x8=CPlayerSarah@Battle@00000001CD3C01B0 +0x10=CPlayerMuria@Battle@00000001CD6001B0
+  CPlayerMuria@Battle@00000001CD6001B0 -> +0x8=CPlayerArumat@Battle@00000001CD4901B0
+  CTacticsMode@Battle@00000001DAB196C0 -> +0xab8=CSelectTarget@Battle@00000001DB18C400
+  CSelectTarget@Battle@00000001DB18C400 -> +0xc48=CSelectTarget@Battle@00000001DB18C400 +0xdd8=CSelectTarget@Battle@00000001DB18C400 +0xed8=CSelectTarget@Battle@00000001DB18C400
+  CBattleMainTask@00000001459FA6F0 +0x410 (operator X) = 00000001DA5B01B0
+  X @00000001DA5B01B0 class=CCm109@Battle@@
+     +0x0008 -> 00000001DA5901B0 CCm109@Battle@@
+     +0x0010 -> 00000001DA5D01B0 CCm103@Battle@@
+     +0x0018 -> 0000000149B4D8D0 CChrManager@Battle@@
+     +0x0050 -> 00000001D99DFF70 HierarchicalObject@Aska@@
+     +0x0058 -> 00000001D77BF900 CBattleAsfHandler@Battle@@
+     +0x0060 -> 00000001D77BF900 CBattleAsfHandler@Battle@@
+     +0x00f8 -> 00000001DA400F30 CBattleCollisionHandler@Battle@@
+     +0x0100 -> 00000001DA400F30 CBattleCollisionHandler@Battle@@
+     +0x0158 -> 00000001D77BF900 CBattleAsfHandler@Battle@@
+     +0x0160 -> 00000001D77BF900 CBattleAsfHandler@Battle@@
+     +0x0360 -> 00000001DA47F640 HierarchicalObject@Aska@@
+     +0x0368 -> 00000001DA480740 HierarchicalObject@Aska@@
+     +0x0370 -> 00000001DA43FA60 HierarchicalObject@Aska@@
+     +0x0378 -> 00000001DA45F980 HierarchicalObject@Aska@@
+     +0x0400 -> 00000001DA3C0740 HierarchicalObject@Aska@@
+     +0x0448 -> 00000001DA4924A0 HierarchicalObject@Aska@@
+  CONTROLLED: CPlayerSarah@Battle@00000001CD3C01B0  +0x129a0=00000001DA5B01B0  +0x129c0=00000001DA3A0920  +0x129d8=42f00000
+     chr+0x12998 -> 00000001CD3C01B0 CPlayerSarah@Battle@@
+     chr+0x129a0 -> 00000001DA5B01B0 CCm109@Battle@@
+     chr+0x129a8 -> 00000001CE59FBF0 HierarchicalObject@Aska@@
+     chr+0x129b0 -> 00000001CE8C1BA0 JointObject@Aska@@
+     chr+0x129b8 -> 00000001CE8C1800 HierarchicalObject@Aska@@
+     chr+0x129c0 -> 00000001DA3A0920 JointObject@Aska@@
+     chr+0x12a20 -> 00000001DA5B01B0 CCm109@Battle@@
+  Y @00000001DA3A0920 class=JointObject@Aska@@
+     +0x00e0 -> 00000001DA3A0740 JointObject@Aska@@
+     +0x00e8 -> 00000001DA3A0B00 JointObject@Aska@@
+     +0x00f0 -> 00000001DA3A0920 JointObject@Aska@@
+     +0x00f8 -> 00000001DA3A0920 JointObject@Aska@@
+     +0x01c8 -> 0000000145860050 MemoryManager@Aska@@
+     +0x02c0 -> 00000001DA3A0920 JointObject@Aska@@
+     +0x02d0 -> 00000001DA3FF840 CBattleAofObject@Battle@@
+     +0x02d8 -> 00000001DA3A0CE0 JointObject@Aska@@
+     +0x03a8 -> 0000000145860050 MemoryManager@Aska@@
+     +0x04a0 -> 00000001DA3A0920 JointObject@Aska@@
+     +0x04a8 -> 00000001DA3BF720 JointObject@Aska@@
+     +0x04b0 -> 00000001DA3A0B00 JointObject@Aska@@
+     +0x04b8 -> 00000001DA3BFAE0 JointObject@Aska@@
+     +0x0588 -> 0000000145860050 MemoryManager@Aska@@
+     +0x05e0 -> 00000001DA3C0E90 AddressNode@Aska@@
+     +0x0610 -> 00000001DA3C0E90 AddressNode@Aska@@
+     +0x0618 -> 00000001DA3C0E90 AddressNode@Aska@@
+     +0x0620 -> 00000001DA3C0E90 AddressNode@Aska@@
+     +0x0658 -> 0000000145860050 MemoryManager@Aska@@
+     +0x06c8 -> 0000000145860050 MemoryManager@Aska@@
+  references to party characters: 387 (2803 ms) -> s02_refs.txt
+  11 objects dumped to so4coop_dumps\
+  battle objects: 1247 instances (2531 over the cap) of 542 classes, 4988 KB -> s02_battle_objects.bin (893 ms)
+  globals: rva 0x00c2d000 size 0x0070ed68 -> s02_globals_00c2d000.bin (0 unreadable pages)
+  watch: 2 slots followed the switch to the new character:
+    000000015A82F280 in CCameraManager@Battle@@@000000015A82EF20+0x360
+    000000017F496BA0 in CCameraAngleLock@Battle@@@000000017F496A10+0x190
+=== SCAN #3 (853 ms) === (probe stack 0000000000B30000-0000000000C30000 skipped)
+  CPlayerEdge@Battle       x1: 00000001CD3701B0
+  CPlayerArumat@Battle     x1: 00000001CD4901B0
+  CPlayerMuria@Battle      x1: 00000001CD6001B0
+  CPlayerSarah@Battle      x1: 00000001CD3C01B0
+  CBtlPad@Battle           x1: 000000014722D100
+  WindowsPad@Aska          x2: 000000014975C570 000000014975E370
+  PadTask@Peripheral       x1: 000000014722DE90
+  CTacticsMode@Battle      x1: 00000001DAB196C0
+  CBattleMainTask@Battle   x1: 00000001459FA6F0
+  CSelectTarget@Battle     x1: 00000001DB18C400
+  CBattleMainTask@Battle@00000001459FA6F0 -> +0x90=CBtlPad@Battle@000000014722D100 +0xbe8=CBattleMainTask@Battle@00000001459FA6F0
+  WindowsPad@Aska@000000014975E370 -> +0xf30=PadTask@Peripheral@000000014722DE90
+  CPlayerEdge@Battle@00000001CD3701B0 -> +0x10=CPlayerSarah@Battle@00000001CD3C01B0
+  CPlayerSarah@Battle@00000001CD3C01B0 -> +0x8=CPlayerEdge@Battle@00000001CD3701B0 +0x10=CPlayerArumat@Battle@00000001CD4901B0
+  CPlayerArumat@Battle@00000001CD4901B0 -> +0x8=CPlayerSarah@Battle@00000001CD3C01B0 +0x10=CPlayerMuria@Battle@00000001CD6001B0
+  CPlayerMuria@Battle@00000001CD6001B0 -> +0x8=CPlayerArumat@Battle@00000001CD4901B0
+  CTacticsMode@Battle@00000001DAB196C0 -> +0xab8=CSelectTarget@Battle@00000001DB18C400
+  CSelectTarget@Battle@00000001DB18C400 -> +0xc48=CSelectTarget@Battle@00000001DB18C400 +0xdd8=CSelectTarget@Battle@00000001DB18C400 +0xed8=CSelectTarget@Battle@00000001DB18C400
+  CBattleMainTask@00000001459FA6F0 +0x410 (operator X) = 00000001DA5B01B0
+  X @00000001DA5B01B0 class=CCm109@Battle@@
+     +0x0008 -> 00000001DA5901B0 CCm109@Battle@@
+     +0x0010 -> 00000001DA5D01B0 CCm103@Battle@@
+     +0x0018 -> 0000000149B4D8D0 CChrManager@Battle@@
+     +0x0050 -> 00000001D99DFF70 HierarchicalObject@Aska@@
+     +0x0058 -> 00000001D77BF900 CBattleAsfHandler@Battle@@
+     +0x0060 -> 00000001D77BF900 CBattleAsfHandler@Battle@@
+     +0x00f8 -> 00000001DA400F30 CBattleCollisionHandler@Battle@@
+     +0x0100 -> 00000001DA400F30 CBattleCollisionHandler@Battle@@
+     +0x0158 -> 00000001D77BF900 CBattleAsfHandler@Battle@@
+     +0x0160 -> 00000001D77BF900 CBattleAsfHandler@Battle@@
+     +0x0360 -> 00000001DA47F640 HierarchicalObject@Aska@@
+     +0x0368 -> 00000001DA480740 HierarchicalObject@Aska@@
+     +0x0370 -> 00000001DA43FA60 HierarchicalObject@Aska@@
+     +0x0378 -> 00000001DA45F980 HierarchicalObject@Aska@@
+     +0x0400 -> 00000001DA3C0740 HierarchicalObject@Aska@@
+     +0x0448 -> 00000001DA4924A0 HierarchicalObject@Aska@@
+  references to party characters: 419 (2789 ms) -> s03_refs.txt
+  11 objects dumped to so4coop_dumps\
+  battle objects: 1248 instances (2531 over the cap) of 542 classes, 4992 KB -> s03_battle_objects.bin (901 ms)
+  globals: rva 0x00c2d000 size 0x0070ed68 -> s03_globals_00c2d000.bin (0 unreadable pages)
+  watch: no controlled character in this scan (press F9 during a battle, not mid-switch)
+[alive t=120s] GetState calls so far: 0
