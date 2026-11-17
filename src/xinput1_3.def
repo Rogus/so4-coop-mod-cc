@@ -10,3 +10,4 @@ XInputGetKeystroke              @8
 XInputGetStateEx                @100 NONAME
 so4coop_scan
 so4coop_selftest
+so4coop_writetest

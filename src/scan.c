@@ -524,17 +524,20 @@ static void dump_objects(void)
     logs(b);
 }
 
-static int f9_was, f10_was, f11_was;
+static int f8_was, f9_was, f10_was, f11_was;
 static uint32_t marks;
 #define VK_F11 0x7a
+static void write_test(void);
 
 static void poll_hotkeys(void)
 {
+    int f8 = (GetAsyncKeyState(0x77 /* VK_F8 */) & 0x8000) != 0;
     int f9 = (GetAsyncKeyState(VK_F9) & 0x8000) != 0;
     int f10 = (GetAsyncKeyState(VK_F10) & 0x8000) != 0;
     int f11 = (GetAsyncKeyState(VK_F11) & 0x8000) != 0;
+    if (f8 && !f8_was) write_test();
     if (f9 && !f9_was) scan_now();
     if (f10 && !f10_was) { char b[64]; wsprintfA(b, "----- MARK #%u -----\r\n", ++marks); logs(b); }
     if (f11 && !f11_was) watch_report();
-    f9_was = f9; f10_was = f10; f11_was = f11;
+    f8_was = f8; f9_was = f9; f10_was = f10; f11_was = f11;
 }
