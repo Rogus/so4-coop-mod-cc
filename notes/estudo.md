@@ -307,3 +307,24 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   (game+0x7b1510, 0x7b2e60, 0x7b7090, 0x7d2870). Todas em .data1 (não cifrada no disco).
 - Próximo: descobrir qual chamada do controle 0 alimenta o líder em batalha; para o co-op, o 2º membro
   precisaria receber os dados do controle 1 (exige alterar código em execução, como o SO4Fix faz).
+- analysis/callgraph.py: RTTI de todas as classes (5201 classes, 3235 vtables, 10091 funções
+  rotuladas) + índice de chamadas diretas (122743) -> rotula quem chama uma função, subindo até métodos
+  virtuais. Saídas: notes/getpad_callers.txt e notes/getleader_callers.txt.
+- Chamadores de game+0x75c660 (pegar controle): quase todos de menus (Camp), campo (Field), título e
+  salvar. Em batalha só três:
+  - game+0x4fd740 = **StartRumble(CBtlPad, controle, motor1, motor2, duração)**; chamado por
+    CPlayerChr::vf107 só quando o personagem é o líder (vibra o controle 0 a 0x7fff).
+  - game+0x5152c0 / 0x515690 (CKernel@Battle::vf12): percorrem os 2 controles e reiniciam estado do
+    dispositivo, depois consultam o líder (flag leader+0xd46, subsistema em *(main)+0xb0): parece
+    preparação/pausa, não o movimento por quadro.
+  - CBtlPad::vf12 (temporizador de vibração).
+- **Definição do líder no código** (confirma o que achamos em execução):
+  - game+0x4f7310(main) = `return *(main+0x68)` (bloco do líder)
+  - game+0x4f9990(grupo, i) = `return *(grupo + 0x5a0 + 8*i)`, grupo = *(CBattleMainTask+0x58)
+  - **game+0x5000d0 = GetLeader(sistema)** = grupo->membros[bloco[4]]; sistema = [game+0x1051838]
+    (1º campo = CBattleMainTask). 109 funções chamam.
+  - **game+0x53e390 = IsLeader(personagem)** = (GetLeader(sistema) == personagem): a pergunta "sou o
+    controlado pelo jogador?" usada por dezenas de métodos de CPlayerChr/CPlayerThinkChr.
+- Hipótese para o co-op: fazer IsLeader responder "sim" também para o personagem do jogador 2 e dar a
+  ele a entrada do controle 1 (o movimento do líder não parece vir de game+0x75c660; falta achar a
+  interface de entrada por quadro). Isso exige alterar código em execução: pedir autorização antes.

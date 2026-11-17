@@ -1,0 +1,98 @@
+RTTI: 5201 classes, 3235 vtables, 10091 labelled functions; 122743 direct calls
+
+== caller fn game+0x4fd740 (?)  
+     ^ level 1: game+0x5363b0  CPlayerThinkChr@Battle@@::vf107; CChrElement@Battle@@::vf107; CRigidbodyChr@Battle@@::vf107; CPlayerChr@Battle@@::vf107; CEnemyChr@Battle@@::vf107; CEnemyThinkChr@Battle@@::vf107; CPlayerEdge@Battle@@::vf107; CPlayerReimi@Battle@@::vf107; CPlayerFaiz@Battle@@::vf107; CPlayerBackus@Battle@@::vf107; CPlayerMelicle@Battle@@::vf107; CPlayerSarah@Battle@@::vf107; CPlayerMuria@Battle@@::vf107; CPlayerArumat@Battle@@::vf107; CPlayerLymle@Battle@@::vf107; CPlayerWireframeEdge@Battle@@::vf107; CEnemyEffectChr@Battle@@::vf107; CCm001@Battle@@::vf107; CCm002@Battle@@::vf107; CCm003@Battle@@::vf107; CCm004@Battle@@::vf107; CCm005@Battle@@::vf107; CCm006_01@Battle@@::vf107; CCm006_02@Battle@@::vf107; CCm007@Battle@@::vf107; CCm008@Battle@@::vf107; CCm009@Battle@@::vf107; CCm010@Battle@@::vf107; CCm101@Battle@@::vf107; CCm102@Battle@@::vf107; CCm103@Battle@@::vf107; CCm104@Battle@@::vf107; CCm105@Battle@@::vf107; CCm106@Battle@@::vf107; CCm107@Battle@@::vf107; CCm108@Battle@@::vf107; CCm109@Battle@@::vf107; CCm110@Battle@@::vf107; CCm111@Battle@@::vf107; CCm112@Battle@@::vf107; CCm113@Battle@@::vf107; CCm114@Battle@@::vf107; CCm115@Battle@@::vf107; CCm116@Battle@@::vf107; CCm117@Battle@@::vf107; CCm119@Battle@@::vf107; CCm123@Battle@@::vf107; CCm124@Battle@@::vf107; CCm125@Battle@@::vf107; CCm126@Battle@@::vf107; CCm127@Battle@@::vf107; CCm128@Battle@@::vf107; CCm129@Battle@@::vf107; CCm130@Battle@@::vf107; CCm132@Battle@@::vf107; CCm133@Battle@@::vf107; CCm134@Battle@@::vf107; CCm135@Battle@@::vf107; CCm136@Battle@@::vf107; CCm137@Battle@@::vf107; CCm139@Battle@@::vf107; CCm138@Battle@@::vf107; CCm140@Battle@@::vf107; CCm141@Battle@@::vf107; CCm142@Battle@@::vf107; CCm145@Battle@@::vf107; CCm146@Battle@@::vf107; CCm147@Battle@@::vf107; CCn520@Battle@@::vf107; CCn020@Battle@@::vf107; CCm201@Battle@@::vf107; CCm202@Battle@@::vf107; CCm203@Battle@@::vf107; CCm204@Battle@@::vf107; CCm205@Battle@@::vf107; CCm206@Battle@@::vf107; CCm207@Battle@@::vf107; CCm208@Battle@@::vf107; CCm209@Battle@@::vf107; CMagicChr@Battle@@::vf107; CEffectControlChr@Battle@@::vf107; CEnemyTechniqueChr@Battle@@::vf107
+       ^ level 2: game+0x537c50  CChrElement@Battle@@::vf51; CRigidbodyChr@Battle@@::vf51; CMagicChr@Battle@@::vf51; CEffectControlChr@Battle@@::vf51
+         ^ level 3: game+0x538e80  CPlayerThinkChr@Battle@@::vf95; CChrElement@Battle@@::vf95; CRigidbodyChr@Battle@@::vf95; CPlayerChr@Battle@@::vf95; CEnemyChr@Battle@@::vf95; CEnemyThinkChr@Battle@@::vf95; CPlayerEdge@Battle@@::vf95; CPlayerFaiz@Battle@@::vf95; CPlayerBackus@Battle@@::vf95; CPlayerMelicle@Battle@@::vf95; CPlayerSarah@Battle@@::vf95; CPlayerMuria@Battle@@::vf95; CPlayerArumat@Battle@@::vf95; CPlayerWireframeEdge@Battle@@::vf95; CEnemyEffectChr@Battle@@::vf95; CCm001@Battle@@::vf95; CCm002@Battle@@::vf95; CCm003@Battle@@::vf95; CCm004@Battle@@::vf95; CCm005@Battle@@::vf95; CCm006_01@Battle@@::vf95; CCm006_02@Battle@@::vf95; CCm007@Battle@@::vf95; CCm008@Battle@@::vf95; CCm009@Battle@@::vf95; CCm010@Battle@@::vf95; CCm101@Battle@@::vf95; CCm102@Battle@@::vf95; CCm103@Battle@@::vf95; CCm104@Battle@@::vf95; CCm105@Battle@@::vf95; CCm106@Battle@@::vf95; CCm108@Battle@@::vf95; CCm109@Battle@@::vf95; CCm110@Battle@@::vf95; CCm111@Battle@@::vf95; CCm112@Battle@@::vf95; CCm113@Battle@@::vf95; CCm114@Battle@@::vf95; CCm115@Battle@@::vf95; CCm116@Battle@@::vf95; CCm117@Battle@@::vf95; CCm119@Battle@@::vf95; CCm123@Battle@@::vf95; CCm124@Battle@@::vf95; CCm125@Battle@@::vf95; CCm127@Battle@@::vf95; CCm128@Battle@@::vf95; CCm129@Battle@@::vf95; CCm130@Battle@@::vf95; CCm132@Battle@@::vf95; CCm133@Battle@@::vf95; CCm135@Battle@@::vf95; CCm136@Battle@@::vf95; CCm137@Battle@@::vf95; CCm139@Battle@@::vf95; CCm138@Battle@@::vf95; CCm140@Battle@@::vf95; CCm141@Battle@@::vf95; CCm142@Battle@@::vf95; CCm145@Battle@@::vf95; CCm146@Battle@@::vf95; CCm147@Battle@@::vf95; CCn520@Battle@@::vf95; CCn020@Battle@@::vf95; CCm201@Battle@@::vf95; CCm202@Battle@@::vf95; CCm203@Battle@@::vf95; CCm204@Battle@@::vf95; CCm205@Battle@@::vf95; CCm206@Battle@@::vf95; CCm207@Battle@@::vf95; CCm208@Battle@@::vf95; CCm209@Battle@@::vf95; CMagicChr@Battle@@::vf95; CEffectControlChr@Battle@@::vf95; CEnemyTechniqueChr@Battle@@::vf95
+         ^ level 3: game+0x5bade0  CPlayerArumat@Battle@@::vf12
+         ^ level 3: game+0x5feab0  CCm209@Battle@@::vf12
+
+== caller fn game+0x5152c0 (?)  
+     ^ level 1: game+0x510fc0  CKernel@Battle@@::vf12
+
+== caller fn game+0x515690 (?)  
+     ^ level 1: game+0x510fc0  CKernel@Battle@@::vf12
+
+== caller fn game+0x67b8d0 (ecx=0)  
+     ^ level 1: game+0x67d990  CampMainTask@Camp@@::vf12
+
+== caller fn game+0x67ca30 (ecx=0)  
+     ^ level 1: game+0x67d990  CampMainTask@Camp@@::vf12
+
+== caller fn game+0x67d990 (?)  CampMainTask@Camp@@::vf12
+
+== caller fn game+0x685450 (ecx=0)  
+     ^ level 1: game+0x67d990  CampMainTask@Camp@@::vf12
+
+== caller fn game+0x694b10 (ecx=0)  
+     ^ level 1: game+0x413f900  CSettingMenu@Camp@@::vf0
+
+== caller fn game+0x695c20 (ecx=0)  
+         ^ level 3: game+0x6988f0  CSettingMenu@Camp@@::vf23
+
+== caller fn game+0x6988f0 (?)  CSettingMenu@Camp@@::vf23
+
+== caller fn game+0x698f60 (ecx=0)  
+     ^ level 1: game+0x6988f0  CSettingMenu@Camp@@::vf23
+
+== caller fn game+0x69ad60 (ecx=0)  
+       ^ level 2: game+0x6988f0  CSettingMenu@Camp@@::vf23
+
+== caller fn game+0x6aa370 (ecx=0)  CNewGameView@Camp@@::vf23
+
+== caller fn game+0x6d7080 (?)  CDictionaryNoteWindow@Camp@@::vf23
+
+== caller fn game+0x6d7790 (ecx=0)  
+     ^ level 1: game+0x6d7080  CDictionaryNoteWindow@Camp@@::vf23
+
+== caller fn game+0x6dabb0 (?)  CPlotNoteWindowNA@Camp@@::vf23
+
+== caller fn game+0x6dacb0 (ecx=0)  
+     ^ level 1: game+0x6dabb0  CPlotNoteWindowNA@Camp@@::vf23
+
+== caller fn game+0x6e8990 (ecx=3375628281)  
+       ^ level 2: game+0x6eb130  CSettingPartsSurround@Camp@@::vf11
+
+== caller fn game+0x6ea790 (?)  CSettingPartsVolume@Camp@@::vf32
+
+== caller fn game+0x6eb130 (?)  CSettingPartsSurround@Camp@@::vf11
+
+== caller fn game+0x706e90 (?)  CCoinTradeWindow@Camp@@::vf25
+
+== caller fn game+0x7546a0 (ecx=0)  
+     ^ level 1: game+0x7a2b30  SceVerSave@SaveLoad@@::vf0
+
+== caller fn game+0x75cad0 (ecx=0)  CSystemNotify@Soz@@::vf12
+
+== caller fn game+0x79ac30 (ecx=0)  CPopUpWindow@WindowLib@@::vf32
+
+== caller fn game+0x7ae0c0 (?)  
+     ^ level 1: game+0x7aeec0  FieldMainTask@Field@@::vf12
+
+== caller fn game+0x7ae450 (?)  
+     ^ level 1: game+0x7aeec0  FieldMainTask@Field@@::vf12
+
+== caller fn game+0x7b1510 (ecx=0, ecx=1)  
+     ^ level 1: game+0x7f6c40  CWanderingDungeonManager@Field@@::vf12
+     ^ level 1: game+0x81ae60  CCalnusSetItem@Field@@::vf12
+     ^ level 1: game+0x8293e0  CControlCreatorPalace@Field@@::vf12
+       ^ level 2: game+0x7dbc20  CHeroCharacter@Field@@::vf63
+
+== caller fn game+0x7b2e60 (ecx=0, ecx=1)  
+
+== caller fn game+0x7b7090 (ecx=0, ecx=1)  
+     ^ level 1: game+0x5324b10  CFSQSwitchCamp@Field@@::vf19
+       ^ level 2: game+0x7aeec0  FieldMainTask@Field@@::vf12
+       ^ level 2: game+0x7dbc20  CHeroCharacter@Field@@::vf63
+
+== caller fn game+0x7d2870 (ecx=0, ecx=1)  CMapManager@Field@@::vf12
+
+== caller fn game+0x7dfa90 (?)  CSceHighSpeedManager@Field@@::vf12
+
+== caller fn game+0x802390 (ecx=0)  CFSQActuator@Field@@::vf20
+
+== caller fn game+0x846120 (?)  CTitleMenu@Title@@::vf12
+
+== caller fn game+0x2f9bae0 (?)  CBtlPad@Battle@@::vf12
+
+== caller fn game+0x53177f0 (ecx=0)  CFSQActuator@Field@@::vf19

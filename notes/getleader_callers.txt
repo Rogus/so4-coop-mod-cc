@@ -1,0 +1,311 @@
+RTTI: 5201 classes, 3235 vtables, 10091 labelled functions; 122743 direct calls
+
+== caller fn game+0x500b40 (?)  
+     ^ level 1: game+0x53d260  CPlayerThinkChr@Battle@@::vf340; CChrElement@Battle@@::vf340; CRigidbodyChr@Battle@@::vf340; CPlayerChr@Battle@@::vf340; CEnemyChr@Battle@@::vf340; CPlayerEdge@Battle@@::vf340; CPlayerReimi@Battle@@::vf340; CPlayerFaiz@Battle@@::vf340; CPlayerBackus@Battle@@::vf340; CPlayerMelicle@Battle@@::vf340; CPlayerSarah@Battle@@::vf340; CPlayerMuria@Battle@@::vf340; CPlayerArumat@Battle@@::vf340; CPlayerLymle@Battle@@::vf340; CPlayerWireframeEdge@Battle@@::vf340; CMagicChr@Battle@@::vf340; CEffectControlChr@Battle@@::vf340; CEnemyTechniqueChr@Battle@@::vf340
+     ^ level 1: game+0x53df50  CPlayerThinkChr@Battle@@::vf265; CChrElement@Battle@@::vf265; CRigidbodyChr@Battle@@::vf265; CPlayerChr@Battle@@::vf265; CEnemyChr@Battle@@::vf265; CEnemyThinkChr@Battle@@::vf265; CPlayerEdge@Battle@@::vf265; CPlayerReimi@Battle@@::vf265; CPlayerFaiz@Battle@@::vf265; CPlayerMelicle@Battle@@::vf265; CPlayerSarah@Battle@@::vf265; CPlayerArumat@Battle@@::vf265; CPlayerLymle@Battle@@::vf265; CPlayerWireframeEdge@Battle@@::vf265; CEnemyEffectChr@Battle@@::vf265; CCm001@Battle@@::vf265; CCm002@Battle@@::vf265; CCm003@Battle@@::vf265; CCm004@Battle@@::vf265; CCm005@Battle@@::vf265; CCm006_01@Battle@@::vf265; CCm006_02@Battle@@::vf265; CCm007@Battle@@::vf265; CCm008@Battle@@::vf265; CCm009@Battle@@::vf265; CCm010@Battle@@::vf265; CCm101@Battle@@::vf265; CCm102@Battle@@::vf265; CCm103@Battle@@::vf265; CCm104@Battle@@::vf265; CCm105@Battle@@::vf265; CCm106@Battle@@::vf265; CCm107@Battle@@::vf265; CCm108@Battle@@::vf265; CCm109@Battle@@::vf265; CCm110@Battle@@::vf265; CCm111@Battle@@::vf265; CCm112@Battle@@::vf265; CCm113@Battle@@::vf265; CCm114@Battle@@::vf265; CCm115@Battle@@::vf265; CCm116@Battle@@::vf265; CCm117@Battle@@::vf265; CCm119@Battle@@::vf265; CCm123@Battle@@::vf265; CCm124@Battle@@::vf265; CCm125@Battle@@::vf265; CCm126@Battle@@::vf265; CCm128@Battle@@::vf265; CCm129@Battle@@::vf265; CCm130@Battle@@::vf265; CCm132@Battle@@::vf265; CCm133@Battle@@::vf265; CCm134@Battle@@::vf265; CCm135@Battle@@::vf265; CCm136@Battle@@::vf265; CCm137@Battle@@::vf265; CCm139@Battle@@::vf265; CCm138@Battle@@::vf265; CCm140@Battle@@::vf265; CCm141@Battle@@::vf265; CCm142@Battle@@::vf265; CCm145@Battle@@::vf265; CCm146@Battle@@::vf265; CCm147@Battle@@::vf265; CCn520@Battle@@::vf265; CCn020@Battle@@::vf265; CCm201@Battle@@::vf265; CCm202@Battle@@::vf265; CCm203@Battle@@::vf265; CCm204@Battle@@::vf265; CCm205@Battle@@::vf265; CCm206@Battle@@::vf265; CCm207@Battle@@::vf265; CCm208@Battle@@::vf265; CCm209@Battle@@::vf265; CMagicChr@Battle@@::vf265; CEffectControlChr@Battle@@::vf265; CEnemyTechniqueChr@Battle@@::vf265
+     ^ level 1: game+0x5536a0  CPlayerThinkChr@Battle@@::vf87; CPlayerChr@Battle@@::vf87; CPlayerEdge@Battle@@::vf87; CPlayerReimi@Battle@@::vf87; CPlayerFaiz@Battle@@::vf87; CPlayerMelicle@Battle@@::vf87; CPlayerSarah@Battle@@::vf87; CPlayerArumat@Battle@@::vf87; CPlayerLymle@Battle@@::vf87; CPlayerWireframeEdge@Battle@@::vf87
+     ^ level 1: game+0x553940  CPlayerThinkChr@Battle@@::vf88; CPlayerChr@Battle@@::vf88; CPlayerReimi@Battle@@::vf88; CPlayerFaiz@Battle@@::vf88; CPlayerBackus@Battle@@::vf88; CPlayerMelicle@Battle@@::vf88; CPlayerSarah@Battle@@::vf88; CPlayerMuria@Battle@@::vf88; CPlayerLymle@Battle@@::vf88
+     ^ level 1: game+0x553bc0  CPlayerThinkChr@Battle@@::vf91; CPlayerChr@Battle@@::vf91; CPlayerEdge@Battle@@::vf91; CPlayerReimi@Battle@@::vf91; CPlayerFaiz@Battle@@::vf91; CPlayerBackus@Battle@@::vf91; CPlayerMelicle@Battle@@::vf91; CPlayerSarah@Battle@@::vf91; CPlayerMuria@Battle@@::vf91; CPlayerArumat@Battle@@::vf91; CPlayerLymle@Battle@@::vf91; CPlayerWireframeEdge@Battle@@::vf91
+     ^ level 1: game+0x554050  CPlayerThinkChr@Battle@@::vf121; CPlayerChr@Battle@@::vf121; CPlayerEdge@Battle@@::vf121; CPlayerReimi@Battle@@::vf121; CPlayerFaiz@Battle@@::vf121; CPlayerBackus@Battle@@::vf121; CPlayerMelicle@Battle@@::vf121; CPlayerSarah@Battle@@::vf121; CPlayerMuria@Battle@@::vf121; CPlayerArumat@Battle@@::vf121; CPlayerLymle@Battle@@::vf121; CPlayerWireframeEdge@Battle@@::vf121
+     ^ level 1: game+0x5547c0  CPlayerThinkChr@Battle@@::vf396; CPlayerChr@Battle@@::vf396; CPlayerEdge@Battle@@::vf396; CPlayerReimi@Battle@@::vf396; CPlayerFaiz@Battle@@::vf396; CPlayerBackus@Battle@@::vf396; CPlayerMelicle@Battle@@::vf396; CPlayerSarah@Battle@@::vf396; CPlayerMuria@Battle@@::vf396; CPlayerArumat@Battle@@::vf396; CPlayerLymle@Battle@@::vf396; CPlayerWireframeEdge@Battle@@::vf396
+     ^ level 1: game+0x555180  CPlayerThinkChr@Battle@@::vf100; CPlayerChr@Battle@@::vf100; CPlayerEdge@Battle@@::vf100; CPlayerReimi@Battle@@::vf100; CPlayerFaiz@Battle@@::vf100; CPlayerBackus@Battle@@::vf100; CPlayerMelicle@Battle@@::vf100; CPlayerSarah@Battle@@::vf100; CPlayerMuria@Battle@@::vf100; CPlayerArumat@Battle@@::vf100; CPlayerLymle@Battle@@::vf100; CPlayerWireframeEdge@Battle@@::vf100
+     ^ level 1: game+0x5554b0  CPlayerThinkChr@Battle@@::vf260; CPlayerChr@Battle@@::vf260; CPlayerEdge@Battle@@::vf260; CPlayerReimi@Battle@@::vf260; CPlayerFaiz@Battle@@::vf260; CPlayerBackus@Battle@@::vf260; CPlayerMelicle@Battle@@::vf260; CPlayerSarah@Battle@@::vf260; CPlayerMuria@Battle@@::vf260; CPlayerArumat@Battle@@::vf260; CPlayerLymle@Battle@@::vf260; CPlayerWireframeEdge@Battle@@::vf260
+     ^ level 1: game+0x5570f0  CPlayerThinkChr@Battle@@::vf78; CPlayerChr@Battle@@::vf78; CPlayerFaiz@Battle@@::vf78; CPlayerSarah@Battle@@::vf78
+     ^ level 1: game+0x558880  CPlayerThinkChr@Battle@@::vf426; CPlayerChr@Battle@@::vf426; CPlayerEdge@Battle@@::vf426; CPlayerReimi@Battle@@::vf426; CPlayerFaiz@Battle@@::vf426; CPlayerBackus@Battle@@::vf426; CPlayerMelicle@Battle@@::vf426; CPlayerSarah@Battle@@::vf426; CPlayerMuria@Battle@@::vf426; CPlayerArumat@Battle@@::vf426; CPlayerLymle@Battle@@::vf426; CPlayerWireframeEdge@Battle@@::vf426
+     ^ level 1: game+0x5a2410  CEnemyChr@Battle@@::vf439; CEnemyThinkChr@Battle@@::vf439; CEnemyEffectChr@Battle@@::vf439; CCm001@Battle@@::vf439; CCm002@Battle@@::vf439; CCm003@Battle@@::vf439; CCm004@Battle@@::vf439; CCm005@Battle@@::vf439; CCm006_01@Battle@@::vf439; CCm006_02@Battle@@::vf439; CCm007@Battle@@::vf439; CCm008@Battle@@::vf439; CCm009@Battle@@::vf439; CCm010@Battle@@::vf439; CCm101@Battle@@::vf439; CCm102@Battle@@::vf439; CCm103@Battle@@::vf439; CCm105@Battle@@::vf439; CCm106@Battle@@::vf439; CCm107@Battle@@::vf439; CCm108@Battle@@::vf439; CCm109@Battle@@::vf439; CCm110@Battle@@::vf439; CCm111@Battle@@::vf439; CCm112@Battle@@::vf439; CCm113@Battle@@::vf439; CCm114@Battle@@::vf439; CCm115@Battle@@::vf439; CCm116@Battle@@::vf439; CCm117@Battle@@::vf439; CCm119@Battle@@::vf439; CCm123@Battle@@::vf439; CCm124@Battle@@::vf439; CCm125@Battle@@::vf439; CCm126@Battle@@::vf439; CCm127@Battle@@::vf439; CCm128@Battle@@::vf439; CCm129@Battle@@::vf439; CCm130@Battle@@::vf439; CCm132@Battle@@::vf439; CCm133@Battle@@::vf439; CCm134@Battle@@::vf439; CCm135@Battle@@::vf439; CCm136@Battle@@::vf439; CCm137@Battle@@::vf439; CCm139@Battle@@::vf439; CCm138@Battle@@::vf439; CCm140@Battle@@::vf439; CCm141@Battle@@::vf439; CCm142@Battle@@::vf439; CCm145@Battle@@::vf439; CCm146@Battle@@::vf439; CCm147@Battle@@::vf439; CCn520@Battle@@::vf439; CCn020@Battle@@::vf439; CCm201@Battle@@::vf439; CCm202@Battle@@::vf439; CCm203@Battle@@::vf439; CCm204@Battle@@::vf439; CCm205@Battle@@::vf439; CCm206@Battle@@::vf439; CCm207@Battle@@::vf439; CCm208@Battle@@::vf439; CCm209@Battle@@::vf439; CEnemyTechniqueChr@Battle@@::vf439
+     ^ level 1: game+0x5a39e0  CEnemyThinkChr@Battle@@::vf88; CEnemyEffectChr@Battle@@::vf88; CCm001@Battle@@::vf88; CCm002@Battle@@::vf88; CCm003@Battle@@::vf88; CCm004@Battle@@::vf88; CCm005@Battle@@::vf88; CCm006_01@Battle@@::vf88; CCm007@Battle@@::vf88; CCm009@Battle@@::vf88; CCm101@Battle@@::vf88; CCm102@Battle@@::vf88; CCm103@Battle@@::vf88; CCm104@Battle@@::vf88; CCm105@Battle@@::vf88; CCm106@Battle@@::vf88; CCm107@Battle@@::vf88; CCm108@Battle@@::vf88; CCm109@Battle@@::vf88; CCm110@Battle@@::vf88; CCm111@Battle@@::vf88; CCm112@Battle@@::vf88; CCm113@Battle@@::vf88; CCm114@Battle@@::vf88; CCm115@Battle@@::vf88; CCm116@Battle@@::vf88; CCm117@Battle@@::vf88; CCm119@Battle@@::vf88; CCm123@Battle@@::vf88; CCm125@Battle@@::vf88; CCm126@Battle@@::vf88; CCm127@Battle@@::vf88; CCm128@Battle@@::vf88; CCm129@Battle@@::vf88; CCm130@Battle@@::vf88; CCm132@Battle@@::vf88; CCm133@Battle@@::vf88; CCm134@Battle@@::vf88; CCm135@Battle@@::vf88; CCm136@Battle@@::vf88; CCm137@Battle@@::vf88; CCm139@Battle@@::vf88; CCm138@Battle@@::vf88; CCm140@Battle@@::vf88; CCm141@Battle@@::vf88; CCm142@Battle@@::vf88; CCm145@Battle@@::vf88; CCn520@Battle@@::vf88; CCn020@Battle@@::vf88; CCm202@Battle@@::vf88; CCm203@Battle@@::vf88; CCm204@Battle@@::vf88; CCm205@Battle@@::vf88; CCm206@Battle@@::vf88; CCm207@Battle@@::vf88; CCm208@Battle@@::vf88
+
+== caller fn game+0x501930 (?)  
+     ^ level 1: game+0x53ce60  CChrElement@Battle@@::vf364; CRigidbodyChr@Battle@@::vf364; CEnemyChr@Battle@@::vf364; CEnemyThinkChr@Battle@@::vf364; CEnemyEffectChr@Battle@@::vf364; CCm001@Battle@@::vf364; CCm002@Battle@@::vf364; CCm003@Battle@@::vf364; CCm004@Battle@@::vf364; CCm005@Battle@@::vf364; CCm006_01@Battle@@::vf364; CCm006_02@Battle@@::vf364; CCm007@Battle@@::vf364; CCm008@Battle@@::vf364; CCm009@Battle@@::vf364; CCm010@Battle@@::vf364; CCm101@Battle@@::vf364; CCm102@Battle@@::vf364; CCm103@Battle@@::vf364; CCm104@Battle@@::vf364; CCm105@Battle@@::vf364; CCm106@Battle@@::vf364; CCm107@Battle@@::vf364; CCm108@Battle@@::vf364; CCm109@Battle@@::vf364; CCm110@Battle@@::vf364; CCm111@Battle@@::vf364; CCm112@Battle@@::vf364; CCm113@Battle@@::vf364; CCm114@Battle@@::vf364; CCm115@Battle@@::vf364; CCm116@Battle@@::vf364; CCm117@Battle@@::vf364; CCm119@Battle@@::vf364; CCm123@Battle@@::vf364; CCm124@Battle@@::vf364; CCm125@Battle@@::vf364; CCm126@Battle@@::vf364; CCm127@Battle@@::vf364; CCm128@Battle@@::vf364; CCm129@Battle@@::vf364; CCm130@Battle@@::vf364; CCm132@Battle@@::vf364; CCm133@Battle@@::vf364; CCm134@Battle@@::vf364; CCm135@Battle@@::vf364; CCm136@Battle@@::vf364; CCm137@Battle@@::vf364; CCm139@Battle@@::vf364; CCm138@Battle@@::vf364; CCm140@Battle@@::vf364; CCm141@Battle@@::vf364; CCm142@Battle@@::vf364; CCm145@Battle@@::vf364; CCm146@Battle@@::vf364; CCm147@Battle@@::vf364; CCn520@Battle@@::vf364; CCn020@Battle@@::vf364; CCm201@Battle@@::vf364; CCm202@Battle@@::vf364; CCm203@Battle@@::vf364; CCm204@Battle@@::vf364; CCm205@Battle@@::vf364; CCm206@Battle@@::vf364; CCm207@Battle@@::vf364; CCm208@Battle@@::vf364; CCm209@Battle@@::vf364; CMagicChr@Battle@@::vf364; CEffectControlChr@Battle@@::vf364; CEnemyTechniqueChr@Battle@@::vf364
+     ^ level 1: game+0x555950  CPlayerThinkChr@Battle@@::vf364; CPlayerChr@Battle@@::vf364; CPlayerEdge@Battle@@::vf364; CPlayerReimi@Battle@@::vf364; CPlayerFaiz@Battle@@::vf364; CPlayerBackus@Battle@@::vf364; CPlayerMelicle@Battle@@::vf364; CPlayerSarah@Battle@@::vf364; CPlayerMuria@Battle@@::vf364; CPlayerArumat@Battle@@::vf364; CPlayerLymle@Battle@@::vf364; CPlayerWireframeEdge@Battle@@::vf364
+
+== caller fn game+0x503840 (?)  
+     ^ level 1: game+0x3d28670  CCameraSightoutGeneral@Battle@@::vf28; CCameraSightoutBase@Battle@@::vf28
+
+== caller fn game+0x50ae00 (?)  
+   (no direct callers: probably called through a pointer)
+
+== caller fn game+0x50fbb0 (?)  
+     ^ level 1: game+0x553d50  CPlayerThinkChr@Battle@@::vf329; CPlayerChr@Battle@@::vf329; CPlayerEdge@Battle@@::vf329; CPlayerReimi@Battle@@::vf329; CPlayerFaiz@Battle@@::vf329; CPlayerBackus@Battle@@::vf329; CPlayerMelicle@Battle@@::vf329; CPlayerSarah@Battle@@::vf329; CPlayerMuria@Battle@@::vf329; CPlayerArumat@Battle@@::vf329; CPlayerLymle@Battle@@::vf329; CPlayerWireframeEdge@Battle@@::vf329
+
+== caller fn game+0x5114c0 (?)  
+
+== caller fn game+0x5118b0 (?)  
+
+== caller fn game+0x511a50 (?)  
+   (no direct callers: probably called through a pointer)
+
+== caller fn game+0x511d10 (?)  
+
+== caller fn game+0x511e00 (?)  
+
+== caller fn game+0x511eb0 (?)  
+
+== caller fn game+0x511f60 (?)  
+
+== caller fn game+0x512210 (?)  
+
+== caller fn game+0x512bf0 (?)  
+
+== caller fn game+0x512e10 (?)  
+
+== caller fn game+0x513650 (?)  
+
+== caller fn game+0x514030 (?)  
+
+== caller fn game+0x514340 (?)  
+
+== caller fn game+0x514c80 (?)  
+
+== caller fn game+0x515080 (?)  
+
+== caller fn game+0x5152c0 (?)  
+     ^ level 1: game+0x510fc0  CKernel@Battle@@::vf12
+
+== caller fn game+0x515400 (?)  
+     ^ level 1: game+0x510fc0  CKernel@Battle@@::vf12
+
+== caller fn game+0x516ee0 (?)  
+
+== caller fn game+0x518a20 (?)  
+
+== caller fn game+0x518cb0 (?)  
+
+== caller fn game+0x518e00 (?)  
+
+== caller fn game+0x5192b0 (?)  
+
+== caller fn game+0x519840 (?)  
+
+== caller fn game+0x519a60 (?)  
+
+== caller fn game+0x51af20 (?)  
+
+== caller fn game+0x51b4e0 (?)  
+
+== caller fn game+0x51bb60 (?)  
+
+== caller fn game+0x51ca30 (?)  
+
+== caller fn game+0x51d040 (?)  
+
+== caller fn game+0x51d0b0 (?)  
+
+== caller fn game+0x521200 (?)  
+
+== caller fn game+0x524260 (?)  
+     ^ level 1: game+0x5231c0  CSoundManager@Battle@@::vf12
+
+== caller fn game+0x528980 (?)  
+
+== caller fn game+0x530490 (?)  
+
+== caller fn game+0x530b00 (?)  
+
+== caller fn game+0x534c60 (?)  
+     ^ level 1: game+0x5381a0  CChrElement@Battle@@::vf87; CRigidbodyChr@Battle@@::vf87; CMagicChr@Battle@@::vf87; CEffectControlChr@Battle@@::vf87
+
+== caller fn game+0x534d60 (?)  
+
+== caller fn game+0x5354b0 (?)  
+
+== caller fn game+0x5363b0 (?)  CPlayerThinkChr@Battle@@::vf107; CChrElement@Battle@@::vf107; CRigidbodyChr@Battle@@::vf107; CPlayerChr@Battle@@::vf107; CEnemyChr@Battle@@::vf107; CEnemyThinkChr@Battle@@::vf107; CPlayerEdge@Battle@@::vf107; CPlayerReimi@Battle@@::vf107; CPlayerFaiz@Battle@@::vf107; CPlayerBackus@Battle@@::vf107; CPlayerMelicle@Battle@@::vf107; CPlayerSarah@Battle@@::vf107; CPlayerMuria@Battle@@::vf107; CPlayerArumat@Battle@@::vf107; CPlayerLymle@Battle@@::vf107; CPlayerWireframeEdge@Battle@@::vf107; CEnemyEffectChr@Battle@@::vf107; CCm001@Battle@@::vf107; CCm002@Battle@@::vf107; CCm003@Battle@@::vf107; CCm004@Battle@@::vf107; CCm005@Battle@@::vf107; CCm006_01@Battle@@::vf107; CCm006_02@Battle@@::vf107; CCm007@Battle@@::vf107; CCm008@Battle@@::vf107; CCm009@Battle@@::vf107; CCm010@Battle@@::vf107; CCm101@Battle@@::vf107; CCm102@Battle@@::vf107; CCm103@Battle@@::vf107; CCm104@Battle@@::vf107; CCm105@Battle@@::vf107; CCm106@Battle@@::vf107; CCm107@Battle@@::vf107; CCm108@Battle@@::vf107; CCm109@Battle@@::vf107; CCm110@Battle@@::vf107; CCm111@Battle@@::vf107; CCm112@Battle@@::vf107; CCm113@Battle@@::vf107; CCm114@Battle@@::vf107; CCm115@Battle@@::vf107; CCm116@Battle@@::vf107; CCm117@Battle@@::vf107; CCm119@Battle@@::vf107; CCm123@Battle@@::vf107; CCm124@Battle@@::vf107; CCm125@Battle@@::vf107; CCm126@Battle@@::vf107; CCm127@Battle@@::vf107; CCm128@Battle@@::vf107; CCm129@Battle@@::vf107; CCm130@Battle@@::vf107; CCm132@Battle@@::vf107; CCm133@Battle@@::vf107; CCm134@Battle@@::vf107; CCm135@Battle@@::vf107; CCm136@Battle@@::vf107; CCm137@Battle@@::vf107; CCm139@Battle@@::vf107; CCm138@Battle@@::vf107; CCm140@Battle@@::vf107; CCm141@Battle@@::vf107; CCm142@Battle@@::vf107; CCm145@Battle@@::vf107; CCm146@Battle@@::vf107; CCm147@Battle@@::vf107; CCn520@Battle@@::vf107; CCn020@Battle@@::vf107; CCm201@Battle@@::vf107; CCm202@Battle@@::vf107; CCm203@Battle@@::vf107; CCm204@Battle@@::vf107; CCm205@Battle@@::vf107; CCm206@Battle@@::vf107; CCm207@Battle@@::vf107; CCm208@Battle@@::vf107; CCm209@Battle@@::vf107; CMagicChr@Battle@@::vf107; CEffectControlChr@Battle@@::vf107; CEnemyTechniqueChr@Battle@@::vf107
+
+== caller fn game+0x538600 (?)  CPlayerThinkChr@Battle@@::vf102; CChrElement@Battle@@::vf102; CRigidbodyChr@Battle@@::vf102; CPlayerChr@Battle@@::vf102; CEnemyChr@Battle@@::vf102; CEnemyThinkChr@Battle@@::vf102; CPlayerEdge@Battle@@::vf102; CPlayerReimi@Battle@@::vf102; CPlayerFaiz@Battle@@::vf102; CPlayerBackus@Battle@@::vf102; CPlayerMelicle@Battle@@::vf102; CPlayerSarah@Battle@@::vf102; CPlayerMuria@Battle@@::vf102; CPlayerArumat@Battle@@::vf102; CPlayerLymle@Battle@@::vf102; CPlayerWireframeEdge@Battle@@::vf102; CEnemyEffectChr@Battle@@::vf102; CCm001@Battle@@::vf102; CCm002@Battle@@::vf102; CCm003@Battle@@::vf102; CCm004@Battle@@::vf102; CCm005@Battle@@::vf102; CCm007@Battle@@::vf102; CCm008@Battle@@::vf102; CCm009@Battle@@::vf102; CCm010@Battle@@::vf102; CCm101@Battle@@::vf102; CCm102@Battle@@::vf102; CCm103@Battle@@::vf102; CCm104@Battle@@::vf102; CCm105@Battle@@::vf102; CCm106@Battle@@::vf102; CCm107@Battle@@::vf102; CCm108@Battle@@::vf102; CCm109@Battle@@::vf102; CCm110@Battle@@::vf102; CCm111@Battle@@::vf102; CCm112@Battle@@::vf102; CCm113@Battle@@::vf102; CCm114@Battle@@::vf102; CCm115@Battle@@::vf102; CCm116@Battle@@::vf102; CCm117@Battle@@::vf102; CCm119@Battle@@::vf102; CCm123@Battle@@::vf102; CCm124@Battle@@::vf102; CCm125@Battle@@::vf102; CCm126@Battle@@::vf102; CCm127@Battle@@::vf102; CCm128@Battle@@::vf102; CCm129@Battle@@::vf102; CCm130@Battle@@::vf102; CCm132@Battle@@::vf102; CCm133@Battle@@::vf102; CCm134@Battle@@::vf102; CCm135@Battle@@::vf102; CCm136@Battle@@::vf102; CCm137@Battle@@::vf102; CCm139@Battle@@::vf102; CCm138@Battle@@::vf102; CCm140@Battle@@::vf102; CCm141@Battle@@::vf102; CCm142@Battle@@::vf102; CCm145@Battle@@::vf102; CCm146@Battle@@::vf102; CCm147@Battle@@::vf102; CCn520@Battle@@::vf102; CCn020@Battle@@::vf102; CCm201@Battle@@::vf102; CCm202@Battle@@::vf102; CCm203@Battle@@::vf102; CCm204@Battle@@::vf102; CCm205@Battle@@::vf102; CCm206@Battle@@::vf102; CCm207@Battle@@::vf102; CCm208@Battle@@::vf102; CCm209@Battle@@::vf102; CMagicChr@Battle@@::vf102; CEffectControlChr@Battle@@::vf102; CEnemyTechniqueChr@Battle@@::vf102
+
+== caller fn game+0x539d00 (?)  CPlayerThinkChr@Battle@@::vf135; CChrElement@Battle@@::vf135; CRigidbodyChr@Battle@@::vf135; CPlayerChr@Battle@@::vf135; CEnemyChr@Battle@@::vf135; CEnemyThinkChr@Battle@@::vf135; CPlayerEdge@Battle@@::vf135; CPlayerReimi@Battle@@::vf135; CPlayerFaiz@Battle@@::vf135; CPlayerBackus@Battle@@::vf135; CPlayerMelicle@Battle@@::vf135; CPlayerSarah@Battle@@::vf135; CPlayerMuria@Battle@@::vf135; CPlayerArumat@Battle@@::vf135; CPlayerLymle@Battle@@::vf135; CPlayerWireframeEdge@Battle@@::vf135; CEnemyEffectChr@Battle@@::vf135; CCm001@Battle@@::vf135; CCm002@Battle@@::vf135; CCm003@Battle@@::vf135; CCm004@Battle@@::vf135; CCm005@Battle@@::vf135; CCm006_01@Battle@@::vf135; CCm006_02@Battle@@::vf135; CCm007@Battle@@::vf135; CCm008@Battle@@::vf135; CCm009@Battle@@::vf135; CCm010@Battle@@::vf135; CCm101@Battle@@::vf135; CCm102@Battle@@::vf135; CCm103@Battle@@::vf135; CCm104@Battle@@::vf135; CCm105@Battle@@::vf135; CCm106@Battle@@::vf135; CCm107@Battle@@::vf135; CCm108@Battle@@::vf135; CCm109@Battle@@::vf135; CCm110@Battle@@::vf135; CCm111@Battle@@::vf135; CCm112@Battle@@::vf135; CCm113@Battle@@::vf135; CCm114@Battle@@::vf135; CCm115@Battle@@::vf135; CCm116@Battle@@::vf135; CCm117@Battle@@::vf135; CCm119@Battle@@::vf135; CCm123@Battle@@::vf135; CCm124@Battle@@::vf135; CCm125@Battle@@::vf135; CCm126@Battle@@::vf135; CCm127@Battle@@::vf135; CCm128@Battle@@::vf135; CCm129@Battle@@::vf135; CCm130@Battle@@::vf135; CCm132@Battle@@::vf135; CCm133@Battle@@::vf135; CCm134@Battle@@::vf135; CCm135@Battle@@::vf135; CCm136@Battle@@::vf135; CCm137@Battle@@::vf135; CCm139@Battle@@::vf135; CCm138@Battle@@::vf135; CCm140@Battle@@::vf135; CCm141@Battle@@::vf135; CCm142@Battle@@::vf135; CCm145@Battle@@::vf135; CCm146@Battle@@::vf135; CCm147@Battle@@::vf135; CCn520@Battle@@::vf135; CCn020@Battle@@::vf135; CCm201@Battle@@::vf135; CCm202@Battle@@::vf135; CCm203@Battle@@::vf135; CCm204@Battle@@::vf135; CCm205@Battle@@::vf135; CCm206@Battle@@::vf135; CCm207@Battle@@::vf135; CCm208@Battle@@::vf135; CCm209@Battle@@::vf135; CMagicChr@Battle@@::vf135; CEffectControlChr@Battle@@::vf135; CEnemyTechniqueChr@Battle@@::vf135
+
+== caller fn game+0x53bd80 (?)  
+     ^ level 1: game+0x535b20  CChrElement@Battle@@::vf43
+
+== caller fn game+0x53d260 (?)  CPlayerThinkChr@Battle@@::vf340; CChrElement@Battle@@::vf340; CRigidbodyChr@Battle@@::vf340; CPlayerChr@Battle@@::vf340; CEnemyChr@Battle@@::vf340; CPlayerEdge@Battle@@::vf340; CPlayerReimi@Battle@@::vf340; CPlayerFaiz@Battle@@::vf340; CPlayerBackus@Battle@@::vf340; CPlayerMelicle@Battle@@::vf340; CPlayerSarah@Battle@@::vf340; CPlayerMuria@Battle@@::vf340; CPlayerArumat@Battle@@::vf340; CPlayerLymle@Battle@@::vf340; CPlayerWireframeEdge@Battle@@::vf340; CMagicChr@Battle@@::vf340; CEffectControlChr@Battle@@::vf340; CEnemyTechniqueChr@Battle@@::vf340
+
+== caller fn game+0x53d910 (?)  
+
+== caller fn game+0x53df50 (?)  CPlayerThinkChr@Battle@@::vf265; CChrElement@Battle@@::vf265; CRigidbodyChr@Battle@@::vf265; CPlayerChr@Battle@@::vf265; CEnemyChr@Battle@@::vf265; CEnemyThinkChr@Battle@@::vf265; CPlayerEdge@Battle@@::vf265; CPlayerReimi@Battle@@::vf265; CPlayerFaiz@Battle@@::vf265; CPlayerMelicle@Battle@@::vf265; CPlayerSarah@Battle@@::vf265; CPlayerArumat@Battle@@::vf265; CPlayerLymle@Battle@@::vf265; CPlayerWireframeEdge@Battle@@::vf265; CEnemyEffectChr@Battle@@::vf265; CCm001@Battle@@::vf265; CCm002@Battle@@::vf265; CCm003@Battle@@::vf265; CCm004@Battle@@::vf265; CCm005@Battle@@::vf265; CCm006_01@Battle@@::vf265; CCm006_02@Battle@@::vf265; CCm007@Battle@@::vf265; CCm008@Battle@@::vf265; CCm009@Battle@@::vf265; CCm010@Battle@@::vf265; CCm101@Battle@@::vf265; CCm102@Battle@@::vf265; CCm103@Battle@@::vf265; CCm104@Battle@@::vf265; CCm105@Battle@@::vf265; CCm106@Battle@@::vf265; CCm107@Battle@@::vf265; CCm108@Battle@@::vf265; CCm109@Battle@@::vf265; CCm110@Battle@@::vf265; CCm111@Battle@@::vf265; CCm112@Battle@@::vf265; CCm113@Battle@@::vf265; CCm114@Battle@@::vf265; CCm115@Battle@@::vf265; CCm116@Battle@@::vf265; CCm117@Battle@@::vf265; CCm119@Battle@@::vf265; CCm123@Battle@@::vf265; CCm124@Battle@@::vf265; CCm125@Battle@@::vf265; CCm126@Battle@@::vf265; CCm128@Battle@@::vf265; CCm129@Battle@@::vf265; CCm130@Battle@@::vf265; CCm132@Battle@@::vf265; CCm133@Battle@@::vf265; CCm134@Battle@@::vf265; CCm135@Battle@@::vf265; CCm136@Battle@@::vf265; CCm137@Battle@@::vf265; CCm139@Battle@@::vf265; CCm138@Battle@@::vf265; CCm140@Battle@@::vf265; CCm141@Battle@@::vf265; CCm142@Battle@@::vf265; CCm145@Battle@@::vf265; CCm146@Battle@@::vf265; CCm147@Battle@@::vf265; CCn520@Battle@@::vf265; CCn020@Battle@@::vf265; CCm201@Battle@@::vf265; CCm202@Battle@@::vf265; CCm203@Battle@@::vf265; CCm204@Battle@@::vf265; CCm205@Battle@@::vf265; CCm206@Battle@@::vf265; CCm207@Battle@@::vf265; CCm208@Battle@@::vf265; CCm209@Battle@@::vf265; CMagicChr@Battle@@::vf265; CEffectControlChr@Battle@@::vf265; CEnemyTechniqueChr@Battle@@::vf265
+
+== caller fn game+0x53e390 (?)  
+     ^ level 1: game+0x526150  CPlayerThinkChr@Battle@@::vf424; CPlayerEdge@Battle@@::vf424; CPlayerReimi@Battle@@::vf424; CPlayerFaiz@Battle@@::vf424; CPlayerBackus@Battle@@::vf424; CPlayerMelicle@Battle@@::vf424; CPlayerSarah@Battle@@::vf424; CPlayerMuria@Battle@@::vf424; CPlayerArumat@Battle@@::vf424; CPlayerLymle@Battle@@::vf424; CPlayerWireframeEdge@Battle@@::vf424
+     ^ level 1: game+0x526480  CPlayerThinkChr@Battle@@::vf401; CPlayerEdge@Battle@@::vf401; CPlayerReimi@Battle@@::vf401; CPlayerFaiz@Battle@@::vf401; CPlayerBackus@Battle@@::vf401; CPlayerMelicle@Battle@@::vf401; CPlayerSarah@Battle@@::vf401; CPlayerMuria@Battle@@::vf401; CPlayerArumat@Battle@@::vf401; CPlayerLymle@Battle@@::vf401; CPlayerWireframeEdge@Battle@@::vf401
+     ^ level 1: game+0x526840  CPlayerThinkChr@Battle@@::vf489; CPlayerEdge@Battle@@::vf489; CPlayerReimi@Battle@@::vf489; CPlayerFaiz@Battle@@::vf489; CPlayerBackus@Battle@@::vf489; CPlayerMelicle@Battle@@::vf489; CPlayerSarah@Battle@@::vf489; CPlayerMuria@Battle@@::vf489; CPlayerArumat@Battle@@::vf489; CPlayerLymle@Battle@@::vf489; CPlayerWireframeEdge@Battle@@::vf489
+     ^ level 1: game+0x526940  CPlayerThinkChr@Battle@@::vf160; CPlayerEdge@Battle@@::vf160; CPlayerReimi@Battle@@::vf160; CPlayerFaiz@Battle@@::vf160; CPlayerBackus@Battle@@::vf160; CPlayerMelicle@Battle@@::vf160; CPlayerSarah@Battle@@::vf160; CPlayerMuria@Battle@@::vf160; CPlayerArumat@Battle@@::vf160; CPlayerLymle@Battle@@::vf160; CPlayerWireframeEdge@Battle@@::vf160
+     ^ level 1: game+0x550f40  CPlayerChr@Battle@@::vf436
+     ^ level 1: game+0x552600  CPlayerThinkChr@Battle@@::vf124; CPlayerChr@Battle@@::vf124; CPlayerEdge@Battle@@::vf124; CPlayerReimi@Battle@@::vf124; CPlayerFaiz@Battle@@::vf124; CPlayerBackus@Battle@@::vf124; CPlayerMelicle@Battle@@::vf124; CPlayerSarah@Battle@@::vf124; CPlayerMuria@Battle@@::vf124; CPlayerArumat@Battle@@::vf124; CPlayerLymle@Battle@@::vf124; CPlayerWireframeEdge@Battle@@::vf124
+     ^ level 1: game+0x552690  CPlayerChr@Battle@@::vf86
+     ^ level 1: game+0x553420  CPlayerThinkChr@Battle@@::vf50; CPlayerChr@Battle@@::vf50; CPlayerEdge@Battle@@::vf50; CPlayerReimi@Battle@@::vf50; CPlayerFaiz@Battle@@::vf50; CPlayerBackus@Battle@@::vf50; CPlayerMelicle@Battle@@::vf50; CPlayerSarah@Battle@@::vf50; CPlayerMuria@Battle@@::vf50; CPlayerArumat@Battle@@::vf50; CPlayerLymle@Battle@@::vf50; CPlayerWireframeEdge@Battle@@::vf50
+     ^ level 1: game+0x5536a0  CPlayerThinkChr@Battle@@::vf87; CPlayerChr@Battle@@::vf87; CPlayerEdge@Battle@@::vf87; CPlayerReimi@Battle@@::vf87; CPlayerFaiz@Battle@@::vf87; CPlayerMelicle@Battle@@::vf87; CPlayerSarah@Battle@@::vf87; CPlayerArumat@Battle@@::vf87; CPlayerLymle@Battle@@::vf87; CPlayerWireframeEdge@Battle@@::vf87
+     ^ level 1: game+0x553940  CPlayerThinkChr@Battle@@::vf88; CPlayerChr@Battle@@::vf88; CPlayerReimi@Battle@@::vf88; CPlayerFaiz@Battle@@::vf88; CPlayerBackus@Battle@@::vf88; CPlayerMelicle@Battle@@::vf88; CPlayerSarah@Battle@@::vf88; CPlayerMuria@Battle@@::vf88; CPlayerLymle@Battle@@::vf88
+     ^ level 1: game+0x553bc0  CPlayerThinkChr@Battle@@::vf91; CPlayerChr@Battle@@::vf91; CPlayerEdge@Battle@@::vf91; CPlayerReimi@Battle@@::vf91; CPlayerFaiz@Battle@@::vf91; CPlayerBackus@Battle@@::vf91; CPlayerMelicle@Battle@@::vf91; CPlayerSarah@Battle@@::vf91; CPlayerMuria@Battle@@::vf91; CPlayerArumat@Battle@@::vf91; CPlayerLymle@Battle@@::vf91; CPlayerWireframeEdge@Battle@@::vf91
+     ^ level 1: game+0x553d50  CPlayerThinkChr@Battle@@::vf329; CPlayerChr@Battle@@::vf329; CPlayerEdge@Battle@@::vf329; CPlayerReimi@Battle@@::vf329; CPlayerFaiz@Battle@@::vf329; CPlayerBackus@Battle@@::vf329; CPlayerMelicle@Battle@@::vf329; CPlayerSarah@Battle@@::vf329; CPlayerMuria@Battle@@::vf329; CPlayerArumat@Battle@@::vf329; CPlayerLymle@Battle@@::vf329; CPlayerWireframeEdge@Battle@@::vf329
+     ^ level 1: game+0x554050  CPlayerThinkChr@Battle@@::vf121; CPlayerChr@Battle@@::vf121; CPlayerEdge@Battle@@::vf121; CPlayerReimi@Battle@@::vf121; CPlayerFaiz@Battle@@::vf121; CPlayerBackus@Battle@@::vf121; CPlayerMelicle@Battle@@::vf121; CPlayerSarah@Battle@@::vf121; CPlayerMuria@Battle@@::vf121; CPlayerArumat@Battle@@::vf121; CPlayerLymle@Battle@@::vf121; CPlayerWireframeEdge@Battle@@::vf121
+     ^ level 1: game+0x5542e0  CPlayerThinkChr@Battle@@::vf166; CPlayerChr@Battle@@::vf166; CPlayerEdge@Battle@@::vf166; CPlayerReimi@Battle@@::vf166; CPlayerFaiz@Battle@@::vf166; CPlayerBackus@Battle@@::vf166; CPlayerMelicle@Battle@@::vf166; CPlayerSarah@Battle@@::vf166; CPlayerMuria@Battle@@::vf166; CPlayerArumat@Battle@@::vf166; CPlayerLymle@Battle@@::vf166; CPlayerWireframeEdge@Battle@@::vf166
+     ^ level 1: game+0x5547c0  CPlayerThinkChr@Battle@@::vf396; CPlayerChr@Battle@@::vf396; CPlayerEdge@Battle@@::vf396; CPlayerReimi@Battle@@::vf396; CPlayerFaiz@Battle@@::vf396; CPlayerBackus@Battle@@::vf396; CPlayerMelicle@Battle@@::vf396; CPlayerSarah@Battle@@::vf396; CPlayerMuria@Battle@@::vf396; CPlayerArumat@Battle@@::vf396; CPlayerLymle@Battle@@::vf396; CPlayerWireframeEdge@Battle@@::vf396
+     ^ level 1: game+0x555180  CPlayerThinkChr@Battle@@::vf100; CPlayerChr@Battle@@::vf100; CPlayerEdge@Battle@@::vf100; CPlayerReimi@Battle@@::vf100; CPlayerFaiz@Battle@@::vf100; CPlayerBackus@Battle@@::vf100; CPlayerMelicle@Battle@@::vf100; CPlayerSarah@Battle@@::vf100; CPlayerMuria@Battle@@::vf100; CPlayerArumat@Battle@@::vf100; CPlayerLymle@Battle@@::vf100; CPlayerWireframeEdge@Battle@@::vf100
+     ^ level 1: game+0x5554b0  CPlayerThinkChr@Battle@@::vf260; CPlayerChr@Battle@@::vf260; CPlayerEdge@Battle@@::vf260; CPlayerReimi@Battle@@::vf260; CPlayerFaiz@Battle@@::vf260; CPlayerBackus@Battle@@::vf260; CPlayerMelicle@Battle@@::vf260; CPlayerSarah@Battle@@::vf260; CPlayerMuria@Battle@@::vf260; CPlayerArumat@Battle@@::vf260; CPlayerLymle@Battle@@::vf260; CPlayerWireframeEdge@Battle@@::vf260
+     ^ level 1: game+0x5570f0  CPlayerThinkChr@Battle@@::vf78; CPlayerChr@Battle@@::vf78; CPlayerFaiz@Battle@@::vf78; CPlayerSarah@Battle@@::vf78
+     ^ level 1: game+0x5571c0  CPlayerThinkChr@Battle@@::vf80; CPlayerChr@Battle@@::vf80; CPlayerEdge@Battle@@::vf80; CPlayerReimi@Battle@@::vf80; CPlayerFaiz@Battle@@::vf80; CPlayerBackus@Battle@@::vf80; CPlayerMelicle@Battle@@::vf80; CPlayerSarah@Battle@@::vf80; CPlayerMuria@Battle@@::vf80; CPlayerArumat@Battle@@::vf80; CPlayerLymle@Battle@@::vf80; CPlayerWireframeEdge@Battle@@::vf80
+     ^ level 1: game+0x5a39e0  CEnemyThinkChr@Battle@@::vf88; CEnemyEffectChr@Battle@@::vf88; CCm001@Battle@@::vf88; CCm002@Battle@@::vf88; CCm003@Battle@@::vf88; CCm004@Battle@@::vf88; CCm005@Battle@@::vf88; CCm006_01@Battle@@::vf88; CCm007@Battle@@::vf88; CCm009@Battle@@::vf88; CCm101@Battle@@::vf88; CCm102@Battle@@::vf88; CCm103@Battle@@::vf88; CCm104@Battle@@::vf88; CCm105@Battle@@::vf88; CCm106@Battle@@::vf88; CCm107@Battle@@::vf88; CCm108@Battle@@::vf88; CCm109@Battle@@::vf88; CCm110@Battle@@::vf88; CCm111@Battle@@::vf88; CCm112@Battle@@::vf88; CCm113@Battle@@::vf88; CCm114@Battle@@::vf88; CCm115@Battle@@::vf88; CCm116@Battle@@::vf88; CCm117@Battle@@::vf88; CCm119@Battle@@::vf88; CCm123@Battle@@::vf88; CCm125@Battle@@::vf88; CCm126@Battle@@::vf88; CCm127@Battle@@::vf88; CCm128@Battle@@::vf88; CCm129@Battle@@::vf88; CCm130@Battle@@::vf88; CCm132@Battle@@::vf88; CCm133@Battle@@::vf88; CCm134@Battle@@::vf88; CCm135@Battle@@::vf88; CCm136@Battle@@::vf88; CCm137@Battle@@::vf88; CCm139@Battle@@::vf88; CCm138@Battle@@::vf88; CCm140@Battle@@::vf88; CCm141@Battle@@::vf88; CCm142@Battle@@::vf88; CCm145@Battle@@::vf88; CCn520@Battle@@::vf88; CCn020@Battle@@::vf88; CCm202@Battle@@::vf88; CCm203@Battle@@::vf88; CCm204@Battle@@::vf88; CCm205@Battle@@::vf88; CCm206@Battle@@::vf88; CCm207@Battle@@::vf88; CCm208@Battle@@::vf88
+     ^ level 1: game+0x3a324c0  CCm110@Battle@@::vf87
+     ^ level 1: game+0x3b67350  CPlayerThinkChr@Battle@@::vf402; CPlayerChr@Battle@@::vf402; CEnemyChr@Battle@@::vf402; CEnemyThinkChr@Battle@@::vf402; CPlayerEdge@Battle@@::vf402; CPlayerReimi@Battle@@::vf402; CPlayerFaiz@Battle@@::vf402; CPlayerBackus@Battle@@::vf402; CPlayerMelicle@Battle@@::vf402; CPlayerSarah@Battle@@::vf402; CPlayerMuria@Battle@@::vf402; CPlayerArumat@Battle@@::vf402; CPlayerLymle@Battle@@::vf402; CPlayerWireframeEdge@Battle@@::vf402; CEnemyEffectChr@Battle@@::vf402; CCm001@Battle@@::vf402; CCm002@Battle@@::vf402; CCm003@Battle@@::vf402; CCm004@Battle@@::vf402; CCm005@Battle@@::vf402; CCm006_01@Battle@@::vf402; CCm006_02@Battle@@::vf402; CCm007@Battle@@::vf402; CCm008@Battle@@::vf402; CCm009@Battle@@::vf402; CCm010@Battle@@::vf402; CCm101@Battle@@::vf402; CCm102@Battle@@::vf402; CCm103@Battle@@::vf402; CCm104@Battle@@::vf402; CCm105@Battle@@::vf402; CCm106@Battle@@::vf402; CCm107@Battle@@::vf402; CCm108@Battle@@::vf402; CCm109@Battle@@::vf402; CCm110@Battle@@::vf402; CCm111@Battle@@::vf402; CCm112@Battle@@::vf402; CCm113@Battle@@::vf402; CCm114@Battle@@::vf402; CCm115@Battle@@::vf402; CCm116@Battle@@::vf402; CCm117@Battle@@::vf402; CCm119@Battle@@::vf402; CCm123@Battle@@::vf402; CCm124@Battle@@::vf402; CCm125@Battle@@::vf402; CCm126@Battle@@::vf402; CCm127@Battle@@::vf402; CCm128@Battle@@::vf402; CCm129@Battle@@::vf402; CCm130@Battle@@::vf402; CCm132@Battle@@::vf402; CCm133@Battle@@::vf402; CCm134@Battle@@::vf402; CCm135@Battle@@::vf402; CCm136@Battle@@::vf402; CCm137@Battle@@::vf402; CCm139@Battle@@::vf402; CCm138@Battle@@::vf402; CCm140@Battle@@::vf402; CCm141@Battle@@::vf402; CCm142@Battle@@::vf402; CCm145@Battle@@::vf402; CCm146@Battle@@::vf402; CCm147@Battle@@::vf402; CCn520@Battle@@::vf402; CCn020@Battle@@::vf402; CCm201@Battle@@::vf402; CCm202@Battle@@::vf402; CCm203@Battle@@::vf402; CCm204@Battle@@::vf402; CCm205@Battle@@::vf402; CCm206@Battle@@::vf402; CCm207@Battle@@::vf402; CCm208@Battle@@::vf402; CCm209@Battle@@::vf402; CMagicChr@Battle@@::vf402; CEffectControlChr@Battle@@::vf402; CEnemyTechniqueChr@Battle@@::vf402
+
+== caller fn game+0x53e3c0 (?)  
+     ^ level 1: game+0x5360b0  CPlayerThinkChr@Battle@@::vf110; CChrElement@Battle@@::vf110; CRigidbodyChr@Battle@@::vf110; CPlayerChr@Battle@@::vf110; CEnemyChr@Battle@@::vf110; CEnemyThinkChr@Battle@@::vf110; CPlayerEdge@Battle@@::vf110; CPlayerReimi@Battle@@::vf110; CPlayerFaiz@Battle@@::vf110; CPlayerBackus@Battle@@::vf110; CPlayerMelicle@Battle@@::vf110; CPlayerSarah@Battle@@::vf110; CPlayerMuria@Battle@@::vf110; CPlayerArumat@Battle@@::vf110; CPlayerLymle@Battle@@::vf110; CPlayerWireframeEdge@Battle@@::vf110; CEnemyEffectChr@Battle@@::vf110; CCm001@Battle@@::vf110; CCm002@Battle@@::vf110; CCm003@Battle@@::vf110; CCm004@Battle@@::vf110; CCm005@Battle@@::vf110; CCm006_01@Battle@@::vf110; CCm006_02@Battle@@::vf110; CCm007@Battle@@::vf110; CCm008@Battle@@::vf110; CCm009@Battle@@::vf110; CCm010@Battle@@::vf110; CCm101@Battle@@::vf110; CCm102@Battle@@::vf110; CCm103@Battle@@::vf110; CCm104@Battle@@::vf110; CCm105@Battle@@::vf110; CCm106@Battle@@::vf110; CCm107@Battle@@::vf110; CCm108@Battle@@::vf110; CCm109@Battle@@::vf110; CCm110@Battle@@::vf110; CCm111@Battle@@::vf110; CCm112@Battle@@::vf110; CCm113@Battle@@::vf110; CCm114@Battle@@::vf110; CCm115@Battle@@::vf110; CCm116@Battle@@::vf110; CCm117@Battle@@::vf110; CCm119@Battle@@::vf110; CCm123@Battle@@::vf110; CCm124@Battle@@::vf110; CCm125@Battle@@::vf110; CCm126@Battle@@::vf110; CCm127@Battle@@::vf110; CCm128@Battle@@::vf110; CCm129@Battle@@::vf110; CCm130@Battle@@::vf110; CCm132@Battle@@::vf110; CCm133@Battle@@::vf110; CCm134@Battle@@::vf110; CCm135@Battle@@::vf110; CCm136@Battle@@::vf110; CCm137@Battle@@::vf110; CCm139@Battle@@::vf110; CCm138@Battle@@::vf110; CCm140@Battle@@::vf110; CCm141@Battle@@::vf110; CCm142@Battle@@::vf110; CCm145@Battle@@::vf110; CCm146@Battle@@::vf110; CCm147@Battle@@::vf110; CCn520@Battle@@::vf110; CCn020@Battle@@::vf110; CCm201@Battle@@::vf110; CCm202@Battle@@::vf110; CCm203@Battle@@::vf110; CCm204@Battle@@::vf110; CCm205@Battle@@::vf110; CCm206@Battle@@::vf110; CCm207@Battle@@::vf110; CCm208@Battle@@::vf110; CCm209@Battle@@::vf110; CMagicChr@Battle@@::vf110; CEffectControlChr@Battle@@::vf110; CEnemyTechniqueChr@Battle@@::vf110
+     ^ level 1: game+0x5363b0  CPlayerThinkChr@Battle@@::vf107; CChrElement@Battle@@::vf107; CRigidbodyChr@Battle@@::vf107; CPlayerChr@Battle@@::vf107; CEnemyChr@Battle@@::vf107; CEnemyThinkChr@Battle@@::vf107; CPlayerEdge@Battle@@::vf107; CPlayerReimi@Battle@@::vf107; CPlayerFaiz@Battle@@::vf107; CPlayerBackus@Battle@@::vf107; CPlayerMelicle@Battle@@::vf107; CPlayerSarah@Battle@@::vf107; CPlayerMuria@Battle@@::vf107; CPlayerArumat@Battle@@::vf107; CPlayerLymle@Battle@@::vf107; CPlayerWireframeEdge@Battle@@::vf107; CEnemyEffectChr@Battle@@::vf107; CCm001@Battle@@::vf107; CCm002@Battle@@::vf107; CCm003@Battle@@::vf107; CCm004@Battle@@::vf107; CCm005@Battle@@::vf107; CCm006_01@Battle@@::vf107; CCm006_02@Battle@@::vf107; CCm007@Battle@@::vf107; CCm008@Battle@@::vf107; CCm009@Battle@@::vf107; CCm010@Battle@@::vf107; CCm101@Battle@@::vf107; CCm102@Battle@@::vf107; CCm103@Battle@@::vf107; CCm104@Battle@@::vf107; CCm105@Battle@@::vf107; CCm106@Battle@@::vf107; CCm107@Battle@@::vf107; CCm108@Battle@@::vf107; CCm109@Battle@@::vf107; CCm110@Battle@@::vf107; CCm111@Battle@@::vf107; CCm112@Battle@@::vf107; CCm113@Battle@@::vf107; CCm114@Battle@@::vf107; CCm115@Battle@@::vf107; CCm116@Battle@@::vf107; CCm117@Battle@@::vf107; CCm119@Battle@@::vf107; CCm123@Battle@@::vf107; CCm124@Battle@@::vf107; CCm125@Battle@@::vf107; CCm126@Battle@@::vf107; CCm127@Battle@@::vf107; CCm128@Battle@@::vf107; CCm129@Battle@@::vf107; CCm130@Battle@@::vf107; CCm132@Battle@@::vf107; CCm133@Battle@@::vf107; CCm134@Battle@@::vf107; CCm135@Battle@@::vf107; CCm136@Battle@@::vf107; CCm137@Battle@@::vf107; CCm139@Battle@@::vf107; CCm138@Battle@@::vf107; CCm140@Battle@@::vf107; CCm141@Battle@@::vf107; CCm142@Battle@@::vf107; CCm145@Battle@@::vf107; CCm146@Battle@@::vf107; CCm147@Battle@@::vf107; CCn520@Battle@@::vf107; CCn020@Battle@@::vf107; CCm201@Battle@@::vf107; CCm202@Battle@@::vf107; CCm203@Battle@@::vf107; CCm204@Battle@@::vf107; CCm205@Battle@@::vf107; CCm206@Battle@@::vf107; CCm207@Battle@@::vf107; CCm208@Battle@@::vf107; CCm209@Battle@@::vf107; CMagicChr@Battle@@::vf107; CEffectControlChr@Battle@@::vf107; CEnemyTechniqueChr@Battle@@::vf107
+     ^ level 1: game+0x5369d0  CPlayerThinkChr@Battle@@::vf120; CChrElement@Battle@@::vf120; CRigidbodyChr@Battle@@::vf120; CPlayerChr@Battle@@::vf120; CEnemyChr@Battle@@::vf120; CEnemyThinkChr@Battle@@::vf120; CPlayerEdge@Battle@@::vf120; CPlayerReimi@Battle@@::vf120; CPlayerFaiz@Battle@@::vf120; CPlayerBackus@Battle@@::vf120; CPlayerMelicle@Battle@@::vf120; CPlayerSarah@Battle@@::vf120; CPlayerMuria@Battle@@::vf120; CPlayerArumat@Battle@@::vf120; CPlayerLymle@Battle@@::vf120; CPlayerWireframeEdge@Battle@@::vf120; CEnemyEffectChr@Battle@@::vf120; CCm001@Battle@@::vf120; CCm002@Battle@@::vf120; CCm003@Battle@@::vf120; CCm004@Battle@@::vf120; CCm005@Battle@@::vf120; CCm006_01@Battle@@::vf120; CCm006_02@Battle@@::vf120; CCm007@Battle@@::vf120; CCm008@Battle@@::vf120; CCm009@Battle@@::vf120; CCm010@Battle@@::vf120; CCm101@Battle@@::vf120; CCm102@Battle@@::vf120; CCm103@Battle@@::vf120; CCm104@Battle@@::vf120; CCm105@Battle@@::vf120; CCm106@Battle@@::vf120; CCm107@Battle@@::vf120; CCm108@Battle@@::vf120; CCm109@Battle@@::vf120; CCm110@Battle@@::vf120; CCm111@Battle@@::vf120; CCm112@Battle@@::vf120; CCm113@Battle@@::vf120; CCm114@Battle@@::vf120; CCm115@Battle@@::vf120; CCm116@Battle@@::vf120; CCm117@Battle@@::vf120; CCm119@Battle@@::vf120; CCm123@Battle@@::vf120; CCm124@Battle@@::vf120; CCm125@Battle@@::vf120; CCm126@Battle@@::vf120; CCm127@Battle@@::vf120; CCm128@Battle@@::vf120; CCm129@Battle@@::vf120; CCm130@Battle@@::vf120; CCm132@Battle@@::vf120; CCm133@Battle@@::vf120; CCm134@Battle@@::vf120; CCm135@Battle@@::vf120; CCm136@Battle@@::vf120; CCm137@Battle@@::vf120; CCm139@Battle@@::vf120; CCm138@Battle@@::vf120; CCm140@Battle@@::vf120; CCm141@Battle@@::vf120; CCm142@Battle@@::vf120; CCm145@Battle@@::vf120; CCm146@Battle@@::vf120; CCm147@Battle@@::vf120; CCn520@Battle@@::vf120; CCn020@Battle@@::vf120; CCm201@Battle@@::vf120; CCm202@Battle@@::vf120; CCm203@Battle@@::vf120; CCm204@Battle@@::vf120; CCm205@Battle@@::vf120; CCm206@Battle@@::vf120; CCm207@Battle@@::vf120; CCm208@Battle@@::vf120; CCm209@Battle@@::vf120; CMagicChr@Battle@@::vf120; CEffectControlChr@Battle@@::vf120; CEnemyTechniqueChr@Battle@@::vf120
+     ^ level 1: game+0x538cd0  CChrElement@Battle@@::vf88; CRigidbodyChr@Battle@@::vf88; CMagicChr@Battle@@::vf88; CEffectControlChr@Battle@@::vf88
+     ^ level 1: game+0x539d00  CPlayerThinkChr@Battle@@::vf135; CChrElement@Battle@@::vf135; CRigidbodyChr@Battle@@::vf135; CPlayerChr@Battle@@::vf135; CEnemyChr@Battle@@::vf135; CEnemyThinkChr@Battle@@::vf135; CPlayerEdge@Battle@@::vf135; CPlayerReimi@Battle@@::vf135; CPlayerFaiz@Battle@@::vf135; CPlayerBackus@Battle@@::vf135; CPlayerMelicle@Battle@@::vf135; CPlayerSarah@Battle@@::vf135; CPlayerMuria@Battle@@::vf135; CPlayerArumat@Battle@@::vf135; CPlayerLymle@Battle@@::vf135; CPlayerWireframeEdge@Battle@@::vf135; CEnemyEffectChr@Battle@@::vf135; CCm001@Battle@@::vf135; CCm002@Battle@@::vf135; CCm003@Battle@@::vf135; CCm004@Battle@@::vf135; CCm005@Battle@@::vf135; CCm006_01@Battle@@::vf135; CCm006_02@Battle@@::vf135; CCm007@Battle@@::vf135; CCm008@Battle@@::vf135; CCm009@Battle@@::vf135; CCm010@Battle@@::vf135; CCm101@Battle@@::vf135; CCm102@Battle@@::vf135; CCm103@Battle@@::vf135; CCm104@Battle@@::vf135; CCm105@Battle@@::vf135; CCm106@Battle@@::vf135; CCm107@Battle@@::vf135; CCm108@Battle@@::vf135; CCm109@Battle@@::vf135; CCm110@Battle@@::vf135; CCm111@Battle@@::vf135; CCm112@Battle@@::vf135; CCm113@Battle@@::vf135; CCm114@Battle@@::vf135; CCm115@Battle@@::vf135; CCm116@Battle@@::vf135; CCm117@Battle@@::vf135; CCm119@Battle@@::vf135; CCm123@Battle@@::vf135; CCm124@Battle@@::vf135; CCm125@Battle@@::vf135; CCm126@Battle@@::vf135; CCm127@Battle@@::vf135; CCm128@Battle@@::vf135; CCm129@Battle@@::vf135; CCm130@Battle@@::vf135; CCm132@Battle@@::vf135; CCm133@Battle@@::vf135; CCm134@Battle@@::vf135; CCm135@Battle@@::vf135; CCm136@Battle@@::vf135; CCm137@Battle@@::vf135; CCm139@Battle@@::vf135; CCm138@Battle@@::vf135; CCm140@Battle@@::vf135; CCm141@Battle@@::vf135; CCm142@Battle@@::vf135; CCm145@Battle@@::vf135; CCm146@Battle@@::vf135; CCm147@Battle@@::vf135; CCn520@Battle@@::vf135; CCn020@Battle@@::vf135; CCm201@Battle@@::vf135; CCm202@Battle@@::vf135; CCm203@Battle@@::vf135; CCm204@Battle@@::vf135; CCm205@Battle@@::vf135; CCm206@Battle@@::vf135; CCm207@Battle@@::vf135; CCm208@Battle@@::vf135; CCm209@Battle@@::vf135; CMagicChr@Battle@@::vf135; CEffectControlChr@Battle@@::vf135; CEnemyTechniqueChr@Battle@@::vf135
+     ^ level 1: game+0x539fc0  CChrElement@Battle@@::vf118; CRigidbodyChr@Battle@@::vf118; CEnemyChr@Battle@@::vf118; CMagicChr@Battle@@::vf118; CEffectControlChr@Battle@@::vf118; CEnemyTechniqueChr@Battle@@::vf118
+     ^ level 1: game+0x544600  CChrElement@Battle@@::vf159; CRigidbodyChr@Battle@@::vf159; CPlayerChr@Battle@@::vf159; CEnemyChr@Battle@@::vf159; CEnemyThinkChr@Battle@@::vf159; CEnemyEffectChr@Battle@@::vf159; CCm001@Battle@@::vf159; CCm002@Battle@@::vf159; CCm003@Battle@@::vf159; CCm004@Battle@@::vf159; CCm005@Battle@@::vf159; CCm006_01@Battle@@::vf159; CCm007@Battle@@::vf159; CCm008@Battle@@::vf159; CCm009@Battle@@::vf159; CCm010@Battle@@::vf159; CCm101@Battle@@::vf159; CCm102@Battle@@::vf159; CCm103@Battle@@::vf159; CCm104@Battle@@::vf159; CCm105@Battle@@::vf159; CCm106@Battle@@::vf159; CCm107@Battle@@::vf159; CCm108@Battle@@::vf159; CCm109@Battle@@::vf159; CCm110@Battle@@::vf159; CCm111@Battle@@::vf159; CCm112@Battle@@::vf159; CCm113@Battle@@::vf159; CCm114@Battle@@::vf159; CCm115@Battle@@::vf159; CCm116@Battle@@::vf159; CCm117@Battle@@::vf159; CCm119@Battle@@::vf159; CCm123@Battle@@::vf159; CCm124@Battle@@::vf159; CCm125@Battle@@::vf159; CCm126@Battle@@::vf159; CCm127@Battle@@::vf159; CCm128@Battle@@::vf159; CCm129@Battle@@::vf159; CCm130@Battle@@::vf159; CCm132@Battle@@::vf159; CCm133@Battle@@::vf159; CCm134@Battle@@::vf159; CCm135@Battle@@::vf159; CCm136@Battle@@::vf159; CCm137@Battle@@::vf159; CCm139@Battle@@::vf159; CCm138@Battle@@::vf159; CCm140@Battle@@::vf159; CCm141@Battle@@::vf159; CCm142@Battle@@::vf159; CCm145@Battle@@::vf159; CCm146@Battle@@::vf159; CCm147@Battle@@::vf159; CCn520@Battle@@::vf159; CCn020@Battle@@::vf159; CCm201@Battle@@::vf159; CCm202@Battle@@::vf159; CCm203@Battle@@::vf159; CCm204@Battle@@::vf159; CCm205@Battle@@::vf159; CCm206@Battle@@::vf159; CCm207@Battle@@::vf159; CCm208@Battle@@::vf159; CCm209@Battle@@::vf159; CMagicChr@Battle@@::vf159; CEffectControlChr@Battle@@::vf159; CEnemyTechniqueChr@Battle@@::vf159
+     ^ level 1: game+0x552690  CPlayerChr@Battle@@::vf86
+     ^ level 1: game+0x552d50  CPlayerThinkChr@Battle@@::vf130; CPlayerChr@Battle@@::vf130; CPlayerEdge@Battle@@::vf130; CPlayerReimi@Battle@@::vf130; CPlayerFaiz@Battle@@::vf130; CPlayerMelicle@Battle@@::vf130; CPlayerSarah@Battle@@::vf130; CPlayerMuria@Battle@@::vf130; CPlayerLymle@Battle@@::vf130; CPlayerWireframeEdge@Battle@@::vf130
+     ^ level 1: game+0x552e10  CPlayerThinkChr@Battle@@::vf421; CPlayerChr@Battle@@::vf421; CPlayerEdge@Battle@@::vf421; CPlayerReimi@Battle@@::vf421; CPlayerFaiz@Battle@@::vf421; CPlayerBackus@Battle@@::vf421; CPlayerMelicle@Battle@@::vf421; CPlayerSarah@Battle@@::vf421; CPlayerMuria@Battle@@::vf421; CPlayerArumat@Battle@@::vf421; CPlayerLymle@Battle@@::vf421; CPlayerWireframeEdge@Battle@@::vf421
+     ^ level 1: game+0x5536a0  CPlayerThinkChr@Battle@@::vf87; CPlayerChr@Battle@@::vf87; CPlayerEdge@Battle@@::vf87; CPlayerReimi@Battle@@::vf87; CPlayerFaiz@Battle@@::vf87; CPlayerMelicle@Battle@@::vf87; CPlayerSarah@Battle@@::vf87; CPlayerArumat@Battle@@::vf87; CPlayerLymle@Battle@@::vf87; CPlayerWireframeEdge@Battle@@::vf87
+     ^ level 1: game+0x553940  CPlayerThinkChr@Battle@@::vf88; CPlayerChr@Battle@@::vf88; CPlayerReimi@Battle@@::vf88; CPlayerFaiz@Battle@@::vf88; CPlayerBackus@Battle@@::vf88; CPlayerMelicle@Battle@@::vf88; CPlayerSarah@Battle@@::vf88; CPlayerMuria@Battle@@::vf88; CPlayerLymle@Battle@@::vf88
+     ^ level 1: game+0x555180  CPlayerThinkChr@Battle@@::vf100; CPlayerChr@Battle@@::vf100; CPlayerEdge@Battle@@::vf100; CPlayerReimi@Battle@@::vf100; CPlayerFaiz@Battle@@::vf100; CPlayerBackus@Battle@@::vf100; CPlayerMelicle@Battle@@::vf100; CPlayerSarah@Battle@@::vf100; CPlayerMuria@Battle@@::vf100; CPlayerArumat@Battle@@::vf100; CPlayerLymle@Battle@@::vf100; CPlayerWireframeEdge@Battle@@::vf100
+     ^ level 1: game+0x556fe0  CPlayerThinkChr@Battle@@::vf89; CPlayerChr@Battle@@::vf89; CPlayerEdge@Battle@@::vf89; CPlayerReimi@Battle@@::vf89; CPlayerFaiz@Battle@@::vf89; CPlayerBackus@Battle@@::vf89; CPlayerMelicle@Battle@@::vf89; CPlayerSarah@Battle@@::vf89; CPlayerMuria@Battle@@::vf89; CPlayerArumat@Battle@@::vf89; CPlayerLymle@Battle@@::vf89; CPlayerWireframeEdge@Battle@@::vf89
+     ^ level 1: game+0x558880  CPlayerThinkChr@Battle@@::vf426; CPlayerChr@Battle@@::vf426; CPlayerEdge@Battle@@::vf426; CPlayerReimi@Battle@@::vf426; CPlayerFaiz@Battle@@::vf426; CPlayerBackus@Battle@@::vf426; CPlayerMelicle@Battle@@::vf426; CPlayerSarah@Battle@@::vf426; CPlayerMuria@Battle@@::vf426; CPlayerArumat@Battle@@::vf426; CPlayerLymle@Battle@@::vf426; CPlayerWireframeEdge@Battle@@::vf426
+     ^ level 1: game+0x559c80  CPlayerThinkChr@Battle@@::vf346; CPlayerChr@Battle@@::vf346; CPlayerEdge@Battle@@::vf346; CPlayerReimi@Battle@@::vf346; CPlayerFaiz@Battle@@::vf346; CPlayerBackus@Battle@@::vf346; CPlayerMelicle@Battle@@::vf346; CPlayerSarah@Battle@@::vf346; CPlayerMuria@Battle@@::vf346; CPlayerArumat@Battle@@::vf346; CPlayerLymle@Battle@@::vf346; CPlayerWireframeEdge@Battle@@::vf346
+     ^ level 1: game+0x59e760  CEnemyChr@Battle@@::vf130; CEnemyThinkChr@Battle@@::vf130; CEnemyEffectChr@Battle@@::vf130; CCm001@Battle@@::vf130; CCm002@Battle@@::vf130; CCm003@Battle@@::vf130; CCm004@Battle@@::vf130; CCm005@Battle@@::vf130; CCm006_01@Battle@@::vf130; CCm006_02@Battle@@::vf130; CCm007@Battle@@::vf130; CCm008@Battle@@::vf130; CCm009@Battle@@::vf130; CCm010@Battle@@::vf130; CCm101@Battle@@::vf130; CCm102@Battle@@::vf130; CCm103@Battle@@::vf130; CCm104@Battle@@::vf130; CCm105@Battle@@::vf130; CCm106@Battle@@::vf130; CCm107@Battle@@::vf130; CCm108@Battle@@::vf130; CCm109@Battle@@::vf130; CCm110@Battle@@::vf130; CCm111@Battle@@::vf130; CCm112@Battle@@::vf130; CCm113@Battle@@::vf130; CCm114@Battle@@::vf130; CCm115@Battle@@::vf130; CCm116@Battle@@::vf130; CCm117@Battle@@::vf130; CCm119@Battle@@::vf130; CCm123@Battle@@::vf130; CCm124@Battle@@::vf130; CCm125@Battle@@::vf130; CCm126@Battle@@::vf130; CCm127@Battle@@::vf130; CCm128@Battle@@::vf130; CCm129@Battle@@::vf130; CCm130@Battle@@::vf130; CCm132@Battle@@::vf130; CCm133@Battle@@::vf130; CCm134@Battle@@::vf130; CCm136@Battle@@::vf130; CCm137@Battle@@::vf130; CCm139@Battle@@::vf130; CCm138@Battle@@::vf130; CCm140@Battle@@::vf130; CCm141@Battle@@::vf130; CCm142@Battle@@::vf130; CCm145@Battle@@::vf130; CCm146@Battle@@::vf130; CCm147@Battle@@::vf130; CCn520@Battle@@::vf130; CCn020@Battle@@::vf130; CCm201@Battle@@::vf130; CCm202@Battle@@::vf130; CCm203@Battle@@::vf130; CCm204@Battle@@::vf130; CCm206@Battle@@::vf130; CCm207@Battle@@::vf130; CCm208@Battle@@::vf130; CEnemyTechniqueChr@Battle@@::vf130
+     ^ level 1: game+0x59f330  CEnemyChr@Battle@@::vf146; CEnemyThinkChr@Battle@@::vf146; CEnemyEffectChr@Battle@@::vf146; CCm001@Battle@@::vf146; CCm002@Battle@@::vf146; CCm003@Battle@@::vf146; CCm004@Battle@@::vf146; CCm005@Battle@@::vf146; CCm006_01@Battle@@::vf146; CCm006_02@Battle@@::vf146; CCm007@Battle@@::vf146; CCm008@Battle@@::vf146; CCm009@Battle@@::vf146; CCm010@Battle@@::vf146; CCm101@Battle@@::vf146; CCm102@Battle@@::vf146; CCm103@Battle@@::vf146; CCm104@Battle@@::vf146; CCm105@Battle@@::vf146; CCm106@Battle@@::vf146; CCm107@Battle@@::vf146; CCm108@Battle@@::vf146; CCm109@Battle@@::vf146; CCm110@Battle@@::vf146; CCm111@Battle@@::vf146; CCm112@Battle@@::vf146; CCm113@Battle@@::vf146; CCm114@Battle@@::vf146; CCm115@Battle@@::vf146; CCm116@Battle@@::vf146; CCm117@Battle@@::vf146; CCm119@Battle@@::vf146; CCm123@Battle@@::vf146; CCm124@Battle@@::vf146; CCm125@Battle@@::vf146; CCm126@Battle@@::vf146; CCm127@Battle@@::vf146; CCm128@Battle@@::vf146; CCm129@Battle@@::vf146; CCm130@Battle@@::vf146; CCm132@Battle@@::vf146; CCm133@Battle@@::vf146; CCm134@Battle@@::vf146; CCm135@Battle@@::vf146; CCm136@Battle@@::vf146; CCm137@Battle@@::vf146; CCm139@Battle@@::vf146; CCm138@Battle@@::vf146; CCm140@Battle@@::vf146; CCm141@Battle@@::vf146; CCm142@Battle@@::vf146; CCm145@Battle@@::vf146; CCm146@Battle@@::vf146; CCm147@Battle@@::vf146; CCn520@Battle@@::vf146; CCn020@Battle@@::vf146; CCm201@Battle@@::vf146; CCm202@Battle@@::vf146; CCm203@Battle@@::vf146; CCm204@Battle@@::vf146; CCm205@Battle@@::vf146; CCm206@Battle@@::vf146; CCm207@Battle@@::vf146; CCm208@Battle@@::vf146; CCm209@Battle@@::vf146; CEnemyTechniqueChr@Battle@@::vf146
+     ^ level 1: game+0x5a1920  CEnemyChr@Battle@@::vf89; CEnemyThinkChr@Battle@@::vf89; CEnemyEffectChr@Battle@@::vf89; CCm001@Battle@@::vf89; CCm002@Battle@@::vf89; CCm003@Battle@@::vf89; CCm004@Battle@@::vf89; CCm005@Battle@@::vf89; CCm006_01@Battle@@::vf89; CCm006_02@Battle@@::vf89; CCm007@Battle@@::vf89; CCm008@Battle@@::vf89; CCm009@Battle@@::vf89; CCm010@Battle@@::vf89; CCm101@Battle@@::vf89; CCm102@Battle@@::vf89; CCm103@Battle@@::vf89; CCm104@Battle@@::vf89; CCm105@Battle@@::vf89; CCm106@Battle@@::vf89; CCm107@Battle@@::vf89; CCm108@Battle@@::vf89; CCm109@Battle@@::vf89; CCm110@Battle@@::vf89; CCm111@Battle@@::vf89; CCm112@Battle@@::vf89; CCm113@Battle@@::vf89; CCm114@Battle@@::vf89; CCm115@Battle@@::vf89; CCm116@Battle@@::vf89; CCm117@Battle@@::vf89; CCm119@Battle@@::vf89; CCm123@Battle@@::vf89; CCm124@Battle@@::vf89; CCm125@Battle@@::vf89; CCm126@Battle@@::vf89; CCm128@Battle@@::vf89; CCm129@Battle@@::vf89; CCm130@Battle@@::vf89; CCm132@Battle@@::vf89; CCm133@Battle@@::vf89; CCm134@Battle@@::vf89; CCm135@Battle@@::vf89; CCm136@Battle@@::vf89; CCm137@Battle@@::vf89; CCm139@Battle@@::vf89; CCm138@Battle@@::vf89; CCm140@Battle@@::vf89; CCm141@Battle@@::vf89; CCm142@Battle@@::vf89; CCm145@Battle@@::vf89; CCm146@Battle@@::vf89; CCm147@Battle@@::vf89; CCn520@Battle@@::vf89; CCn020@Battle@@::vf89; CCm201@Battle@@::vf89; CCm202@Battle@@::vf89; CCm203@Battle@@::vf89; CCm204@Battle@@::vf89; CCm205@Battle@@::vf89; CCm206@Battle@@::vf89; CCm207@Battle@@::vf89; CCm208@Battle@@::vf89; CCm209@Battle@@::vf89; CEnemyTechniqueChr@Battle@@::vf89
+     ^ level 1: game+0x5adad0  CPlayerFaiz@Battle@@::vf428
+     ^ level 1: game+0x5b6100  CPlayerMelicle@Battle@@::vf90
+     ^ level 1: game+0x5bcd40  CPlayerLymle@Battle@@::vf428
+     ^ level 1: game+0x5bd050  CPlayerLymle@Battle@@::vf86
+     ^ level 1: game+0x5bdfd0  CPlayerLymle@Battle@@::vf478
+     ^ level 1: game+0x5c9040  CCm006_02@Battle@@::vf87
+     ^ level 1: game+0x620ea0  CEftMgcFairyHeal@Battle@@::vf12
+     ^ level 1: game+0x3480bc0  CPlayerThinkChr@Battle@@::vf470; CPlayerChr@Battle@@::vf470; CPlayerEdge@Battle@@::vf470; CPlayerReimi@Battle@@::vf470; CPlayerFaiz@Battle@@::vf470; CPlayerBackus@Battle@@::vf470; CPlayerMelicle@Battle@@::vf470; CPlayerSarah@Battle@@::vf470; CPlayerMuria@Battle@@::vf470; CPlayerArumat@Battle@@::vf470; CPlayerLymle@Battle@@::vf470; CPlayerWireframeEdge@Battle@@::vf470
+     ^ level 1: game+0x34820a0  CPlayerThinkChr@Battle@@::vf427; CPlayerChr@Battle@@::vf427; CPlayerEdge@Battle@@::vf427; CPlayerReimi@Battle@@::vf427; CPlayerFaiz@Battle@@::vf427; CPlayerBackus@Battle@@::vf427; CPlayerMelicle@Battle@@::vf427; CPlayerSarah@Battle@@::vf427; CPlayerMuria@Battle@@::vf427; CPlayerArumat@Battle@@::vf427; CPlayerLymle@Battle@@::vf427; CPlayerWireframeEdge@Battle@@::vf427
+
+== caller fn game+0x5403a0 (?)  
+
+== caller fn game+0x541ba0 (?)  
+
+== caller fn game+0x541e60 (?)  
+
+== caller fn game+0x547060 (?)  
+     ^ level 1: game+0x537c50  CChrElement@Battle@@::vf51; CRigidbodyChr@Battle@@::vf51; CMagicChr@Battle@@::vf51; CEffectControlChr@Battle@@::vf51
+
+== caller fn game+0x54a410 (?)  
+
+== caller fn game+0x54b0f0 (?)  
+     ^ level 1: game+0x537c50  CChrElement@Battle@@::vf51; CRigidbodyChr@Battle@@::vf51; CMagicChr@Battle@@::vf51; CEffectControlChr@Battle@@::vf51
+     ^ level 1: game+0x538600  CPlayerThinkChr@Battle@@::vf102; CChrElement@Battle@@::vf102; CRigidbodyChr@Battle@@::vf102; CPlayerChr@Battle@@::vf102; CEnemyChr@Battle@@::vf102; CEnemyThinkChr@Battle@@::vf102; CPlayerEdge@Battle@@::vf102; CPlayerReimi@Battle@@::vf102; CPlayerFaiz@Battle@@::vf102; CPlayerBackus@Battle@@::vf102; CPlayerMelicle@Battle@@::vf102; CPlayerSarah@Battle@@::vf102; CPlayerMuria@Battle@@::vf102; CPlayerArumat@Battle@@::vf102; CPlayerLymle@Battle@@::vf102; CPlayerWireframeEdge@Battle@@::vf102; CEnemyEffectChr@Battle@@::vf102; CCm001@Battle@@::vf102; CCm002@Battle@@::vf102; CCm003@Battle@@::vf102; CCm004@Battle@@::vf102; CCm005@Battle@@::vf102; CCm007@Battle@@::vf102; CCm008@Battle@@::vf102; CCm009@Battle@@::vf102; CCm010@Battle@@::vf102; CCm101@Battle@@::vf102; CCm102@Battle@@::vf102; CCm103@Battle@@::vf102; CCm104@Battle@@::vf102; CCm105@Battle@@::vf102; CCm106@Battle@@::vf102; CCm107@Battle@@::vf102; CCm108@Battle@@::vf102; CCm109@Battle@@::vf102; CCm110@Battle@@::vf102; CCm111@Battle@@::vf102; CCm112@Battle@@::vf102; CCm113@Battle@@::vf102; CCm114@Battle@@::vf102; CCm115@Battle@@::vf102; CCm116@Battle@@::vf102; CCm117@Battle@@::vf102; CCm119@Battle@@::vf102; CCm123@Battle@@::vf102; CCm124@Battle@@::vf102; CCm125@Battle@@::vf102; CCm126@Battle@@::vf102; CCm127@Battle@@::vf102; CCm128@Battle@@::vf102; CCm129@Battle@@::vf102; CCm130@Battle@@::vf102; CCm132@Battle@@::vf102; CCm133@Battle@@::vf102; CCm134@Battle@@::vf102; CCm135@Battle@@::vf102; CCm136@Battle@@::vf102; CCm137@Battle@@::vf102; CCm139@Battle@@::vf102; CCm138@Battle@@::vf102; CCm140@Battle@@::vf102; CCm141@Battle@@::vf102; CCm142@Battle@@::vf102; CCm145@Battle@@::vf102; CCm146@Battle@@::vf102; CCm147@Battle@@::vf102; CCn520@Battle@@::vf102; CCn020@Battle@@::vf102; CCm201@Battle@@::vf102; CCm202@Battle@@::vf102; CCm203@Battle@@::vf102; CCm204@Battle@@::vf102; CCm205@Battle@@::vf102; CCm206@Battle@@::vf102; CCm207@Battle@@::vf102; CCm208@Battle@@::vf102; CCm209@Battle@@::vf102; CMagicChr@Battle@@::vf102; CEffectControlChr@Battle@@::vf102; CEnemyTechniqueChr@Battle@@::vf102
+
+== caller fn game+0x54bb20 (?)  
+
+== caller fn game+0x54beb0 (?)  
+   (no direct callers: probably called through a pointer)
+
+== caller fn game+0x568f60 (?)  
+
+== caller fn game+0x56b2e0 (?)  
+
+== caller fn game+0x571d70 (?)  CCameraCampMenu@Battle@@::vf9
+
+== caller fn game+0x59f630 (?)  CEnemyChr@Battle@@::vf145; CEnemyThinkChr@Battle@@::vf145; CEnemyEffectChr@Battle@@::vf145; CCm001@Battle@@::vf145; CCm002@Battle@@::vf145; CCm003@Battle@@::vf145; CCm004@Battle@@::vf145; CCm005@Battle@@::vf145; CCm006_01@Battle@@::vf145; CCm006_02@Battle@@::vf145; CCm007@Battle@@::vf145; CCm008@Battle@@::vf145; CCm009@Battle@@::vf145; CCm010@Battle@@::vf145; CCm101@Battle@@::vf145; CCm102@Battle@@::vf145; CCm103@Battle@@::vf145; CCm104@Battle@@::vf145; CCm105@Battle@@::vf145; CCm106@Battle@@::vf145; CCm107@Battle@@::vf145; CCm108@Battle@@::vf145; CCm109@Battle@@::vf145; CCm110@Battle@@::vf145; CCm111@Battle@@::vf145; CCm112@Battle@@::vf145; CCm113@Battle@@::vf145; CCm114@Battle@@::vf145; CCm115@Battle@@::vf145; CCm116@Battle@@::vf145; CCm117@Battle@@::vf145; CCm119@Battle@@::vf145; CCm123@Battle@@::vf145; CCm124@Battle@@::vf145; CCm125@Battle@@::vf145; CCm126@Battle@@::vf145; CCm127@Battle@@::vf145; CCm128@Battle@@::vf145; CCm129@Battle@@::vf145; CCm130@Battle@@::vf145; CCm132@Battle@@::vf145; CCm133@Battle@@::vf145; CCm134@Battle@@::vf145; CCm135@Battle@@::vf145; CCm136@Battle@@::vf145; CCm137@Battle@@::vf145; CCm139@Battle@@::vf145; CCm138@Battle@@::vf145; CCm140@Battle@@::vf145; CCm141@Battle@@::vf145; CCm142@Battle@@::vf145; CCm145@Battle@@::vf145; CCm146@Battle@@::vf145; CCm147@Battle@@::vf145; CCn520@Battle@@::vf145; CCn020@Battle@@::vf145; CCm201@Battle@@::vf145; CCm202@Battle@@::vf145; CCm203@Battle@@::vf145; CCm204@Battle@@::vf145; CCm205@Battle@@::vf145; CCm206@Battle@@::vf145; CCm207@Battle@@::vf145; CCm208@Battle@@::vf145; CCm209@Battle@@::vf145; CEnemyTechniqueChr@Battle@@::vf145
+
+== caller fn game+0x5a3530 (?)  CEnemyThinkChr@Battle@@::vf432; CEnemyEffectChr@Battle@@::vf432; CCm001@Battle@@::vf432; CCm002@Battle@@::vf432; CCm003@Battle@@::vf432; CCm004@Battle@@::vf432; CCm005@Battle@@::vf432; CCm006_01@Battle@@::vf432; CCm006_02@Battle@@::vf432; CCm007@Battle@@::vf432; CCm008@Battle@@::vf432; CCm009@Battle@@::vf432; CCm010@Battle@@::vf432; CCm101@Battle@@::vf432; CCm102@Battle@@::vf432; CCm103@Battle@@::vf432; CCm104@Battle@@::vf432; CCm105@Battle@@::vf432; CCm106@Battle@@::vf432; CCm107@Battle@@::vf432; CCm108@Battle@@::vf432; CCm109@Battle@@::vf432; CCm110@Battle@@::vf432; CCm111@Battle@@::vf432; CCm112@Battle@@::vf432; CCm113@Battle@@::vf432; CCm114@Battle@@::vf432; CCm115@Battle@@::vf432; CCm116@Battle@@::vf432; CCm117@Battle@@::vf432; CCm119@Battle@@::vf432; CCm123@Battle@@::vf432; CCm124@Battle@@::vf432; CCm125@Battle@@::vf432; CCm126@Battle@@::vf432; CCm127@Battle@@::vf432; CCm128@Battle@@::vf432; CCm129@Battle@@::vf432; CCm130@Battle@@::vf432; CCm132@Battle@@::vf432; CCm133@Battle@@::vf432; CCm134@Battle@@::vf432; CCm135@Battle@@::vf432; CCm136@Battle@@::vf432; CCm137@Battle@@::vf432; CCm139@Battle@@::vf432; CCm138@Battle@@::vf432; CCm140@Battle@@::vf432; CCm141@Battle@@::vf432; CCm142@Battle@@::vf432; CCm145@Battle@@::vf432; CCm146@Battle@@::vf432; CCm147@Battle@@::vf432; CCn520@Battle@@::vf432; CCn020@Battle@@::vf432; CCm201@Battle@@::vf432; CCm202@Battle@@::vf432; CCm203@Battle@@::vf432; CCm204@Battle@@::vf432; CCm205@Battle@@::vf432; CCm206@Battle@@::vf432; CCm207@Battle@@::vf432; CCm208@Battle@@::vf432; CCm209@Battle@@::vf432
+
+== caller fn game+0x5a4ff0 (?)  
+
+== caller fn game+0x5db330 (?)  
+     ^ level 1: game+0x5db120  CCm110@Battle@@::vf12
+
+== caller fn game+0x607440 (?)  CMinimapCharacterMarkerElement@Battle@@::vf41
+
+== caller fn game+0x607fd0 (?)  CMinimapPlayerMarkerElement@Battle@@::vf41
+
+== caller fn game+0x6091b0 (?)  CMinimapCharacterMarkerElement@Battle@@::vf42
+
+== caller fn game+0x609d70 (?)  CMinimapPlayerMarkerElement@Battle@@::vf42
+
+== caller fn game+0x6137c0 (?)  
+     ^ level 1: game+0x614630  CBattleCamp@Battle@@::vf12
+
+== caller fn game+0x613c40 (?)  
+     ^ level 1: game+0x614630  CBattleCamp@Battle@@::vf12
+
+== caller fn game+0x614340 (?)  
+     ^ level 1: game+0x614630  CBattleCamp@Battle@@::vf12
+
+== caller fn game+0x6161c0 (?)  CSightInCursor@Battle@@::vf32
+
+== caller fn game+0x618ce0 (?)  CTacticsMode@Battle@@::vf32
+
+== caller fn game+0x618f00 (?)  
+
+== caller fn game+0x619450 (?)  CLinkComboBonus@Battle@@::vf32
+
+== caller fn game+0x61b0f0 (?)  CEftSightOutLine@Battle@@::vf12
+
+== caller fn game+0x659380 (?)  
+     ^ level 1: game+0x657fc0  CTargetBoard@Battle@@::vf29
+     ^ level 1: game+0x658d00  CTargetBoard@Battle@@::vf32
+
+== caller fn game+0x65b6c0 (?)  
+
+== caller fn game+0x65cc80 (?)  
+   (no direct callers: probably called through a pointer)
+
+== caller fn game+0x65f4d0 (?)  CMagicList@Battle@@::vf49
+
+== caller fn game+0x65f6d0 (?)  CMagicList@Battle@@::vf86
+
+== caller fn game+0x65f820 (?)  CMagicList@Battle@@::vf44
+
+== caller fn game+0x660190 (?)  CSkillList@Battle@@::vf49
+
+== caller fn game+0x6615c0 (?)  CEquipItemList@Battle@@::vf61
+
+== caller fn game+0x661b10 (?)  CEquipEquipBox@Battle@@::vf49
+
+== caller fn game+0x661cb0 (?)  CEquipItemList@Battle@@::vf49
+
+== caller fn game+0x662150 (?)  CEquipSkillBox@Battle@@::vf49
+
+== caller fn game+0x663ec0 (?)  CEquipItemList@Battle@@::vf44
+
+== caller fn game+0x6649d0 (?)  CEquipContentsInfoMemo@Battle@@::vf17
+
+== caller fn game+0x665bb0 (?)  
+
+== caller fn game+0x665c50 (?)  
+     ^ level 1: game+0x6689a0  CEquipItemList@Battle@@::vf67
+
+== caller fn game+0x667190 (?)  
+
+== caller fn game+0x668360 (?)  
+     ^ level 1: game+0x666610  CBattleCampEquip@Battle@@::vf23
+
+== caller fn game+0x668780 (?)  CEquipEquipBox@Battle@@::vf67
+
+== caller fn game+0x668c30 (?)  
+     ^ level 1: game+0x666610  CBattleCampEquip@Battle@@::vf23
+
+== caller fn game+0x668ca0 (?)  
+     ^ level 1: game+0x666610  CBattleCampEquip@Battle@@::vf23
+
+== caller fn game+0x668ec0 (?)  
+     ^ level 1: game+0x6615c0  CEquipItemList@Battle@@::vf61
+     ^ level 1: game+0x661790  CEquipItemList@Battle@@::vf99
+     ^ level 1: game+0x3eb8550  CEquipItemList@Battle@@::vf104
+
+== caller fn game+0x6694c0 (?)  CTacticsList@Battle@@::vf46
+
+== caller fn game+0x669cd0 (?)  CTacticsList@Battle@@::vf32
+
+== caller fn game+0x66b330 (?)  CBattleCampMember@Battle@@::vf27
+
+== caller fn game+0x66da80 (?)  
+
+== caller fn game+0x35d1820 (?)  CCameraUserCtrl@Battle@@::vf26
+
+== caller fn game+0x3e23030 (?)  CSkillList@Battle@@::vf44
+
+== caller fn game+0x3e43bf0 (?)  CEquipPlayerInfo@Battle@@::vf29
+
+== caller fn game+0x3ee9920 (?)  CTacticsList@Battle@@::vf61
+
+== caller fn game+0x3eef860 (?)  CTacticsList@Battle@@::vf44
