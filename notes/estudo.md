@@ -520,3 +520,8 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   controle 1 -> handle 1 (Arumat); R3 no 2 -> Sarah; R3 no DualSense -> Edge; controle 1 -> Arumat.
 - ~6300 consultas neutralizadas por segundo = 2/3 do total (os dois controles que não são do líder). Sem travar.
 - **Usuário confirmou: funcionou** (só o controle do líder move o líder; R3 troca; menus ok).
+
+## Release: so4coop tag-team 1.1
+- Igual à 1.0 + hook_steam=1 e leader_only_input=1 ligados no so4coop.ini modelo: na batalha só o controle
+  do líder comanda o líder. README/LEIA-ME atualizados. Pacote build/release/so4coop-tagteam-1.1.zip.
+  Testado no Wine local (versão, ini, autotestes do filtro, recusa fora de batalha).

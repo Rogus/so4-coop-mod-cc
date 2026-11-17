@@ -1,4 +1,4 @@
-so4coop tag-team 1.0 - STAR OCEAN - THE LAST HOPE - 4K & Full HD Remaster (Steam)
+so4coop tag-team 1.1 - STAR OCEAN - THE LAST HOPE - 4K & Full HD Remaster (Steam)
 ==================================================================================
 
 What it does
@@ -8,12 +8,19 @@ controller makes your character the battle leader (the one the game lets you con
 like L1/R1 would, but straight to your own character. F3 / F4 on the keyboard do the same for
 player 1 / player 2.
 
+New in 1.1: only the leader's controller drives
+------------------------------------------------
+In battle, the game now only receives input from the controller that owns the current leader;
+the other controllers are ignored by the battle (they still work for R3, menus and the field).
+So nobody can accidentally move someone else's character. To go back to 1.0 behaviour, set
+leader_only_input=0 (or hook_steam=0) in so4coop.ini.
+
 Limits (please read)
 --------------------
 - The game itself only lets ONE character be controlled at a time (the leader); the others are
   AI. This mod switches the leader; it does not make two characters controllable at once.
-- The game mixes all controllers into one input: every controller moves whoever is the leader.
-  If you are not the leader, keep your hands off the stick and buttons.
+- If the leader is a character without a controller in so4coop.ini, every controller drives it
+  (no filtering), as in 1.0.
 - Battle only. The mod starts reacting about 45 seconds after the game starts.
 - R3 also recentres the camera behind the new leader (the game's own R3 action).
 

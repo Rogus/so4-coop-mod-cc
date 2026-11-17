@@ -1,4 +1,4 @@
-so4coop tag-team 1.0 - STAR OCEAN - THE LAST HOPE - 4K & Full HD Remaster (Steam)
+so4coop tag-team 1.1 - STAR OCEAN - THE LAST HOPE - 4K & Full HD Remaster (Steam)
 ==================================================================================
 
 O que faz
@@ -8,12 +8,19 @@ no seu controle torna o seu personagem o líder da batalha (o personagem que o j
 controlar), como L1/R1 fariam, mas direto para o seu personagem. F3 / F4 no teclado fazem o
 mesmo para o jogador 1 / jogador 2.
 
+Novo na 1.1: só o controle do líder comanda
+--------------------------------------------
+Na batalha, o jogo agora só recebe a entrada do controle dono do líder atual; os outros controles
+são ignorados pela batalha (continuam valendo para o R3, os menus e o campo). Ninguém mexe sem
+querer no personagem do outro. Para voltar ao comportamento da 1.0, use leader_only_input=0 (ou
+hook_steam=0) no so4coop.ini.
+
 Limites (leia)
 --------------
 - O próprio jogo só deixa controlar UM personagem por vez (o líder); os outros são IA. O mod
   troca o líder; não deixa dois personagens controláveis ao mesmo tempo.
-- O jogo mistura todos os controles numa entrada só: todo controle move quem for o líder.
-  Se você não é o líder, não mexa no analógico nem nos botões.
+- Se o líder for um personagem sem controle no so4coop.ini, todos os controles o comandam
+  (sem filtro), como na 1.0.
 - Só em batalha. O mod começa a reagir uns 45 segundos depois de o jogo abrir.
 - O R3 também recentraliza a câmera atrás do novo líder (ação própria do jogo).
 
