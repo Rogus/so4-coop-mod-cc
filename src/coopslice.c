@@ -41,7 +41,7 @@ static void cs_load(void)
         if (tt_find_value(buf, r, "coop_auto=", &v)) cs_auto = v ? 1 : 0;
         if (tt_find_value(buf, r, "coop_active_only=", &v)) cs_active_only = v ? 1 : 0;
     }
-    wsprintfA(b, "  co-op: F2 toggles; auto %lu, slice %lu ms, active players only %lu (idle after %lu ms)\r\n", (unsigned long)cs_auto,
+    wsprintfA(b, "  co-op: auto %lu (F2 toggles in the research build), slice %lu ms, active players only %lu (idle after %lu ms)\r\n", (unsigned long)cs_auto,
               (unsigned long)cs_ms, (unsigned long)cs_active_only, (unsigned long)cs_idle);
     logs(b);
 }

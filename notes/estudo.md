@@ -551,3 +551,21 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   coop_slice_ms = 40; coop_auto=1 liga ao começar a batalha e pausa no fim (F2 continua alternando).
   Atividade medida na thread principal da sonda (steamctl: ações digitais + analógicas 1 e 2 pelo Steam,
   nunca filtradas). Teste local: ini lido, recusa fora de batalha.
+
+### Execução 33 (v0.33) - notes/run33_v0.33 — co-op em 3 batalhas
+- coop_auto ligou no início de cada batalha e pausou no fim (3 batalhas, sem F2).
+- Fatias divididas conforme a atividade: momentos com 1, 2 e **3 jogadores ativos**; total no fim 1=608, 2=521,
+  3=906 fatias; ~20-25 trocas/s; 2 de 2099 fatias puladas (fim de batalha). Jogo rodou 6 min sem problema.
+- Falta o relato do usuário sobre 2 e 3 jogadores (câmera, controle, fluidez).
+- **Relato do usuário (exec. 33): joga bem.** 2 jogadores: perfeito. 3 jogadores: só falha visual — os cursores
+  brancos de cada personagem mapeado no minimapa da batalha piscam, e o personagem guiado por cada controle fica
+  piscando em branco (marcador de líder redesenhado a cada troca). L2/R2 (habilidades) funcionaram como no
+  single-player. 1 jogador: sem falhas.
+
+## Release: so4coop co-op 1.2
+- Co-op na batalha para até 4 jogadores (fatias de líder para jogadores ativos), ligado no so4coop.ini modelo
+  (coop_auto=1, coop_slice_ms=40, coop_idle_ms=1500, coop_active_only=1, hook_steam=1, leader_only_input=1,
+  steam1..4_position=0..3). README/LEIA-ME reescritos: como funciona, problemas conhecidos (marcador do líder e
+  cursores do minimapa piscando com 3+ jogadores), instalação, como achar o número de cada controle no log,
+  opções. Pacote build/release/so4coop-coop-1.2.zip; testado no Wine local (versão, ini, recusa fora de
+  batalha, autotestes do filtro).
