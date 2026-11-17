@@ -262,7 +262,7 @@ static int fn_bounds(uintptr_t a, uint32_t *start, uint32_t *end)
 }
 
 /* writes the function around a (or a window) to so4coop_dumps/code_<startrva>.bin */
-#define MAXCODE 64
+#define MAXCODE 160
 static uint32_t code_done[MAXCODE], ncode;
 static void dump_code(uintptr_t a, char *note)
 {
@@ -327,10 +327,16 @@ static void watch_selftest(void)
     reset_tables();
 }
 
+/* v0.10: hardware watchpoints are OFF. Under Proton, setting debug registers on another thread
+ * goes through ptrace; the game froze right after the two mass changes (F11 disarm in run 7,
+ * arming in run 8). The code stays for reference; set WATCH_HW to 1 to use it again. */
+#define WATCH_HW 0
+
 static void watch_setup(void)
 {
     my_tid = GetCurrentThreadId();
     watch_init_module();
+    if (!WATCH_HW) { logs("watch: hardware watchpoints disabled (v0.10)\r\n"); return; }
     if (!AddVectoredExceptionHandler(1, watch_veh)) { logs("watch: AddVectoredExceptionHandler failed\r\n"); return; }
     watch_selftest();
 }
@@ -429,10 +435,68 @@ static void watch_arm_fixed(void)
     watch_arm(c, n);
 }
 
+/* ---- v0.10: static cross-references to the controlled-member block ----
+ * x64 code reaches a global with a RIP-relative disp32: target = end of instruction + disp.
+ * For every byte position of the (decrypted, in-memory) code, take the 4 bytes as a disp and
+ * test the possible instruction ends (disp, then 0/1/2/4 bytes of immediate). Hits are logged
+ * and their functions dumped for offline disassembly (objdump -b binary). Read-only. */
+#define XR_LO 0x00f77e80
+#define XR_HI 0x00f77f40
+#define MAXXR 256
+static struct { uintptr_t at, target; uint32_t imm, abs; } xr[MAXXR];
+static uint32_t nxr, xr_over;
+static int xref_done;
+
+static void xref_region(uintptr_t a, uintptr_t b, void *ctx)
+{
+    (void)ctx;
+    static const uint32_t imms[4] = { 0, 1, 2, 4 };
+    uintptr_t tlo = game_base + XR_LO, thi = game_base + XR_HI;
+    for (uintptr_t p = a; p + 4 <= b; p++) {
+        int32_t d = *(const int32_t *)p;
+        for (int k = 0; k < 4; k++) {
+            uintptr_t t = p + 4 + imms[k] + (intptr_t)d;
+            if (t >= tlo && t < thi) {
+                if (nxr < MAXXR) { xr[nxr].at = p; xr[nxr].target = t; xr[nxr].imm = imms[k]; xr[nxr].abs = 0; nxr++; } else xr_over++;
+                break;
+            }
+        }
+        if (p + 8 <= b) {                                   /* absolute 64-bit address (mov r64, imm64) */
+            uint64_t v = *(const uint64_t *)p;
+            if (v >= tlo && v < thi) {
+                if (nxr < MAXXR) { xr[nxr].at = p; xr[nxr].target = v; xr[nxr].imm = 0; xr[nxr].abs = 1; nxr++; } else xr_over++;
+            }
+        }
+    }
+}
+
+static void xref_scan(void)
+{
+    char b[300];
+    xref_done = 1;
+    if (!code_lo) return;
+    uint64_t t0 = GetTickCount64();
+    each_region(code_lo, code_hi, 0, xref_region, 0);
+    wsprintfA(b, "=== XREFS to game+0x%08lx-0x%08lx: %lu (%lu over the limit) in %lu ms ===\r\n", (unsigned long)XR_LO,
+              (unsigned long)XR_HI, (unsigned long)nxr, (unsigned long)xr_over, (unsigned long)(GetTickCount64() - t0));
+    logs(b);
+    for (uint32_t i = 0; i < nxr; i++) {
+        char code[32] = "", fn[48] = "";
+        uint32_t s, e;
+        if (fn_bounds(xr[i].at, &s, &e)) wsprintfA(fn, " fn=game+0x%08lx", (unsigned long)s);
+        dump_code(xr[i].at, code);
+        wsprintfA(b, "  XREF %s at game+0x%08lx -> game+0x%08lx (+0x%02lx from 0xf77ed0)%s%s %s\r\n", xr[i].abs ? "abs64" : "rip  ",
+                  (unsigned long)(xr[i].at - game_base), (unsigned long)(xr[i].target - game_base),
+                  (unsigned long)(xr[i].target - (game_base + 0x00f77ed0)), xr[i].abs ? "" : (xr[i].imm ? " imm" : ""), fn, code);
+        logs(b);
+    }
+}
+
 static void watch_after_scan(void)
 {
     char b[300];
-    if (controlled_cur && !w_any) watch_arm_fixed();
+    if (!xref_done) xref_scan();
+    if (WATCH_HW && controlled_cur && !w_any) watch_arm_fixed();
     if (!controlled_cur) {
         logs("  watch: no controlled character in this scan (press F9 during a battle, not mid-switch)\r\n");
         return;                                         /* keep the previous reference set (run 7 bug) */

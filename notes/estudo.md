@@ -114,3 +114,19 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   - Forte candidato a "índice do membro controlado". Falta um 3º personagem para ver a numeração.
 - v0.9: arma uma vez, no 1º F9 em batalha, watchpoints fixos: os dois globais, CBtlPad+0x1180
   (controle: muda sempre) e CBtlPad+0x28 (valores do analógico); F11 só relata, não desarma.
+
+### Execução 8 (v0.9) - notes/run8_v0.9
+- O log da execução 8 foi **sobrescrito** pela inicialização seguinte (tela branca); só restaram os
+  dumps (2 capturas, 01:12:04 e 01:12:08) -> provável travamento logo após armar os watchpoints.
+- Nas duas capturas a Sarah é a controlada, mas o bloco global tem `02 01` (os valores do Edge na
+  execução 7): o número **não é o personagem**, parece a posição do controlado na ordem do grupo
+  desta batalha (líder = 1 em +0xed3). +0xf00 caiu para 0 na 2ª captura: é outra coisa.
+- Início com tela branca (01:15): a sonda carregou, autoteste dos watchpoints ok, chamadas XInput,
+  e o log para (nenhum heartbeat de 30 s).
+- Watchpoints de hardware no Proton = 2 (talvez 3) travamentos: **desligados na v0.10**.
+- v0.10: log em modo acréscimo com cabeçalho de sessão; so4coop_dumps anterior renomeado;
+  busca estática no código decifrado (deslocamentos RIP-relativos e endereços absolutos) de
+  todas as instruções que apontam para game+0xf77e80..0xf77f40, com dump das funções.
+- Som: PulseAudio e PipeWire/WirePlumber rodando juntos; o WirePlumber detém a reserva
+  (org.freedesktop.ReserveDevice1) das 4 placas, então as saídas do PulseAudio (que o Proton usa)
+  ficam suspensas. Não é problema do jogo nem da sonda.

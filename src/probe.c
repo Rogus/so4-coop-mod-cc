@@ -45,6 +45,11 @@ __declspec(dllimport) int __cdecl wsprintfA(char *, LPCSTR, ...);
 __declspec(dllimport) BOOL WINAPI CreateDirectoryW(LPCWSTR, void *);
 __declspec(dllimport) HANDLE WINAPI CreateThread(void *, uint64_t, DWORD (WINAPI *)(LPVOID), LPVOID, DWORD, DWORD *);
 __declspec(dllimport) void WINAPI Sleep(DWORD);
+__declspec(dllimport) BOOL WINAPI MoveFileW(LPCWSTR, LPCWSTR);
+typedef struct { WORD y, mo, dow, d, h, mi, s, ms; } SYSTIME;
+__declspec(dllimport) void WINAPI GetLocalTime(SYSTIME *);
+#define OPEN_ALWAYS 4
+#define FILE_APPEND_DATA 0x0004
 
 typedef struct { WORD wButtons; BYTE bLeftTrigger, bRightTrigger; short sThumbLX, sThumbLY, sThumbRX, sThumbRY; } XINPUT_GAMEPAD;
 typedef struct { DWORD dwPacketNumber; XINPUT_GAMEPAD Gamepad; } XINPUT_STATE;
@@ -283,14 +288,28 @@ static void describe_game_module(void)
     }
 }
 
+/* v0.10: the log is appended (run 8's log was overwritten by the next launch) and the previous
+ * session's so4coop_dumps folder is renamed to so4coop_dumps_before_<this session's start time> */
+static char session[32];
+static void wcopy(uint16_t *d, const uint16_t *s) { while ((*d++ = *s++)) {} }
+
 static void open_log(HMODULE self)
 {
-    uint16_t path[520];
-    DWORD n = GetModuleFileNameW(self, path, 512);
-    while (n && path[n - 1] != '\\' && path[n - 1] != '/') n--;
-    path[n] = 0;
-    wcat(path, "so4coop_probe.log");
-    logf = CreateFileW(path, GENERIC_WRITE, FILE_SHARE_READ, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+    SYSTIME t;
+    GetLocalTime(&t);
+    wsprintfA(session, "%04u%02u%02u_%02u%02u%02u", t.y, t.mo, t.d, t.h, t.mi, t.s);
+    uint16_t dir[520], from[600], to[600];
+    DWORD n = GetModuleFileNameW(self, dir, 512);
+    while (n && dir[n - 1] != '\\' && dir[n - 1] != '/') n--;
+    dir[n] = 0;
+    wcopy(from, dir); wcat(from, "so4coop_dumps");
+    wcopy(to, dir); wcat(to, "so4coop_dumps_before_"); wcat(to, session);
+    int moved = MoveFileW(from, to) != 0;                  /* fails harmlessly when there is none */
+    wcopy(to, dir); wcat(to, "so4coop_probe.log");
+    logf = CreateFileW(to, FILE_APPEND_DATA, FILE_SHARE_READ, 0, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+    char b[160];
+    wsprintfA(b, "\r\n===== session %s =====%s\r\n", session, moved ? " (previous so4coop_dumps renamed to so4coop_dumps_before_<session>)" : "");
+    logs(b);
 }
 
 static void load_real(void)
@@ -350,7 +369,7 @@ BOOL WINAPI DllMain(HMODULE self, DWORD reason, LPVOID unused)
             self_end = self_base + *(uint32_t *)(sb + *(int32_t *)(sb + 0x3c) + 24 + 56);
         }
         open_log(self);
-        logs("so4coop probe v0.9 loaded (F9 = scan battle objects, first one arms the watchpoints, F10 = mark, F11 = watch report)\r\n");
+        logs("so4coop probe v0.10 loaded (F9 = scan battle objects, first one also searches the code for the controlled-member globals, F10 = mark)\r\n");
         describe_game_module();   /* the real XInput is loaded on the first call, not under the loader lock */
         CreateThread(0, 0, hotkey_thread, 0, 0, 0);
     }

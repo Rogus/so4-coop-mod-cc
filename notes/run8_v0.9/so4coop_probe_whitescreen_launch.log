@@ -1,0 +1,19 @@
+so4coop probe v0.9 loaded (F9 = scan battle objects, first one arms the watchpoints, F10 = mark, F11 = watch report)
+game module base=0000000140000000 size=0x0585d000 sections=10
+  .data1   rva=0x00001000 vsize=0x0090b000 flags=0x60000020
+  .xdata   rva=0x0090c000 vsize=0x00320800 flags=0x40000040
+  .arch    rva=0x00c2d000 vsize=0x0070ed68 flags=0xc0000020
+  .pdata   rva=0x0133c000 vsize=0x00065e00 flags=0x40000040
+  .xpdata  rva=0x013a2000 vsize=0x04487932 flags=0xe0000020
+  .text    rva=0x0582a000 vsize=0x00002d3b flags=0x60000020
+  .link    rva=0x0582d000 vsize=0x00000b1b flags=0x60000020
+  .srdata  rva=0x0582e000 vsize=0x000015da flags=0x40000040
+  .xtext   rva=0x05830000 vsize=0x000014b0 flags=0x40000040
+  .bind    rva=0x05832000 vsize=0x0002acd0 flags=0x60000000
+watch: code game+0x013a2000-0x05829932, 34735 function entries
+watch self-test: SetThreadContext ok, Dr7 read back 0000000000090001, hits 2 (writes seen 2, DR6 empty 2) -> hardware watchpoints WORK
+[alive t=0s] GetState calls so far: 0
+first call: XInputGetCapabilities from game+0x01f15bc0
+real XInput: system32\xinput1_3.dll
+first call: XInputSetState from game+0x003786cd
+new caller: game+0x003786cd
