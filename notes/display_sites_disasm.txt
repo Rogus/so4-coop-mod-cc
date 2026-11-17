@@ -1,0 +1,183 @@
+== CSightInCursor vf32 #1 site game+0x6161f1
+      game+0x6161d1: movabs ds:0x4440245c290f4400,eax
+      game+0x6161d8: 
+      game+0x6161da: movaps xmm3,xmm1
+      game+0x6161dd: call   0x1405007e0
+      game+0x6161e2: test   al,al
+      game+0x6161e4: jne    0x1406169cd
+      game+0x6161ea: mov    rcx,QWORD PTR [rip+0xa3b647]        # 0x141051838
+   >> game+0x6161f1: call   0x1405000d0
+      game+0x6161f6: test   rax,rax
+      game+0x6161f9: je     0x1406169cd
+      game+0x6161ff: mov    rdx,QWORD PTR [rax]
+      game+0x616202: mov    QWORD PTR [rsp+0xb0],rbx
+      game+0x616209: 
+      game+0x61620a: mov    rcx,rax
+      game+0x61620d: mov    QWORD PTR [rsp+0xb8],rbp
+      game+0x616214: 
+      game+0x616215: mov    QWORD PTR [rsp+0x98],r14
+      game+0x61621c: 
+      game+0x61621d: call   QWORD PTR [rdx+0x530]
+      game+0x616223: xor    r14d,r14d
+      game+0x616226: mov    rbx,rax
+      game+0x616229: mov    ebp,r14d
+      game+0x61622c: test   rax,rax
+      game+0x61622f: je     0x140616259
+      game+0x616231: mov    rcx,rax
+      game+0x616234: call   0x14053d130
+      game+0x616239: test   al,al
+      game+0x61623b: je     0x140616243
+      game+0x61623d: lea    ebp,[r14+0x2]
+      game+0x616241: jmp    0x140616259
+== CSightInCursor vf32 #2 site game+0x616911
+      game+0x6168f1: add    BYTE PTR [rax],al
+      game+0x6168f3: add    BYTE PTR [rbx+rcx*4-0x44],cl
+      game+0x6168f7: and    al,0x90
+      game+0x6168f9: add    BYTE PTR [rax],al
+      game+0x6168fb: add    BYTE PTR [rax-0x75],cl
+      game+0x6168fe: mov    esp,0xc824
+      game+0x616903: add    BYTE PTR [rdi+rcx*1+0x28],al
+      game+0x616907: rex.WR and al,0x50
+      game+0x61690a: mov    rcx,QWORD PTR [rip+0xa3af27]        # 0x141051838
+   >> game+0x616911: call   0x1405000d0
+      game+0x616916: lea    rdx,[rsp+0x20]
+      game+0x61691b: xor    r8d,r8d
+      game+0x61691e: mov    rcx,rax
+      game+0x616921: call   0x1404fa5e0
+      game+0x616926: lea    rcx,[rsp+0x20]
+      game+0x61692b: call   0x140757740
+      game+0x616930: cmp    DWORD PTR [rsi+0x1f4],0x0
+      game+0x616937: mov    r14,QWORD PTR [rsp+0x98]
+      game+0x61693e: 
+      game+0x61693f: mov    rbp,QWORD PTR [rsp+0xb8]
+      game+0x616946: 
+      game+0x616947: mov    rax,QWORD PTR [rsi]
+      game+0x61694a: mov    rcx,rsi
+      game+0x61694d: je     0x140616985
+      game+0x61694f: movss  xmm2,DWORD PTR [rsp+0x24]
+      game+0x616955: movss  xmm1,DWORD PTR [rsp+0x20]
+      game+0x61695b: call   QWORD PTR [rax+0x18]
+      game+0x61695e: movaps xmm0,XMMWORD PTR [rsp+0x20]
+      game+0x616963: mov    rbx,QWORD PTR [rsi]
+      game+0x616966: lea    rcx,[rsp+0x30]
+      game+0x61696b: movaps XMMWORD PTR [rsp+0x30],xmm0
+      game+0x616970: call   0x14062e320
+      game+0x616975: mov    rcx,rsi
+      game+0x616978: test   al,al
+      game+0x61697a: sete   dl
+      game+0x61697d: call   QWORD PTR [rbx+0x88]
+      game+0x616983: jmp    0x1406169a1
+== CEftSightOutLine vf12 site game+0x61b150
+      game+0x61b130: add    BYTE PTR [rax],al
+      game+0x61b132: pop    rbp
+      game+0x61b133: ret
+== CTargetBoard helper site game+0x6593a8
+      game+0x659388: and    al,0x18
+      game+0x65938a: mov    QWORD PTR [rsp+0x20],rsi
+      game+0x65938f: push   rdi
+      game+0x659390: sub    rsp,0x30
+      game+0x659394: mov    rdi,rcx
+      game+0x659397: mov    rcx,QWORD PTR [rip+0x9f849a]        # 0x141051838
+      game+0x65939e: movaps XMMWORD PTR [rsp+0x20],xmm6
+      game+0x6593a3: movaps xmm6,xmm1
+      game+0x6593a6: xor    ebx,ebx
+   >> game+0x6593a8: call   0x1405000d0
+      game+0x6593ad: mov    rsi,QWORD PTR [rdi+0x200]
+      game+0x6593b4: mov    rbp,rax
+      game+0x6593b7: test   rax,rax
+      game+0x6593ba: je     0x1406593f7
+      game+0x6593bc: mov    rcx,rax
+      game+0x6593bf: call   0x14053d640
+      game+0x6593c4: test   al,al
+      game+0x6593c6: jne    0x1406593f7
+      game+0x6593c8: test   rsi,rsi
+      game+0x6593cb: je     0x1406593f7
+      game+0x6593cd: mov    rcx,rsi
+      game+0x6593d0: call   0x14053d640
+      game+0x6593d5: test   al,al
+      game+0x6593d7: jne    0x1406593f7
+      game+0x6593d9: xor    r8d,r8d
+      game+0x6593dc: mov    rdx,rsi
+      game+0x6593df: mov    rcx,rbp
+      game+0x6593e2: call   0x14053a5d0
+      game+0x6593e7: movss  xmm1,DWORD PTR [rip+0x3823ed]        # 0x1409db7dc
+      game+0x6593ee: 
+      game+0x6593ef: comiss xmm1,xmm0
+      game+0x6593f2: setb   bl
+      game+0x6593f5: inc    ebx
+      game+0x6593f7: cmp    ebx,DWORD PTR [rdi+0x218]
+      game+0x6593fd: je     0x140659461
+      game+0x6593ff: mov    ecx,ebx
+      game+0x659401: test   ebx,ebx
+      game+0x659403: je     0x14065943f
+      game+0x659405: dec    ecx
+      game+0x659407: je     0x140659426
+      game+0x659409: dec    ecx
+      game+0x65940b: jne    0x140659451
+      game+0x65940d: mov    rcx,QWORD PTR [rdi+0x258]
+      game+0x659414: mov    edx,0x76
+      game+0x659419: mov    rax,QWORD PTR [rcx]
+      game+0x65941c: call   QWORD PTR [rax+0x1b0]
+      game+0x659422: mov    dl,0x1
+      game+0x659424: jmp    0x140659441
+== CMinimapPlayerMarker vf41 site game+0x6080bd
+      game+0x60809d: add    eax,ebp
+      game+0x60809f: int    0xb4
+      game+0x6080a1: cmc
+      game+0x6080a2: inc    DWORD PTR [rbp+0x33]
+      game+0x6080a5: leave
+      game+0x6080a6: lea    rdx,[rbp-0x80]
+      game+0x6080aa: lea    r8d,[r9+0x8]
+      game+0x6080ae: mov    rcx,r12
+      game+0x6080b1: call   0x1403afc40
+      game+0x6080b6: mov    rcx,QWORD PTR [rip+0xa4977b]        # 0x141051838
+   >> game+0x6080bd: call   0x1405000d0
+      game+0x6080c2: mov    rbx,rax
+      game+0x6080c5: mov    QWORD PTR [rsp+0x48],rax
+      game+0x6080ca: test   sil,sil
+      game+0x6080cd: je     0x1406086dc
+      game+0x6080d3: test   rax,rax
+      game+0x6080d6: je     0x1406086dc
+      game+0x6080dc: mov    rcx,rax
+      game+0x6080df: call   0x140555b20
+      game+0x6080e4: test   al,al
+      game+0x6080e6: je     0x1406086dc
+      game+0x6080ec: mov    rax,QWORD PTR [rdi+0x180]
+      game+0x6080f3: mov    r14,QWORD PTR [rdi+0x258]
+      game+0x6080fa: xor    esi,esi
+      game+0x6080fc: mov    QWORD PTR [rsp+0x68],rsi
+      game+0x608101: movss  xmm0,DWORD PTR [rax]
+      game+0x608105: movss  xmm1,DWORD PTR [rax+0xc]
+      game+0x60810a: movss  xmm2,DWORD PTR [rax+0x4]
+      game+0x60810f: movss  xmm12,DWORD PTR [rax+0x10]
+      game+0x608115: movss  xmm11,DWORD PTR [rax+0x14]
+      game+0x60811b: movss  DWORD PTR [rbp+0xf0],xmm0
+      game+0x608122: 
+      game+0x608123: movss  DWORD PTR [rbp+0xf4],xmm0
+      game+0x60812a: 
+      game+0x60812b: movss  xmm0,DWORD PTR [rax+0x8]
+      game+0x608130: movss  DWORD PTR [rbp+0x104],xmm1
+      game+0x608137: 
+      game+0x608138: mov    rax,QWORD PTR [rip+0x96ece1]        # 0x140f76e20
+      game+0x60813f: movss  DWORD PTR [rbp+0xf8],xmm0
+      game+0x608146: 
+      game+0x608147: movss  DWORD PTR [rbp+0xfc],xmm0
+      game+0x60814e: 
+      game+0x60814f: movss  DWORD PTR [rbp+0x108],xmm1
+      game+0x608156: 
+      game+0x608157: movaps xmm0,XMMWORD PTR [rip+0x305ed2]        # 0x14090e030
+      game+0x60815e: movaps xmm1,XMMWORD PTR [rip+0x305edb]        # 0x14090e040
+      game+0x608165: movss  DWORD PTR [rbp+0x100],xmm2
+      game+0x60816c: 
+      game+0x60816d: movss  DWORD PTR [rbp+0x10c],xmm2
+      game+0x608174: 
+      game+0x608175: movaps XMMWORD PTR [rbp+0x70],xmm0
+      game+0x608179: movaps xmm0,XMMWORD PTR [rip+0x305ed0]        # 0x14090e050
+      game+0x608180: movaps XMMWORD PTR [rbp+0x80],xmm1
+      game+0x608187: movaps xmm1,XMMWORD PTR [rip+0x305512]        # 0x14090d6a0
+      game+0x60818e: movaps XMMWORD PTR [rbp+0x90],xmm0
+      game+0x608195: movaps XMMWORD PTR [rbp+0xa0],xmm1
+      game+0x60819c: cmp    QWORD PTR [rax+0x4d8],rsi
+      game+0x6081a3: jne    0x1406081a9
+      game+0x6081a5: mov    eax,esi
+      game+0x6081a7: jmp    0x1406081b0

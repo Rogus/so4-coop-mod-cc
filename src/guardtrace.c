@@ -129,7 +129,7 @@ static void guard_poll(void)
  * export below still works on the probe's own page. */
 #define GUARD_TRACE 0
 
-static void guard_trace(void)
+static __attribute__((unused)) void guard_trace(void)   /* no hotkey since v0.36 (F5 = display fix modes) */
 {
     if (!GUARD_TRACE) { logs("=== GUARD TRACE (F5): disabled since v0.23 (run 23 crashed the game) ===\r\n"); return; }
     gt_start(game_base + GT_PAGE_RVA);

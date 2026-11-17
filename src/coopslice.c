@@ -127,8 +127,8 @@ static DWORD WINAPI cs_thread(LPVOID u)
         __sync_fetch_and_add(&cs_per[k], 1);
         if (now - cs_report >= 10000) {
             cs_report = now;
-            wsprintfA(b, "  [co-op t=%lus] %ld slices (%ld skipped); per Steam controller: 1=%ld 2=%ld 3=%ld 4=%ld; active now: %d; popup quieted %ld\r\n",
-                      (unsigned long)((now - cs_t0) / 1000), cs_slices, cs_skips, cs_per[0], cs_per[1], cs_per[2], cs_per[3], np, cs_quieted);
+            wsprintfA(b, "  [co-op t=%lus] %ld slices of %lu ms (%ld skipped); per Steam controller: 1=%ld 2=%ld 3=%ld 4=%ld; active now: %d; popup quieted %ld\r\n",
+                      (unsigned long)((now - cs_t0) / 1000), cs_slices, (unsigned long)cs_ms, cs_skips, cs_per[0], cs_per[1], cs_per[2], cs_per[3], np, cs_quieted);
             logs(b);
         }
     }
@@ -173,6 +173,15 @@ static void coop_slice_poll(void)
         wsprintfA(b, "  co-op: popup (CThisIs) %p\r\n", (void *)cs_thisis);
         logs(b);
     }
+}
+
+/* F6 (research build): slice length 40 -> 80 -> 150 -> 40 ms, live */
+static void coop_slice_cycle(void)
+{
+    char b[120];
+    cs_ms = cs_ms < 80 ? 80 : cs_ms < 150 ? 150 : 40;
+    wsprintfA(b, "=== F6: co-op slice now %lu ms (t=%lu ms) ===\r\n", (unsigned long)cs_ms, (unsigned long)GetTickCount64());
+    logs(b);
 }
 
 /* test hook (not used by the game): toggle co-op; outside a battle it must refuse */

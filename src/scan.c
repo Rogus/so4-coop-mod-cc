@@ -534,6 +534,8 @@ static void guard_trace(void);
 static int f5_was, f3_was, f4_was, f2_was;
 static void coop_toggle(void);
 static void tt_take(int player);
+static void display_fix_cycle(void);
+static void coop_slice_cycle(void);
 
 static void poll_hotkeys(void)
 {
@@ -547,10 +549,10 @@ static void poll_hotkeys(void)
 #endif
     { int f2 = (GetAsyncKeyState(0x71 /* VK_F2 */) & 0x8000) != 0; if (f2 && !f2_was) coop_toggle(); f2_was = f2; }
     int f5 = (GetAsyncKeyState(0x74 /* VK_F5 */) & 0x8000) != 0;
-    if (f5 && !f5_was) guard_trace();
+    if (f5 && !f5_was) display_fix_cycle();         /* v0.36 (the guard trace was disabled since v0.23) */
     f5_was = f5;
     int f6 = (GetAsyncKeyState(0x75 /* VK_F6 */) & 0x8000) != 0;
-    if (f6 && !f6_was) stick_capture();
+    if (f6 && !f6_was) coop_slice_cycle();          /* v0.36 (stick capture: so4coop_stickcap test hook) */
     f6_was = f6;
     int f7 = (GetAsyncKeyState(0x76 /* VK_F7 */) & 0x8000) != 0;
     if (f7 && !f7_was) autocap_toggle();

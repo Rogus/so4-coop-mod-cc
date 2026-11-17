@@ -599,3 +599,14 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   antes e durante a pausa ou nada muda, cache de instruções descarregado, proteção restaurada. Uma vez por
   sessão, quando o co-op liga.
 - Autoteste (chamada dentro da própria sonda): antes 4, depois 2002 -> funciona.
+- Rodada 35 (v0.35, 3 jogadores): correção 2 aplicada sem travar (60 threads pausadas, 8 locais), minimapa
+  ficou estável. Popup CThisIs nunca foi pego em 3-5 em ~2250 trocas -> não é ele que pisca (correção 1 sem
+  efeito). PROBLEMA NOVO relatado: com cada jogador movendo o seu personagem (lados diferentes, ou todos para
+  cima) os personagens travam/param e "parecem controlados pelo mesmo"; na rodada 33 (v0.33) isso não foi
+  notado. Duas hipóteses: (a) algum local remendado não é só visual (CSightInCursor vf32 chama métodos do
+  personagem: vf+0x530, 0x53d130; o ajudante do CTargetBoard só mede distância até o alvo, parece visual);
+  (b) fatias de 40 ms com 3 jogadores (40 de cada 120 ms; no resto a IA mexe o personagem).
+- v0.36 para separar: F5 alterna ao vivo TODOS os 8 locais -> SÓ MINIMAPA -> DESLIGADO (= v0.34) (os locais
+  continuam remendados; o bit desligado devolve o líder real); gl_display identifica o local pelo endereço de
+  retorno e conta chamadas por local (relatório [display] a cada 10 s); F6 alterna a fatia 40 -> 80 -> 150 ms.
+  Config opcional coop_display_sites= (hex, padrão ff).
