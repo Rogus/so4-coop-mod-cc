@@ -525,3 +525,15 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
 - Igual à 1.0 + hook_steam=1 e leader_only_input=1 ligados no so4coop.ini modelo: na batalha só o controle
   do líder comanda o líder. README/LEIA-ME atualizados. Pacote build/release/so4coop-tagteam-1.1.zip.
   Testado no Wine local (versão, ini, autotestes do filtro, recusa fora de batalha).
+
+## Fase 5 - co-op de verdade (pesquisa)
+- Dois caminhos: (1) o certo: achar onde a IA decide as ações de um membro que não é líder e trocar pela
+  entrada do controle 2 (engenharia reversa longa); (2) experimento rápido com peças já provadas:
+  alternar o líder entre dois personagens a cada N ms e, a cada troca, deixar passar só o controle daquele
+  personagem.
+- v0.32 (src/coopslice.c): F2 liga/desliga; coop_a/coop_b (posições, padrão 0 e 1), coop_slice_ms (padrão 50).
+  Cada fatia: valida a batalha, grava a posição do líder (mesmas checagens do tag-team) e põe o filtro no
+  controle daquela posição (steamN_position). Desligar devolve o líder para coop_a. Precisa de
+  leader_only_input=1 para separar a entrada. Teste local: recusa fora de batalha. Na release o código fica
+  inerte (F2 não existe lá).
+- Problemas esperados: câmera indo e voltando, animação de troca, IA assumindo na outra metade do tempo.
