@@ -653,3 +653,9 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   textura nova em formato de interface (RGBA/BGRA 8 bits, BC1/2/3/7) é salva uma vez como .dds (até 6000
   arquivos / 3 GB). Só observa. Autoteste: gancho + textura 64x64 por um 2º dispositivo -> salva, o Pillow lê.
 - Próximo: achar a folha com os ícones do Xbox (cores A/B/X/Y), desenhar os ícones do PlayStation e trocar.
+- Rodada 40 (v0.40; lista em notes/run40_textures.txt): o gancho funcionou (553 texturas com dados, 762 sem),
+  mas 0 .dds salvos: o jogo cria em formatos TYPELESS (70 BC1, 73 BC2, 76 BC3, 27 RGBA8, 97 BC7, 83 BC5) e a
+  v0.40 só salvava os tipados. Todas imutáveis (usage 1). Candidatas a folhas de interface: 4x 8192x4096 e
+  2x 2048x4096 em BC3 (DXT5). Nada criado entre 45 s e ~60 s (tela de título antes do gancho).
+- v0.41: salva os TYPELESS (arquivo marcado como UNORM) e lista também as texturas criadas sem dados.
+  Autoteste com RGBA8 e BC3 TYPELESS: os dois salvos e lidos pelo Pillow.

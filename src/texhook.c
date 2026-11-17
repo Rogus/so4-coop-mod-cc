@@ -62,7 +62,8 @@ static uint32_t tx_fmt(uint32_t f, int *block)
 static int tx_saveable(uint32_t f)
 {
     switch (f) {
-    case 28: case 29: case 87: case 91: case 71: case 72: case 74: case 75: case 77: case 78: case 98: case 99: return 1;
+    case 27: case 28: case 29: case 87: case 91: case 70: case 71: case 72: case 73: case 74: case 75: case 76: case 77: case 78:
+    case 97: case 98: case 99: return 1;              /* v0.41: + the TYPELESS formats the game uses (27, 70, 73, 76, 97) */
     }
     return 0;
 }
@@ -92,6 +93,7 @@ static void tx_save(uint64_t h, const TX_DESC *d, const BYTE *p, uint32_t pitch,
     hd[7] = 1;                                           /* mip count */
     hd[19] = 32;                                         /* pixel format size */
     uint32_t f2 = d->Format, n = 32;
+    if (f2 == 70 || f2 == 73 || f2 == 76 || f2 == 27 || f2 == 97) f2++;     /* TYPELESS -> UNORM for the file */
     if (f2 == 71 || f2 == 72) { hd[20] = 0x4; hd[21] = 0x31545844; }        /* DXT1 */
     else if (f2 == 74 || f2 == 75) { hd[20] = 0x4; hd[21] = 0x33545844; }   /* DXT3 */
     else if (f2 == 77 || f2 == 78) { hd[20] = 0x4; hd[21] = 0x35545844; }   /* DXT5 */
@@ -111,7 +113,20 @@ static long tx_create(void *self, const TX_DESC *desc, const TX_INIT *init, void
 {
     long hr = tx_orig(self, desc, init, out);
     if (hr < 0 || !desc) return hr;
-    if (!init || !init->pSysMem) { __sync_fetch_and_add(&tx_n_nodata, 1); return hr; }
+    if (!init || !init->pSysMem) {                        /* v0.41: listed too (data arrives later) */
+        __sync_fetch_and_add(&tx_n_nodata, 1);
+        char line[200];
+        wsprintfA(line, "%lu\t(no data)\t%lux%lu\tmips %lu\tarray %lu\tfmt %lu\tbind %lx\tusage %lu\tmisc %lx\tthread %lu\tcpu %lx\r\n",
+                  (unsigned long)(GetTickCount64() - tx_t0), (unsigned long)desc->Width, (unsigned long)desc->Height, (unsigned long)desc->MipLevels,
+                  (unsigned long)desc->ArraySize, (unsigned long)desc->Format, (unsigned long)desc->BindFlags, (unsigned long)desc->Usage,
+                  (unsigned long)desc->MiscFlags, (unsigned long)GetCurrentThreadId(), (unsigned long)desc->CPUAccessFlags);
+        DWORD n = 0, w;
+        while (line[n]) n++;
+        tx_acquire();
+        if (tx_list != (HANDLE)-1) WriteFile(tx_list, line, n, &w, 0);
+        tx_release();
+        return hr;
+    }
     __sync_fetch_and_add(&tx_n_data, 1);
     int block;
     uint32_t bpe = tx_fmt(desc->Format, &block);
@@ -240,9 +255,17 @@ __declspec(dllexport) void WINAPI so4coop_textest(void)
     long hr = ((tx_create_fn)(*(void ***)dev)[5])(dev, &d, &in, &tex);
     typedef unsigned long (*rel_fn)(void *);
     if (tex) ((rel_fn)(*(void ***)tex)[2])(tex);
+    tex = 0;                                              /* v0.41: also a BC3 TYPELESS one (the game's format) */
+    static BYTE bc3[16 * 16 * 16];
+    for (int i = 0; i < (int)sizeof bc3; i++) bc3[i] = (BYTE)(i * 37 + 11);
+    TX_DESC d3 = { 64, 64, 1, 1, 76, 1, 0, 0, 8, 0, 0 };
+    TX_INIT in3 = { bc3, 16 * 16, 0 };
+    long hr3 = ((tx_create_fn)(*(void ***)dev)[5])(dev, &d3, &in3, &tex);
+    if (tex) ((rel_fn)(*(void ***)tex)[2])(tex);
+    if (hr3 < 0) hr = hr3;
     if (ctx) ((rel_fn)(*(void ***)ctx)[2])(ctx);
     ((rel_fn)(*(void ***)dev)[2])(dev);
     wsprintfA(b, "texture self-test: CreateTexture2D hr %lx, saved %ld -> %ld: %s\r\n", (unsigned long)hr, before, tx_n_saved,
-              hr >= 0 && tx_n_saved == before + 1 ? "WORKS" : "FAILED");
+              hr >= 0 && tx_n_saved == before + 2 ? "WORKS" : "FAILED");
     logs(b);
 }
