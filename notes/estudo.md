@@ -437,3 +437,18 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   (GetConnectedControllers) e consulta as ações 1..32 em cada um (GetDigitalActionData) a cada 60 ms,
   registrando cada mudança (calibração). take_action=<n> no so4coop.ini: ação n no controle k do Steam
   -> jogador k assume.
+
+### Execução 27 (v0.27) - notes/run27_v0.27 — Steam vê 3 controles
+- Interface SteamController005 obtida; **3 controles conectados** (handles 0x1C666D5EC4E5, 0x135371001869A2DE,
+  0x2D90895F4DC78F). 130 mudanças, **todas no controle 3 do Steam**: ação 1 x1, 2 x2, 3 x45, 4 x2, 10 x15.
+  Controles 1 e 2 não relataram nenhuma ação.
+- Hipótese: o Steam só relata ações onde o jogo ativou o seu conjunto de ações; o jogo parece usar só um
+  controle (o 3º), o que explica também tudo no objeto de controle 1 na execução 25.
+- Ação 10 = candidata a R3 (15 toques no fim); ação 3 = provável ataque.
+- Próximo: confirmar com o usuário a ordem e se o 2º controle mexia no jogo; se não, ativar o conjunto de
+  ações atual (GetCurrentActionSet do controle 3 -> ActivateActionSet nos outros) para lê-los.
+- Relato do usuário (exec. 27): R3 3x no DualSense, depois 3x no outro; saiu com Super+Q. O 3º "controle"
+  do Steam não é o teclado (F3/F4 são lidos pelo mod direto); provavelmente um dispositivo virtual/duplicado.
+- v0.28: horário em cada linha de ação; por controle, índice de gamepad e conjunto de ações; activate_all=1
+  (so4coop.ini criado no jogo só com essa linha): a cada 2 s o conjunto de ações do controle que tem um é
+  ativado nos outros. take_action agora é decimal (o teste pegou 10 -> 16 com o leitor hex).

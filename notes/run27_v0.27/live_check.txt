@@ -1,0 +1,26 @@
+game pid 180178 started 05:18:16
+===== 05:18:46  default sink: bluez_output.41_42_47_D8_D3_08.1
+threads:      70 S       2 swapchain 
+  stream #7714 Sink: 7091 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=-2.5 dBFS rms=-14.6 dBFS
+  default sink state: RUNNING
+===== 05:19:05  default sink: bluez_output.41_42_47_D8_D3_08.1
+threads:       1 R      69 S       2 swapchain 
+  stream #7714 Sink: 7091 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=-2.9 dBFS rms=-14.6 dBFS
+  default sink state: RUNNING
+===== 05:19:23  default sink: bluez_output.41_42_47_D8_D3_08.1
+threads:       2 R      68 S       2 swapchain 
+  stream #7714 Sink: 7091 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=-1.0 dBFS rms=-15.5 dBFS
+  default sink state: RUNNING
+===== 05:19:42  default sink: bluez_output.41_42_47_D8_D3_08.1
+threads:       1 R      70 S       2 swapchain 
+  stream #7714 Sink: 7091 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=0.0 dBFS rms=-12.9 dBFS
+  default sink state: RUNNING
+===== 05:20:00  default sink: bluez_output.41_42_47_D8_D3_08.1
+threads:      71 S       2 swapchain 
+  stream #7714 Sink: 7091 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=-0.1 dBFS rms=-13.2 dBFS
+  default sink state: RUNNING
+===== 05:20:19  default sink: bluez_output.41_42_47_D8_D3_08.1
+threads:       1 R      70 S       2 swapchain 
+  stream #7714 Sink: 7091 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=0.0 dBFS rms=-12.1 dBFS
+  default sink state: RUNNING
+game exited 05:20:37
