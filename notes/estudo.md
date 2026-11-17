@@ -276,3 +276,19 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   líder <= max); (2) painel = líder; (3) max + 1 = nº de personagens do grupo na memória (RTTI).
   As 3 checagens passam nas 19 capturas.
 - Sessões curtas às 03:02 (30 s) e 03:02:53: inícios extras, sem dados.
+
+### Execução 21 (v0.20) - notes/run21_v0.20 — **primeira escrita, e o jogo seguiu**
+- As 3 checagens passaram; 5 escritas (4 na 1ª batalha: 0->1->2->3->0; 1 na 2ª: 0->1).
+- Depois de cada escrita: o valor **permaneceu** (3 s), o **destaque do painel deslizou** até a nova posição
+  (x 70 -> 295 -> 353 etc., a mesma animação do R1) e o **foco da câmera foi para o novo líder**
+  (Sarah, Arumat, Myuria, Edge). CThisIs não apontou para ninguém. Sem travar.
+- Na 2ª batalha o bloco estava em outra região (0x149B4D3A0, base +0x60 = 0x149B4D350): o ponteiro
+  +0x68 funciona entre batalhas.
+- Falta o relato do usuário: o analógico passou a controlar o novo líder?
+- **Relato do usuário:** depois de cada F8 o analógico passou a controlar o novo líder. Logo **1 byte
+  ([*(CBattleMainTask+0x68) + 4]) troca o líder por completo** (câmera, painel e controle), sem travar.
+  Como esperado, continua havendo só um personagem controlável: é o desenho do jogo (1 líder + 3 IA).
+- Co-op exige um 2º membro (não líder) dirigido pelo controle 2 no lugar da IA. Próximos alvos:
+  (1) como a entrada do controle chega ao líder (começar pelos métodos do CBtlPad, vtable game+0x9d6c78,
+  offline); (2) onde a IA decide as ações dos outros membros; (3) leitura do 2º controle (Steam Input,
+  2 objetos WindowsPad).
