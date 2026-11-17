@@ -337,3 +337,10 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
 - Conclusão: estática achou **quem é o líder** (GetLeader/IsLeader), mas não **por onde entra o
   movimento** (deve passar por métodos virtuais dos objetos de controle). Próximo: captura dirigida
   pelo analógico (neutro/cima/direita/baixo/esquerda, repetido) e diff, como foi feito com o líder.
+- Validação offline da fórmula do líder: party = *(CBattleMainTask+0x58) = **CChrManager@Battle**,
+  membros em +0x5a0 = [Edge, Sarah, Arumat, Myuria] (execução 16), líder = membros[bloco[4]] confere
+  em todas as capturas (exec. 16 e 20).
+- v0.21: F6 = captura rotulada pelo analógico (neutro, cima, direita, baixo, esquerda, ×2), com objetos
+  Battle::, as 24 classes (personagens 256 KB, WindowsPad), globais de entrada game+0x1059000..0x105b000
+  e o líder achado pela fórmula do jogo. analysis/diff_stick.py procura eixos X/Y e campos discretos
+  (testado com dados sintéticos).

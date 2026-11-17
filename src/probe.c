@@ -113,6 +113,7 @@ static void wcat(uint16_t *d, const char *s)
 #include "allrtti.c"
 #include "writetest.c"
 #include "autocap.c"
+#include "stickcap.c"
 
 /* ---- statistics (written from the game's input thread, flushed every 2 s) ---- */
 #define MAXCALLERS 16
@@ -382,7 +383,7 @@ BOOL WINAPI DllMain(HMODULE self, DWORD reason, LPVOID unused)
             self_end = self_base + *(uint32_t *)(sb + *(int32_t *)(sb + 0x3c) + 24 + 56);
         }
         open_log(self);
-        logs("so4coop probe v0.20 loaded (hotkeys after 45 s; F7 = auto-capture, F8 = WRITE TEST on the leader block at *(CBattleMainTask+0x68) (3 checks), F9 = scan + dump, F10 = mark)\r\n");
+        logs("so4coop probe v0.21 loaded (hotkeys after 45 s; F6 = stick capture (neutral,up,right,down,left x2); F7 = auto-capture, F8 = WRITE TEST on the leader block at *(CBattleMainTask+0x68) (3 checks), F9 = scan + dump, F10 = mark)\r\n");
         describe_game_module();   /* the real XInput is loaded on the first call, not under the loader lock */
         CreateThread(0, 0, hotkey_thread, 0, 0, 0);
     }
