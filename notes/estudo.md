@@ -619,3 +619,10 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   minimapa quase nunca.
 - v0.37: só os 4 locais do minimapa são remendados; F5 liga/desliga a correção do minimapa; F6 continua
   (fatia 40/80/150 ms); popup (coop_quiet_marker) desligado por padrão.
+- Rodada 37 (v0.37, 40 ms; log em notes/run37_probe.log): com só o minimapa remendado (948 de 948 chamadas
+  devolveram Edge) o minimapa AINDA piscou e o branco nos personagens voltou. Na rodada 35 (8 locais, 40 ms)
+  o minimapa ficou estável; na rodada 36 batalha 1 (minimapa, 80 ms) também -> os cursores brancos vêm do
+  cursor de mira e/ou do quadro de alvo, e a fatia mais longa (menos trocas/s) disfarça o pisca.
+  Controle 1 ficou sem uso até o R3 (nenhum botão/analógico antes). Usuário prefere fatia padrão de 40 ms.
+- v0.38: os 8 locais remendados de novo; F5 percorre MODO 1 MAPA -> 2 MAPA + QUADRO DE ALVO -> 3 MAPA +
+  CURSOR DE MIRA -> 4 DESLIGADO, para achar qual deles acalma o visual sem puxar os personagens.

@@ -1,5 +1,5 @@
 /*
- * so4coop - co-op flicker fix 2: steady "display leader" for the mini-map (v0.35; v0.36 F5 modes + per-site counts; v0.37 mini-map sites only).  Included after coopslice.c.
+ * so4coop - co-op flicker fix 2: steady "display leader" for the mini-map (v0.35; v0.36 F5 modes + per-site counts; v0.37 mini-map sites only; v0.38 F5 = map / +target board / +sight cursor / off).  Included after coopslice.c.
  *
  * The mini-map markers, sight cursor, sight outline effect and target board ask GetLeader
  * (game+0x5000d0) for the leader every frame; during co-op the leader alternates ~25x/s, so they
@@ -21,24 +21,28 @@ __declspec(dllimport) void *WINAPI VirtualAlloc(void *, uint64_t, DWORD, DWORD);
 __declspec(dllimport) BOOL WINAPI FlushInstructionCache(HANDLE, const void *, uint64_t);
 
 #define GL_RVA 0x5000d0
-/* v0.37: only the 4 mini-map sites. Round 35 (all 8 sites) broke movement ("characters pulled back"); round
- * 36 (F5 live): mini-map only = map steady + movement normal, so the sight cursor (0x6161f1, 0x616911) and the
- * target board helper (0x6593a8) feed gameplay and must see the real leader; the sight outline (0x61b150) was
- * never called. */
-static const uint32_t gl_sites[] = { 0x6075e1, 0x6080bd, 0x609372, 0x609e30 };
+/* v0.37 patched only the 4 mini-map sites: round 37 (40 ms) the mini-map still flickered, while round 35 (all 8
+ * sites, 40 ms) it was steady but movement broke ("characters pulled back"). So the white map cursors come
+ * from the sight cursor or the target board, and one of them feeds gameplay. v0.38 patches the 8 sites again
+ * and F5 cycles which ones get the steady leader:
+ *   MAP (0-3) -> MAP + TARGET BOARD (+7) -> MAP + SIGHT CURSOR (+4,5) -> OFF -> MAP ...
+ * The sight outline (6) was never called; it is patched but never enabled. */
+static const uint32_t gl_sites[] = { 0x6075e1, 0x6080bd, 0x609372, 0x609e30, 0x6161f1, 0x616911, 0x61b150, 0x6593a8 };
 #define GL_NSITES (sizeof(gl_sites) / sizeof(gl_sites[0]))
 static uint32_t gl_fix = 1, gl_pos = 0xffffffff;
 static volatile int gl_done, gl_applied;
 static volatile long gl_calls, gl_shown, gl_cnt[GL_NSITES];
-/* which sites get the steady leader; F5 (research build) toggles ON / OFF live. Patched sites whose bit is
- * clear just return the real leader. */
-#define GL_ALL 0x0f
-static volatile uint32_t gl_mask = GL_ALL;
+/* which sites get the steady leader; patched sites whose bit is clear just return the real leader */
+#define GL_MAP 0x0f
+#define GL_BOARD 0x80
+#define GL_SIGHT 0x30
+static volatile uint32_t gl_mask = GL_MAP;
 static uint64_t gl_report_t;
 
 static const char *gl_mode_name(uint32_t m)
 {
-    return m == GL_ALL ? "mini-map fix ON" : m == 0 ? "mini-map fix OFF (real leader)" : "custom";
+    return m == GL_MAP ? "MODE 1: MAP" : m == (GL_MAP | GL_BOARD) ? "MODE 2: MAP + TARGET BOARD" : m == (GL_MAP | GL_SIGHT) ? "MODE 3: MAP + SIGHT CURSOR"
+         : m == 0 ? "MODE 4: OFF (real leader)" : m == (GL_MAP | GL_BOARD | GL_SIGHT) ? "ALL" : "custom";
 }
 
 /* same result as GetLeader, except a steady member while co-op runs (for the enabled sites) */
@@ -160,18 +164,18 @@ static void gl_load(void)
         CloseHandle(h);
         if (tt_find_value(buf, r, "coop_display_fix=", &v)) gl_fix = v ? 1 : 0;
         if (tt_find_value(buf, r, "coop_display_pos=", &v)) gl_pos = v;
-        if (tt_find_hex(buf, r, "coop_display_sites=", &v)) gl_mask = v & GL_ALL;
+        if (tt_find_hex(buf, r, "coop_display_sites=", &v)) gl_mask = v & 0xbf;
     }
     if (gl_pos == 0xffffffff)                             /* default: lowest mapped position */
         for (int k = 0; k < SC_MAXCTL; k++) if (sc_pos[k] < gl_pos) gl_pos = sc_pos[k];
 }
 
-/* F5 (research build): mini-map fix on <-> off */
+/* F5 (research build): MAP -> MAP + TARGET BOARD -> MAP + SIGHT CURSOR -> OFF -> MAP */
 static void display_fix_cycle(void)
 {
     char b[200];
     if (!gl_applied) { logs("=== F5: display fix not applied yet (it is applied when co-op first starts) ===\r\n"); return; }
-    gl_mask = gl_mask ? 0 : GL_ALL;
+    gl_mask = gl_mask == GL_MAP ? (GL_MAP | GL_BOARD) : gl_mask == (GL_MAP | GL_BOARD) ? (GL_MAP | GL_SIGHT) : gl_mask == (GL_MAP | GL_SIGHT) ? 0 : GL_MAP;
     wsprintfA(b, "=== F5: display fix now %s (t=%lu ms) ===\r\n", gl_mode_name(gl_mask), (unsigned long)GetTickCount64());
     logs(b);
 }
@@ -184,8 +188,8 @@ static void display_fix_poll(void)
         uint64_t now = GetTickCount64();
         if (now - gl_report_t >= 10000) {
             gl_report_t = now;
-            wsprintfA(b, "  [display] %s; mini-map calls %ld %ld %ld %ld; steady %ld of %ld\r\n",
-                      gl_mode_name(gl_mask), gl_cnt[0], gl_cnt[1], gl_cnt[2], gl_cnt[3], gl_shown, gl_calls);
+            wsprintfA(b, "  [display] %s; calls: mini-map %ld %ld %ld %ld, sight cursor %ld %ld, sight outline %ld, target board %ld; steady %ld of %ld\r\n",
+                      gl_mode_name(gl_mask), gl_cnt[0], gl_cnt[1], gl_cnt[2], gl_cnt[3], gl_cnt[4], gl_cnt[5], gl_cnt[6], gl_cnt[7], gl_shown, gl_calls);
             logs(b);
         }
     }
@@ -198,7 +202,7 @@ static void display_fix_poll(void)
     int ok = gl_patch(s, GL_NSITES, game_base + GL_RVA, (void *)gl_display, cs_tid, why);
     gl_applied = ok;
     gl_report_t = GetTickCount64();
-    wsprintfA(b, "  display fix: %s; %lu mini-map call sites patched, steady display leader = party position %lu during co-op, %s; F5 toggles (%s)\r\n",
+    wsprintfA(b, "  display fix: %s; %lu UI call sites patched, steady display leader = party position %lu during co-op, %s; F5 = next mode (%s)\r\n",
               ok ? "ON" : "NOT applied", (unsigned long)GL_NSITES, (unsigned long)gl_pos, gl_mode_name(gl_mask), why);
     logs(b);
 }
