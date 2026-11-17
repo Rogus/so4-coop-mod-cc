@@ -467,3 +467,9 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   (até 4 jogadores); sem essas linhas vale p1_steam (jogador 1) / todos os outros (jogador 2). tt_take dividido
   em tt_take_pos(rótulo, posição). Teste local: posições lidas (3->0, 2->1, 1->2), recusa fora de batalha.
   A ordem dos controles no Steam pode mudar entre sessões (o log lista a cada início).
+
+### Execução 29 (v0.29) - notes/run29_v0.29 — **tag-team pelos controles funcionando**
+- R3 (ação 10) em cada controle trocou o líder para o personagem configurado, duas voltas:
+  controle 3 -> Edge, controle 2 -> Sarah, controle 1 -> Arumat (6 apertos, todas as checagens ok, sem travar).
+- Falta o usuário dizer qual controle físico é o 2 e qual é o 1 (GameSir / DualShock 4) e se o R3 fez algo além
+  de recentralizar a câmera.
