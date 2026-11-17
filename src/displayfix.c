@@ -206,7 +206,12 @@ static void display_fix_poll(void)
     int ok = gl_patch(s, GL_NSITES, game_base + GL_RVA, (void *)gl_display, cs_tid, why);
     gl_applied = ok;
     gl_report_t = GetTickCount64();
-    wsprintfA(b, "  display fix: %s; %lu UI call sites patched, steady display leader = party position %lu during co-op, %s; F5 = next mode (%s)\r\n",
+#ifdef SO4COOP_RELEASE
+#define GL_F5_HINT ""
+#else
+#define GL_F5_HINT "; F5 = on/off"
+#endif
+    wsprintfA(b, "  display fix: %s; %lu UI call sites patched, steady display leader = party position %lu during co-op, %s" GL_F5_HINT " (%s)\r\n",
               ok ? "ON" : "NOT applied", (unsigned long)GL_NSITES, (unsigned long)gl_pos, gl_mode_name(gl_mask), why);
     logs(b);
 }

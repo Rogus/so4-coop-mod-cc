@@ -1,4 +1,4 @@
-so4coop co-op 1.2 - STAR OCEAN - THE LAST HOPE - 4K & Full HD Remaster (Steam)
+so4coop co-op 1.3 - STAR OCEAN - THE LAST HOPE - 4K & Full HD Remaster (Steam)
 =================================================================================
 
 What it does
@@ -12,11 +12,14 @@ default) and, during each turn, lets only that player's controller reach the gam
 counts as active while they use their controller (stick or any button in the last 1.5 s); idle
 players' characters are left to the AI, and a single active player plays like single-player.
 
+New in 1.3: no more flicker. While co-op runs, the battle mini-map, the sight cursor and the
+target board show one steady character instead of switching between the players many times per
+second (that switching made the cursors and the characters flash white).
+
 Known issues
 ------------
-- With 3 or more players the leader marker flickers: the white highlight on the controlled
-  characters and their cursors on the battle mini-map. Gameplay is not affected. A longer
-  coop_slice_ms (e.g. 80) flickers less but feels less smooth.
+- During co-op the mini-map, sight cursor and target board follow one character
+  (coop_display_pos, by default the first member) rather than whoever has the current turn.
 - Battle only. In the field and in menus every controller works as usual (single leader).
 - The mod starts reacting about 45 seconds after the game starts.
 
@@ -42,15 +45,22 @@ Other settings
 --------------
 coop_auto=1          co-op starts with every battle (0 = off; R3 then works as tag-team:
                      your character becomes the leader).
-coop_slice_ms=40     length of each player's turn (smaller = smoother, more flicker).
+coop_slice_ms=40     length of each player's turn (smaller = smoother).
 coop_idle_ms=1500    after this long without input a player stops getting turns.
 coop_active_only=1   0 = every mapped player gets turns even when idle.
+coop_display_fix=1   steady mini-map / sight cursor / target board during co-op (0 = off: they
+                     follow the current turn and flicker).
+coop_display_pos=P   which party position they follow during co-op (default: the lowest
+                     steamN_position).
+coop_display_sites=bf  advanced: 0f = mini-map only, 8f = + target board, 3f = + sight cursor.
 hook_steam=1, leader_only_input=1   needed: each controller only reaches its own character.
 
 Uninstall
 ---------
 Delete xinput1_3.dll, so4coop.ini and so4coop.log from the game folder (and the launch option).
 
-The mod only writes the leader position in game memory (the value L1/R1 change), after checking
-that a battle is running, and filters what each controller sends to the game. It never touches
-save files.
+The mod writes the leader position in game memory (the value L1/R1 change), after checking
+that a battle is running, filters what each controller sends to the game, and (coop_display_fix)
+redirects 8 calls in the game's display code in memory - mini-map, sight cursor, target board -
+after checking each one; gameplay code is not changed. Nothing is changed on disk and it never
+touches save files.

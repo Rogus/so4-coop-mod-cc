@@ -1,0 +1,804 @@
+
+===== session 20261117_073631 =====
+so4coop probe v0.39 loaded (CO-OP: up to 4 players, time-sliced leader for active players, steady UI leader for map + target board + sight cursor; F5 = UI fix on/off, F6 = slice 40/80/150 ms; F2 toggles, coop_auto=1 starts with battles; TAG-TEAM: R3 = Steam action 10 per controller; hook_steam=1 + leader_only_input=1: only the leader's controller drives; R3 via XInput, F3/F4 = player 1/2; F3/F4 = player 1/2; hotkeys after 45 s; F5/F6 as above; F7 = auto-capture, F8 = WRITE TEST on the leader block at *(CBattleMainTask+0x68) (3 checks), F9 = scan + dump, F10 = mark)
+game module base=0000000140000000 size=0x0585d000 sections=10
+  .data1   rva=0x00001000 vsize=0x0090b000 flags=0x60000020
+  .xdata   rva=0x0090c000 vsize=0x00320800 flags=0x40000040
+  .arch    rva=0x00c2d000 vsize=0x0070ed68 flags=0xc0000020
+  .pdata   rva=0x0133c000 vsize=0x00065e00 flags=0x40000040
+  .xpdata  rva=0x013a2000 vsize=0x04487932 flags=0xe0000020
+  .text    rva=0x0582a000 vsize=0x00002d3b flags=0x60000020
+  .link    rva=0x0582d000 vsize=0x00000b1b flags=0x60000020
+  .srdata  rva=0x0582e000 vsize=0x000015da flags=0x40000040
+  .xtext   rva=0x05830000 vsize=0x000014b0 flags=0x40000040
+  .bind    rva=0x05832000 vsize=0x0002acd0 flags=0x60000000
+watch: code game+0x013a2000-0x05829932, 34735 function entries
+watch: hardware watchpoints disabled (v0.10)
+first call: XInputGetCapabilities from game+0x01f15bc0
+real XInput: system32\xinput1_3.dll
+first call: XInputSetState from game+0x003786cd
+new caller: game+0x003786cd
+hotkeys active (45 s after load)
+  take button not configured yet: every button change of both controllers is logged (calibration)
+=== TAG-TEAM ready: the take button (R3, set in so4coop.ini after calibration) on your controller takes control (F3 = player 1, F4 = player 2); player 1 = party position 0, player 2 = position 1 (from so4coop.ini) ===
+  pad1 buttons: 0002 0002 0000 0000 0000 0000
+  controllers: XInput slots connected  -> player 1 = slot -1, player 2 = slot -1
+  steam controller: interface 000000000029AF40 (SteamController005); action-set calls available
+  steam controller: take action = 10, player 1 = Steam controller 1 (every other controller = player 2), activate_all = 0
+  steam controller 1 -> party position 2
+  steam controller 2 -> party position 1
+  steam controller 3 -> party position 0
+  steam hook: installed on interface 000000000029AF40 (vtable 00006FFFFADB19B8 -> 00006FFFFA7E5A20), counting only
+  steam hook: leader-only input ON (other controllers are neutral while a mapped character leads)
+  steam controller: 3 connected
+    controller 1: handle 00001C666D5EC4E5, gamepad index -1, action set 0000000000000001
+    controller 2: handle 135371001869A2DE, gamepad index -1, action set 0000000000000001
+    controller 3: handle 002D90895F4DC78F, gamepad index -1, action set 0000000000000001
+  steamctl t=     6 ms controller 3 action 14: pressed
+  co-op: auto 1 (F2 toggles in the research build), slice 40 ms, active players only 1 (idle after 1500 ms), quiet marker 0
+[alive t=45s] GetState calls so far: 0
+  pad1 buttons: 0000 0002 0000 0000 0000 0000
+  steamctl t=    76 ms controller 3 action 14: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0008 0008 0000 0000 0000 0000
+  steamctl t=   929 ms controller 3 action 16: pressed
+  pad1 buttons: 0000 0008 0000 0000 0000 0000
+  steamctl t=  1052 ms controller 3 action 16: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0002 0000 0000 0002 0000 0002
+  pad1 buttons: 0002 0002 0000 0000 0000 0000
+  steamctl t=  1420 ms controller 3 action 14: pressed
+  pad1 buttons: 0000 0002 0000 0000 0000 0000
+  steamctl t=  1483 ms controller 3 action 14: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0008 0008 0000 0000 0000 0000
+  steamctl t=  1668 ms controller 3 action 16: pressed
+  pad1 buttons: 0008 0008 0000 0000 0000 0008
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=  2217 ms controller 3 action 16: released
+  pad1 buttons: 2000 2000 0000 0000 0000 0000
+  steamctl t=  2401 ms controller 3 action  1: pressed
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=  2464 ms controller 3 action  1: released
+  pad1 buttons: 2000 0000 0000 2000 0000 2000
+  pad1 buttons: 2000 2000 0000 0000 0000 0000
+  steamctl t=  2650 ms controller 3 action  1: pressed
+  pad1 buttons: 0000 2000 0000 0000 0000 0000
+  steamctl t=  2712 ms controller 3 action  1: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 2000 2000 0000 0000 0000 0000
+  steamctl t=  3686 ms controller 3 action  1: pressed
+  pad1 buttons: 0000 2000 0000 0000 0000 0000
+  steamctl t=  3810 ms controller 3 action  1: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0004 0000 0000 0004 0000 0004
+  steamctl t=  4115 ms controller 3 action 15: pressed
+  pad1 buttons: 0004 0004 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=  4301 ms controller 3 action 15: released
+  pad1 buttons: 2000 2000 0000 0000 0000 0000
+  steamctl t=  4364 ms controller 3 action  1: pressed
+  pad1 buttons: 0000 2000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=  4489 ms controller 3 action  1: released
+  pad1 buttons: 0002 0002 0000 0000 0000 0000
+  steamctl t=  5402 ms controller 3 action 14: pressed
+  pad1 buttons: 0002 0002 0000 0000 0000 0002
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=  7042 ms controller 3 action 14: released
+  pad1 buttons: 0008 0008 0000 0000 0000 0000
+  steamctl t=  7528 ms controller 3 action 16: pressed
+  pad1 buttons: 0000 0008 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=  7653 ms controller 3 action 16: released
+  pad1 buttons: 0008 0000 0000 0008 0000 0008
+  pad1 buttons: 0008 0008 0000 0000 0000 0000
+  steamctl t=  8141 ms controller 3 action 16: pressed
+  pad1 buttons: 0000 0008 0000 0000 0000 0000
+  steamctl t=  8204 ms controller 3 action 16: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0008 0008 0000 0000 0000 0000
+  steamctl t=  8329 ms controller 3 action 16: pressed
+  pad1 buttons: 0000 0008 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=  8454 ms controller 3 action 16: released
+  pad1 buttons: 0008 0000 0000 0008 0000 0008
+  pad1 buttons: 0008 0008 0000 0000 0000 0000
+  steamctl t=  8639 ms controller 3 action 16: pressed
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=  8763 ms controller 3 action 16: released
+  pad1 buttons: 0200 0200 0000 0000 0000 0000
+  steamctl t=  8886 ms controller 3 action  6: pressed
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=  9070 ms controller 3 action  6: released
+  pad1 buttons: 0200 0000 0000 0200 0000 0200
+  pad1 buttons: 0200 0200 0000 0000 0000 0000
+  steamctl t=  9316 ms controller 3 action  6: pressed
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=  9500 ms controller 3 action  6: released
+  pad1 buttons: 0200 0000 0000 0200 0000 0200
+  steamctl t=  9563 ms controller 3 action  6: pressed
+  pad1 buttons: 0200 0200 0000 0000 0000 0000
+  pad1 buttons: 0000 0200 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=  9750 ms controller 3 action  6: released
+  pad1 buttons: 0200 0000 0000 0200 0000 0200
+  steamctl t=  9812 ms controller 3 action  6: pressed
+  pad1 buttons: 0200 0200 0000 0000 0000 0000
+  pad1 buttons: 0000 0200 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=  9998 ms controller 3 action  6: released
+  [steam hook t=10s] calls by the game (not the mod); leader-only filter ON, leader handle 0000000000000000, neutralised 0:
+    RunFrame                    3970
+    GetConnectedControllers     1588
+    GetDigitalActionData      113870 | handle 00001C666D5EC4E5 x38112 | handle 135371001869A2DE x38112 | handle 002D90895F4DC78F x37646
+    GetAnalogActionData         9528 | handle 00001C666D5EC4E5 x3176 | handle 135371001869A2DE x3176 | handle 002D90895F4DC78F x3176
+    digital actions queried: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+    analog actions queried: 1 2
+    caller 000000007BF8944D -> RunFrame
+    caller game+0x007a5c59 -> RunFrame
+    caller game+0x007a535a -> GetConnectedControllers
+    caller game+0x007a55a3 -> GetDigitalActionData
+    caller game+0x007a556d -> GetDigitalActionData
+    caller game+0x007a55f8 -> GetAnalogActionData
+  pad1 buttons: 0200 0200 0000 0000 0000 0000
+  steamctl t= 10083 ms controller 3 action  6: pressed
+  pad1 buttons: 0000 0200 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 10207 ms controller 3 action  6: released
+  pad1 buttons: 0200 0000 0000 0200 0000 0200
+  steamctl t= 10270 ms controller 3 action  6: pressed
+  pad1 buttons: 0200 0200 0000 0000 0000 0000
+  pad1 buttons: 0000 0200 0000 0000 0000 0000
+  steamctl t= 10394 ms controller 3 action  6: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0200 0000 0000 0200 0000 0200
+  pad1 buttons: 0200 0200 0000 0000 0000 0000
+  steamctl t= 10520 ms controller 3 action  6: pressed
+  pad1 buttons: 0000 0200 0000 0000 0000 0000
+  steamctl t= 10643 ms controller 3 action  6: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0200 0200 0000 0000 0000 0000
+  steamctl t= 10950 ms controller 3 action  6: pressed
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 11073 ms controller 3 action  6: released
+  pad1 buttons: 1000 0000 0000 1000 0000 1000
+  steamctl t= 12713 ms controller 3 action  2: pressed
+  pad1 buttons: 1000 1000 0000 0000 0000 0000
+  pad1 buttons: 0000 1000 0000 0000 0000 0000
+  steamctl t= 12838 ms controller 3 action  2: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 1000 0000 0000 1000 0000 1000
+  pad1 buttons: 1000 1000 0000 0000 0000 0000
+  steamctl t= 13025 ms controller 3 action  2: pressed
+  pad1 buttons: 0000 1000 0000 0000 0000 0000
+  steamctl t= 13088 ms controller 3 action  2: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 2000 0000 0000 2000 0000 2000
+  steamctl t= 14061 ms controller 3 action  1: pressed
+  pad1 buttons: 2000 2000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 14247 ms controller 3 action  1: released
+  pad1 buttons: 2000 2000 0000 0000 0000 0000
+  steamctl t= 14977 ms controller 3 action  1: pressed
+  pad1 buttons: 0000 2000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 15102 ms controller 3 action  1: released
+  pad1 buttons: 2000 2000 0000 0000 0000 0000
+  steamctl t= 16162 ms controller 3 action  1: pressed
+  pad1 buttons: 0000 2000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 16287 ms controller 3 action  1: released
+  pad1 buttons: 2000 0000 0000 2000 0000 2000
+  steamctl t= 17260 ms controller 3 action  1: pressed
+  pad1 buttons: 2000 2000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 17446 ms controller 3 action  1: released
+  pad1 buttons: 0100 0100 0000 0000 0000 0000
+  steamctl t= 19268 ms controller 3 action  5: pressed
+  pad1 buttons: 0000 0100 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 19393 ms controller 3 action  5: released
+  [steam hook t=20s] calls by the game (not the mod); leader-only filter ON, leader handle 0000000000000000, neutralised 0:
+    RunFrame                    7390
+    GetConnectedControllers     2956
+    GetDigitalActionData      212366 | handle 00001C666D5EC4E5 x70944 | handle 135371001869A2DE x70944 | handle 002D90895F4DC78F x70478
+    GetAnalogActionData        17736 | handle 00001C666D5EC4E5 x5916 | handle 135371001869A2DE x5916 | handle 002D90895F4DC78F x5916
+    digital actions queried: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+    analog actions queried: 1 2
+    caller 000000007BF8944D -> RunFrame
+    caller game+0x007a5c59 -> RunFrame
+    caller game+0x007a535a -> GetConnectedControllers
+    caller game+0x007a55a3 -> GetDigitalActionData
+    caller game+0x007a556d -> GetDigitalActionData
+    caller game+0x007a55f8 -> GetAnalogActionData
+[alive t=75s] GetState calls so far: 0
+  [steam hook t=30s] calls by the game (not the mod); leader-only filter ON, leader handle 0000000000000000, neutralised 0:
+    RunFrame                   10750
+    GetConnectedControllers     4302
+    GetDigitalActionData      309278 | handle 00001C666D5EC4E5 x103248 | handle 135371001869A2DE x103248 | handle 002D90895F4DC78F x102782
+    GetAnalogActionData        25812 | handle 00001C666D5EC4E5 x8608 | handle 135371001869A2DE x8608 | handle 002D90895F4DC78F x8608
+    digital actions queried: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+    analog actions queried: 1 2
+    caller 000000007BF8944D -> RunFrame
+    caller game+0x007a5c59 -> RunFrame
+    caller game+0x007a535a -> GetConnectedControllers
+    caller game+0x007a55a3 -> GetDigitalActionData
+    caller game+0x007a556d -> GetDigitalActionData
+    caller game+0x007a55f8 -> GetAnalogActionData
+  pad1 buttons: 1000 0000 0000 1000 0000 1000
+  pad1 buttons: 1000 1000 0000 0000 0000 0000
+  steamctl t= 30829 ms controller 3 action  2: pressed
+  pad1 buttons: 0000 1000 0000 0000 0000 0000
+  steamctl t= 30952 ms controller 3 action  2: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 1000 1000 0000 0000 0000 0000
+  steamctl t= 31622 ms controller 3 action  2: pressed
+  pad1 buttons: 1000 1000 0000 0000 0000 1000
+  pad1 buttons: 0000 1000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 31809 ms controller 3 action  2: released
+  pad1 buttons: 8000 8000 0000 0000 0000 0000
+  steamctl t= 34117 ms controller 3 action  4: pressed
+  pad1 buttons: 8001 8001 0000 0000 0000 0000
+  pad1 buttons: 8000 8000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 34242 ms controller 3 action  4: released
+  pad1 buttons: 1000 1000 0000 0000 0000 0000
+  steamctl t= 35337 ms controller 3 action  2: pressed
+  pad1 buttons: 0000 1000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 35462 ms controller 3 action  2: released
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 36072 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  steamctl t= 36256 ms controller 3 action  3: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 36564 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 36748 ms controller 3 action  3: released
+  steamctl t= 36810 ms controller 3 action  3: pressed
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 36997 ms controller 3 action  3: released
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 37122 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 37306 ms controller 3 action  3: released
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 37430 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  steamctl t= 37555 ms controller 3 action  3: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 37924 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  steamctl t= 38047 ms controller 3 action  3: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 38233 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 38358 ms controller 3 action  3: released
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 38481 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 38665 ms controller 3 action  3: released
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 38728 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 38913 ms controller 3 action  3: released
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 39038 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 39162 ms controller 3 action  3: released
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 39286 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 39470 ms controller 3 action  3: released
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 39594 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 39718 ms controller 3 action  3: released
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 39842 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  steamctl t= 39966 ms controller 3 action  3: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  [steam hook t=40s] calls by the game (not the mod); leader-only filter ON, leader handle 0000000000000000, neutralised 0:
+    RunFrame                   14040
+    GetConnectedControllers     5616
+    GetDigitalActionData      403886 | handle 00001C666D5EC4E5 x134784 | handle 135371001869A2DE x134784 | handle 002D90895F4DC78F x134318
+    GetAnalogActionData        33696 | handle 00001C666D5EC4E5 x11232 | handle 135371001869A2DE x11232 | handle 002D90895F4DC78F x11236
+    digital actions queried: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+    analog actions queried: 1 2
+    caller 000000007BF8944D -> RunFrame
+    caller game+0x007a5c59 -> RunFrame
+    caller game+0x007a535a -> GetConnectedControllers
+    caller game+0x007a55a3 -> GetDigitalActionData
+    caller game+0x007a556d -> GetDigitalActionData
+    caller game+0x007a55f8 -> GetAnalogActionData
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 40115 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  steamctl t= 40238 ms controller 3 action  3: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 42311 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 42496 ms controller 3 action  3: released
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 43046 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 43232 ms controller 3 action  3: released
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 43840 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  steamctl t= 43964 ms controller 3 action  3: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 44150 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 44275 ms controller 3 action  3: released
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 44399 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  steamctl t= 44523 ms controller 3 action  3: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 44709 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  steamctl t= 44832 ms controller 3 action  3: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 45017 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 45140 ms controller 3 action  3: released
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 45325 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 45448 ms controller 3 action  3: released
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 45572 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 45757 ms controller 3 action  3: released
+  pad1 buttons: 0001 0001 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+=== CO-OP ON (battle started) ===
+  display fix: ON; 8 UI call sites patched, steady display leader = party position 0 during co-op, ON: MAP + TARGET BOARD + SIGHT CURSOR; F5 = next mode (60 threads paused, trampoline 000000013F600000, patched)
+  [steam hook t=50s] calls by the game (not the mod); leader-only filter ON, leader handle 002D90895F4DC78F, neutralised 8528:
+    RunFrame                   17280
+    GetConnectedControllers     6912
+    GetDigitalActionData      497198 | handle 00001C666D5EC4E5 x165888 | handle 135371001869A2DE x165888 | handle 002D90895F4DC78F x165422
+    GetAnalogActionData        41484 | handle 00001C666D5EC4E5 x13828 | handle 135371001869A2DE x13828 | handle 002D90895F4DC78F x13828
+    digital actions queried: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+    analog actions queried: 1 2
+    caller 000000007BF8944D -> RunFrame
+    caller game+0x007a5c59 -> RunFrame
+    caller game+0x007a535a -> GetConnectedControllers
+    caller game+0x007a55a3 -> GetDigitalActionData
+    caller game+0x007a556d -> GetDigitalActionData
+    caller game+0x007a55f8 -> GetAnalogActionData
+  pad1 buttons: 0080 0080 0000 0000 0000 0000
+  steamctl t= 52624 ms controller 3 action 10: pressed
+=== TAG-TEAM: take action on Steam controller 3 -> position 0 ===
+  P3: CPlayerEdge@Battle@@ is already the leader
+  pad1 buttons: 0000 0080 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 52752 ms controller 3 action 10: released
+  steamctl t= 55743 ms controller 2 action 10: pressed
+=== TAG-TEAM: take action on Steam controller 2 -> position 1 ===
+  P2 takes control: position 0 -> 1 (CPlayerSarah@Battle@@)
+  pad1 buttons: 0080 0080 0000 0000 0000 0000
+  pad1 buttons: 0000 0080 0000 0000 0000 0000
+  steamctl t= 55873 ms controller 2 action 10: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 57341 ms controller 1 action  8: pressed
+  pad1 buttons: 0800 0000 0000 0800 0000 0800
+  pad1 buttons: 0880 0800 0000 0080 0000 0080
+  steamctl t= 57405 ms controller 1 action 10: pressed
+=== TAG-TEAM: take action on Steam controller 1 -> position 2 ===
+  P1: CPlayerArumat@Battle@@ is already the leader
+  pad1 buttons: 0880 0880 0000 0000 0000 0000
+  pad1 buttons: 0800 0880 0000 0000 0000 0000
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  steamctl t= 57596 ms controller 1 action 10: released
+  pad1 buttons: 0800 0800 0000 0000 0000 0800
+  [co-op t=10s] 135 slices of 40 ms (0 skipped); per Steam controller: 1=51 2=39 3=45 4=0; active now: 1; popup quieted 0
+  [display] ON: MAP + TARGET BOARD + SIGHT CURSOR; calls: mini-map 2 2 436 436, sight cursor 629 629, sight outline 0, target board 629; steady 2763 of 2763
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0000 0000 0800 0000 0800
+  pad1 buttons: 0000 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0000 0000 0800 0000 0800
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0800 0000 0000 0000 0000
+  pad1 buttons: 0800 0000 0000 0800 0000 0800
+  pad1 buttons: 0000 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+=== CO-OP paused: battle ended (150 slices) ===
+[alive t=105s] GetState calls so far: 0
+  [steam hook t=60s] calls by the game (not the mod); leader-only filter ON, leader handle 0000000000000000, neutralised 71344:
+    RunFrame                   20325
+    GetConnectedControllers     8132
+    GetDigitalActionData      585038 | handle 00001C666D5EC4E5 x195168 | handle 135371001869A2DE x195168 | handle 002D90895F4DC78F x194702
+    GetAnalogActionData        48792 | handle 00001C666D5EC4E5 x16264 | handle 135371001869A2DE x16264 | handle 002D90895F4DC78F x16264
+    digital actions queried: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+    analog actions queried: 1 2
+    caller 000000007BF8944D -> RunFrame
+    caller game+0x007a5c59 -> RunFrame
+    caller game+0x007a535a -> GetConnectedControllers
+    caller game+0x007a55a3 -> GetDigitalActionData
+    caller game+0x007a556d -> GetDigitalActionData
+    caller game+0x007a55f8 -> GetAnalogActionData
+  pad1 buttons: 0800 0800 0000 0000 0000 0800
+  pad1 buttons: 1800 1800 0000 0000 0000 0800
+  steamctl t= 65643 ms controller 3 action  2: pressed
+  pad1 buttons: 0800 0800 0000 0000 0000 0800
+  steamctl t= 65828 ms controller 3 action  2: released
+  pad1 buttons: 1800 1800 0000 0000 0000 0800
+  steamctl t= 66319 ms controller 3 action  2: pressed
+  pad1 buttons: 0800 0800 0000 0000 0000 0800
+  steamctl t= 66566 ms controller 3 action  2: released
+  pad1 buttons: 4800 0800 0000 4000 0000 4800
+  steamctl t= 68456 ms controller 3 action  3: pressed
+  pad1 buttons: 4800 4800 0000 0000 0000 0800
+  pad1 buttons: 0800 0800 0000 0000 0000 0800
+  steamctl t= 68642 ms controller 3 action  3: released
+  [steam hook t=70s] calls by the game (not the mod); leader-only filter ON, leader handle 0000000000000000, neutralised 71344:
+    RunFrame                   23430
+    GetConnectedControllers     9372
+    GetDigitalActionData      674318 | handle 00001C666D5EC4E5 x224928 | handle 135371001869A2DE x224928 | handle 002D90895F4DC78F x224462
+    GetAnalogActionData        56232 | handle 00001C666D5EC4E5 x18744 | handle 135371001869A2DE x18744 | handle 002D90895F4DC78F x18748
+    digital actions queried: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+    analog actions queried: 1 2
+    caller 000000007BF8944D -> RunFrame
+    caller game+0x007a5c59 -> RunFrame
+    caller game+0x007a535a -> GetConnectedControllers
+    caller game+0x007a55a3 -> GetDigitalActionData
+    caller game+0x007a556d -> GetDigitalActionData
+    caller game+0x007a55f8 -> GetAnalogActionData
+  pad1 buttons: 4800 4800 0000 0000 0000 0800
+  steamctl t= 70185 ms controller 3 action  3: pressed
+  pad1 buttons: 0800 4800 0000 0000 0000 0800
+  pad1 buttons: 0800 0800 0000 0000 0000 0800
+  steamctl t= 70310 ms controller 3 action  3: released
+  pad1 buttons: 4800 0800 0000 4000 0000 4800
+  steamctl t= 70434 ms controller 3 action  3: pressed
+  pad1 buttons: 4800 4800 0000 0000 0000 0800
+  pad1 buttons: 0800 0800 0000 0000 0000 0800
+  steamctl t= 70619 ms controller 3 action  3: released
+  pad1 buttons: 4800 4800 0000 0000 0000 0800
+  steamctl t= 70743 ms controller 3 action  3: pressed
+  pad1 buttons: 0800 4800 0000 0000 0000 0800
+  steamctl t= 70866 ms controller 3 action  3: released
+  pad1 buttons: 0800 0800 0000 0000 0000 0800
+  pad1 buttons: 080a 080a 0000 0000 0000 0800
+  pad1 buttons: 0800 0800 0000 0000 0000 0800
+=== CO-OP ON (battle started) ===
+  [display] ON: MAP + TARGET BOARD + SIGHT CURSOR; calls: mini-map 4 5 474 474, sight cursor 882 882, sight outline 0, target board 1262; steady 2954 of 3983
+  steamctl t= 77520 ms controller 3 action 10: pressed
+=== TAG-TEAM: take action on Steam controller 3 -> position 0 ===
+  P3 takes control: position 2 -> 0 (CPlayerEdge@Battle@@)
+  pad1 buttons: 0080 0800 0000 0080 0000 0080
+  pad1 buttons: 0800 0080 0000 0800 0000 0800
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0080 0000 0000 0000 0000
+  steamctl t= 77651 ms controller 3 action 10: released
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0800 0000 0000 0000 0000
+  pad1 buttons: 0800 0000 0000 0800 0000 0800
+  pad1 buttons: 0000 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0000 0000 0800 0000 0800
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0800 0000 0000 0000 0000
+  pad1 buttons: 0800 0000 0000 0800 0000 0800
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0800 0000 0000 0000 0000
+  pad1 buttons: 0800 0000 0000 0800 0000 0800
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0000 0000 0800 0000 0800
+  pad1 buttons: 0000 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0800 0000 0000 0000 0000
+  pad1 buttons: 0800 0000 0000 0800 0000 0800
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0000 0000 0800 0000 0800
+  pad1 buttons: 0000 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0000 0000 0800 0000 0800
+  pad1 buttons: 0000 0800 0000 0000 0000 0000
+  pad1 buttons: 0800 0000 0000 0800 0000 0800
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0800 0000 0000 0000 0000
+  pad1 buttons: 0800 0000 0000 0800 0000 0800
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0800 0800 0000 0000 0000 0800
+  pad1 buttons: 0000 0800 0000 0000 0000 0000
+  steamctl t= 79417 ms controller 1 action  8: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  [steam hook t=80s] calls by the game (not the mod); leader-only filter ON, leader handle 00001C666D5EC4E5, neutralised 99008:
+    RunFrame                   26565
+    GetConnectedControllers    10626
+    GetDigitalActionData      764606 | handle 00001C666D5EC4E5 x255024 | handle 135371001869A2DE x255024 | handle 002D90895F4DC78F x254558
+    GetAnalogActionData        63756 | handle 00001C666D5EC4E5 x21256 | handle 135371001869A2DE x21256 | handle 002D90895F4DC78F x21256
+    digital actions queried: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+    analog actions queried: 1 2
+    caller 000000007BF8944D -> RunFrame
+    caller game+0x007a5c59 -> RunFrame
+    caller game+0x007a535a -> GetConnectedControllers
+    caller game+0x007a55a3 -> GetDigitalActionData
+    caller game+0x007a556d -> GetDigitalActionData
+    caller game+0x007a55f8 -> GetAnalogActionData
+  steamctl t= 83412 ms controller 1 action  8: pressed
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0800 0000 0000 0000 0000
+  pad1 buttons: 0800 0000 0000 0800 0000 0800
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0000 0000 0800 0000 0800
+  pad1 buttons: 0000 0800 0000 0000 0000 0000
+  pad1 buttons: 0800 0000 0000 0800 0000 0800
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 0800 0800 0000 0000 0000 0000
+  pad1 buttons: 0800 0800 0000 0000 0000 0800
+  pad1 buttons: 0880 0800 0000 0080 0000 0880
+  steamctl t= 85576 ms controller 1 action 10: pressed
+=== TAG-TEAM: take action on Steam controller 1 -> position 2 ===
+  P1: CPlayerArumat@Battle@@ is already the leader
+  pad1 buttons: 0880 0880 0000 0000 0000 0800
+  pad1 buttons: 0800 0800 0000 0000 0000 0800
+  steamctl t= 85765 ms controller 1 action 10: released
+  [display] ON: MAP + TARGET BOARD + SIGHT CURSOR; calls: mini-map 4 5 1076 1076, sight cursor 1484 1484, sight outline 0, target board 1864; steady 5964 of 6993
+  [co-op t=10s] 401 slices of 40 ms (1 skipped); per Steam controller: 1=217 2=39 3=145 4=0; active now: 1; popup quieted 0
+=== CO-OP paused: battle ended (412 slices) ===
+  steamctl t= 86561 ms controller 3 action  8: pressed
+  steamctl t= 86745 ms controller 3 action  8: released
+  pad1 buttons: 0000 0800 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 87419 ms controller 1 action  8: released
+[alive t=135s] GetState calls so far: 0
+  [steam hook t=90s] calls by the game (not the mod); leader-only filter ON, leader handle 0000000000000000, neutralised 137280:
+    RunFrame                   29570
+    GetConnectedControllers    11828
+    GetDigitalActionData      851150 | handle 00001C666D5EC4E5 x283872 | handle 135371001869A2DE x283872 | handle 002D90895F4DC78F x283454
+    GetAnalogActionData        70980 | handle 00001C666D5EC4E5 x23660 | handle 135371001869A2DE x23660 | handle 002D90895F4DC78F x23660
+    digital actions queried: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+    analog actions queried: 1 2
+    caller 000000007BF8944D -> RunFrame
+    caller game+0x007a5c59 -> RunFrame
+    caller game+0x007a535a -> GetConnectedControllers
+    caller game+0x007a55a3 -> GetDigitalActionData
+    caller game+0x007a556d -> GetDigitalActionData
+    caller game+0x007a55f8 -> GetAnalogActionData
+  pad1 buttons: 1000 1000 0000 0000 0000 0000
+  steamctl t= 91538 ms controller 3 action  2: pressed
+  pad1 buttons: 0000 1000 0000 0000 0000 0000
+  steamctl t= 91602 ms controller 3 action  2: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 1000 1000 0000 0000 0000 0000
+  steamctl t= 92033 ms controller 3 action  2: pressed
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 92219 ms controller 3 action  2: released
+  pad1 buttons: 1000 1000 0000 0000 0000 0000
+  steamctl t= 92953 ms controller 3 action  2: pressed
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 93139 ms controller 3 action  2: released
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 96549 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  steamctl t= 96734 ms controller 3 action  3: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 97770 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  steamctl t= 97955 ms controller 3 action  3: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t= 98687 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 98873 ms controller 3 action  3: released
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  steamctl t= 98996 ms controller 3 action  3: pressed
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t= 99181 ms controller 3 action  3: released
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  steamctl t=100093 ms controller 3 action  3: pressed
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  [steam hook t=100s] calls by the game (not the mod); leader-only filter ON, leader handle 0000000000000000, neutralised 137280:
+    RunFrame                   32680
+    GetConnectedControllers    13072
+    GetDigitalActionData      940718 | handle 00001C666D5EC4E5 x313728 | handle 135371001869A2DE x313728 | handle 002D90895F4DC78F x313310
+    GetAnalogActionData        78444 | handle 00001C666D5EC4E5 x26148 | handle 135371001869A2DE x26148 | handle 002D90895F4DC78F x26148
+    digital actions queried: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+    analog actions queried: 1 2
+    caller 000000007BF8944D -> RunFrame
+    caller game+0x007a5c59 -> RunFrame
+    caller game+0x007a535a -> GetConnectedControllers
+    caller game+0x007a55a3 -> GetDigitalActionData
+    caller game+0x007a556d -> GetDigitalActionData
+    caller game+0x007a55f8 -> GetAnalogActionData
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=100304 ms controller 3 action  3: released
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t=100853 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=101037 ms controller 3 action  3: released
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  steamctl t=101161 ms controller 3 action  3: pressed
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=101346 ms controller 3 action  3: released
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  steamctl t=101591 ms controller 3 action  3: pressed
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  steamctl t=101777 ms controller 3 action  3: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  steamctl t=102569 ms controller 3 action  3: pressed
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=102815 ms controller 3 action  3: released
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t=103001 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=103185 ms controller 3 action  3: released
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t=103733 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=103919 ms controller 3 action  3: released
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  steamctl t=104042 ms controller 3 action  3: pressed
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=104228 ms controller 3 action  3: released
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t=104351 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  steamctl t=104475 ms controller 3 action  3: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t=104963 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=105149 ms controller 3 action  3: released
+  pad1 buttons: 4000 0000 0000 4000 0000 4000
+  steamctl t=105273 ms controller 3 action  3: pressed
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=105459 ms controller 3 action  3: released
+  pad1 buttons: 4000 4000 0000 0000 0000 0000
+  steamctl t=105704 ms controller 3 action  3: pressed
+  pad1 buttons: 0000 4000 0000 0000 0000 0000
+  steamctl t=105888 ms controller 3 action  3: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  [steam hook t=110s] calls by the game (not the mod); leader-only filter ON, leader handle 0000000000000000, neutralised 137280:
+    RunFrame                   35685
+    GetConnectedControllers    14274
+    GetDigitalActionData     1027262 | handle 00001C666D5EC4E5 x342576 | handle 135371001869A2DE x342576 | handle 002D90895F4DC78F x342110
+    GetAnalogActionData        85644 | handle 00001C666D5EC4E5 x28548 | handle 135371001869A2DE x28548 | handle 002D90895F4DC78F x28548
+    digital actions queried: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+    analog actions queried: 1 2
+    caller 000000007BF8944D -> RunFrame
+    caller game+0x007a5c59 -> RunFrame
+    caller game+0x007a535a -> GetConnectedControllers
+    caller game+0x007a55a3 -> GetDigitalActionData
+    caller game+0x007a556d -> GetDigitalActionData
+    caller game+0x007a55f8 -> GetAnalogActionData
+  pad1 buttons: 000a 000a 0000 0000 0000 0000
+  pad1 buttons: 000a 000a 0000 0000 0000 000a
+  pad1 buttons: 0002 000a 0000 0000 0000 0002
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+=== CO-OP ON (battle started) ===
+  [display] ON: MAP + TARGET BOARD + SIGHT CURSOR; calls: mini-map 6 8 1111 1111, sight cursor 1775 1775, sight outline 0, target board 2560; steady 6110 of 8346
+  steamctl t=115721 ms controller 1 action 10: pressed
+=== TAG-TEAM: take action on Steam controller 1 -> position 2 ===
+  P1: CPlayerArumat@Battle@@ is already the leader
+  pad1 buttons: 0080 0080 0000 0000 0000 0000
+  pad1 buttons: 0000 0080 0000 0000 0000 0000
+  steamctl t=115911 ms controller 1 action 10: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=119760 ms controller 3 action 10: pressed
+=== TAG-TEAM: take action on Steam controller 3 -> position 0 ===
+  P3 takes control: position 2 -> 0 (CPlayerEdge@Battle@@)
+  pad1 buttons: 0080 0080 0000 0000 0000 0000
+  pad1 buttons: 0000 0080 0000 0000 0000 0000
+  steamctl t=119889 ms controller 3 action 10: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+[alive t=165s] GetState calls so far: 0
+  steamctl t=122518 ms controller 1 action 10: pressed
+=== TAG-TEAM: take action on Steam controller 1 -> position 2 ===
+  P1 takes control: position 0 -> 2 (CPlayerArumat@Battle@@)
+  pad1 buttons: 0080 0000 0000 0080 0000 0080
+  pad1 buttons: 0080 0080 0000 0000 0000 0000
+  pad1 buttons: 0000 0080 0000 0000 0000 0000
+  steamctl t=122709 ms controller 1 action 10: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  [display] ON: MAP + TARGET BOARD + SIGHT CURSOR; calls: mini-map 6 8 1715 1715, sight cursor 2379 2379, sight outline 0, target board 3164; steady 9130 of 11366
+  steamctl t=125461 ms controller 2 action 10: pressed
+=== TAG-TEAM: take action on Steam controller 2 -> position 1 ===
+  P2 takes control: position 2 -> 1 (CPlayerSarah@Battle@@)
+  [co-op t=11s] 533 slices of 40 ms (2 skipped); per Steam controller: 1=309 2=40 3=184 4=0; active now: 1; popup quieted 0
+  pad1 buttons: 0080 0000 0000 0080 0000 0080
+  pad1 buttons: 0080 0080 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=125591 ms controller 2 action 10: released
+  steamctl t=127180 ms controller 3 action 10: pressed
+=== TAG-TEAM: take action on Steam controller 3 -> position 0 ===
+  P3 takes control: position 1 -> 0 (CPlayerEdge@Battle@@)
+  pad1 buttons: 0080 0080 0000 0000 0000 0000
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  steamctl t=127309 ms controller 3 action 10: released
+  steamctl t=127982 ms controller 1 action 10: pressed
+=== TAG-TEAM: take action on Steam controller 1 -> position 2 ===
+  P1 takes control: position 0 -> 2 (CPlayerArumat@Battle@@)
+  pad1 buttons: 0080 0000 0000 0080 0000 0080
+  pad1 buttons: 0000 0080 0000 0000 0000 0000
+  steamctl t=128111 ms controller 1 action 10: released
+  pad1 buttons: 0000 0000 0000 0000 0000 0000
+  [display] ON: MAP + TARGET BOARD + SIGHT CURSOR; calls: mini-map 6 8 2324 2324, sight cursor 2988 2988, sight outline 0, target board 3773; steady 12175 of 14411
+  [co-op t=21s] 774 slices of 40 ms (2 skipped); per Steam controller: 1=338 2=130 3=306 4=0; active now: 2; popup quieted 0
+  [display] ON: MAP + TARGET BOARD + SIGHT CURSOR; calls: mini-map 6 8 2925 2925, sight cursor 3589 3589, sight outline 0, target board 4374; steady 15180 of 17416
+  [co-op t=31s] 1024 slices of 40 ms (2 skipped); per Steam controller: 1=385 2=208 3=431 4=0; active now: 3; popup quieted 0
+[alive t=195s] GetState calls so far: 0
+  [display] ON: MAP + TARGET BOARD + SIGHT CURSOR; calls: mini-map 6 8 3526 3526, sight cursor 4190 4190, sight outline 0, target board 4975; steady 18185 of 20421

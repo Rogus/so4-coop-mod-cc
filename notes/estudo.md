@@ -633,3 +633,8 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   (ajudante do CTargetBoard) causa o branco nos personagens. Nenhum dos dois sozinho puxa os personagens.
 - v0.39: liga os dois juntos (máscara 0xbf) por padrão; F5 = ligado/desligado. Testa se a combinação (como
   na rodada 35) é o que puxava os personagens de volta.
+- Rodada 39 (v0.39, mapa + quadro de alvo + cursor de mira, 40 ms, 3 jogadores, 3 batalhas): movimento
+  normal, minimapa estável, sem branco nos personagens. O "puxado de volta" da rodada 35 não voltou (causa
+  não confirmada; se voltar, coop_display_sites= permite desligar partes).
+- Release 1.3: correção de exibição ligada (máscara bf), coop_display_fix/coop_display_pos/coop_display_sites
+  documentados no README/LEIA-ME e no so4coop.ini; pacote build/release/so4coop-coop-1.3.zip.
