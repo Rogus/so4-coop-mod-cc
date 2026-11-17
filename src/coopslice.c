@@ -23,7 +23,7 @@ static volatile long cs_slices, cs_skips, cs_per[SC_MAXCTL];
 /* v0.34: the "this is your character" popup (CThisIs) restarts at every leader change: state 3 =
  * pop up, 4 = animate, 5 = hold, 6 = fade out (+0x4c opacity -> 0, then hidden), 2 = idle.
  * With coop_quiet_marker=1 the popup is sent straight to a finished fade-out after each slice. */
-static uint32_t cs_quiet = 1;
+static uint32_t cs_quiet = 0;                   /* v0.37: off by default (never triggered in rounds 35-36) */
 static volatile uintptr_t cs_thisis;
 static volatile int cs_need_find = 1;
 static volatile long cs_quieted;

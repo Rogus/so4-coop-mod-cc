@@ -610,3 +610,12 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   continuam remendados; o bit desligado devolve o líder real); gl_display identifica o local pelo endereço de
   retorno e conta chamadas por local (relatório [display] a cada 10 s); F6 alterna a fatia 40 -> 80 -> 150 ms.
   Config opcional coop_display_sites= (hex, padrão ff).
+- Rodada 36 (v0.36, F5/F6 ao vivo; log em notes/run36_probe.log): batalha 1 = só minimapa + 80 ms (2 jogadores),
+  2-3 = correção desligada + 80/40 ms, 4 = desligada + 150 ms (3 jogadores). O usuário: movimento NORMAL em
+  todas; minimapa estável com "só minimapa"; o branco piscando nos personagens sumiu. Na rodada 35 (8 locais)
+  o sintoma era "personagens puxados de volta" -> o cursor de mira (CSightInCursor) e/ou o ajudante do
+  CTargetBoard alimentam a jogabilidade e precisam do líder real. O contorno de mira (CEftSightOutLine) nunca
+  foi chamado. Chamadas por quadro (~60/s): minimapa vf42 (os dois), cursor de mira (os dois), alvo; os vf41 do
+  minimapa quase nunca.
+- v0.37: só os 4 locais do minimapa são remendados; F5 liga/desliga a correção do minimapa; F6 continua
+  (fatia 40/80/150 ms); popup (coop_quiet_marker) desligado por padrão.

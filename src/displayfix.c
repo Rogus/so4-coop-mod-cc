@@ -1,5 +1,5 @@
 /*
- * so4coop - co-op flicker fix 2: steady "display leader" for the UI (v0.35, v0.36: F5 modes + per-site counts).  Included after coopslice.c.
+ * so4coop - co-op flicker fix 2: steady "display leader" for the mini-map (v0.35; v0.36 F5 modes + per-site counts; v0.37 mini-map sites only).  Included after coopslice.c.
  *
  * The mini-map markers, sight cursor, sight outline effect and target board ask GetLeader
  * (game+0x5000d0) for the leader every frame; during co-op the leader alternates ~25x/s, so they
@@ -21,22 +21,24 @@ __declspec(dllimport) void *WINAPI VirtualAlloc(void *, uint64_t, DWORD, DWORD);
 __declspec(dllimport) BOOL WINAPI FlushInstructionCache(HANDLE, const void *, uint64_t);
 
 #define GL_RVA 0x5000d0
-static const uint32_t gl_sites[] = { 0x6075e1, 0x6080bd, 0x609372, 0x609e30, 0x6161f1, 0x616911, 0x61b150, 0x6593a8 };
+/* v0.37: only the 4 mini-map sites. Round 35 (all 8 sites) broke movement ("characters pulled back"); round
+ * 36 (F5 live): mini-map only = map steady + movement normal, so the sight cursor (0x6161f1, 0x616911) and the
+ * target board helper (0x6593a8) feed gameplay and must see the real leader; the sight outline (0x61b150) was
+ * never called. */
+static const uint32_t gl_sites[] = { 0x6075e1, 0x6080bd, 0x609372, 0x609e30 };
 #define GL_NSITES (sizeof(gl_sites) / sizeof(gl_sites[0]))
 static uint32_t gl_fix = 1, gl_pos = 0xffffffff;
 static volatile int gl_done, gl_applied;
 static volatile long gl_calls, gl_shown, gl_cnt[GL_NSITES];
-/* v0.36: which sites get the steady leader, switchable live with F5 (research build):
- * all 8 -> mini-map only (sites 0-3) -> off (= v0.34 behaviour) -> all 8 ...  Patched sites whose bit
- * is clear just return the real leader. */
-#define GL_ALL 0xff
-#define GL_MINIMAP 0x0f
+/* which sites get the steady leader; F5 (research build) toggles ON / OFF live. Patched sites whose bit is
+ * clear just return the real leader. */
+#define GL_ALL 0x0f
 static volatile uint32_t gl_mask = GL_ALL;
 static uint64_t gl_report_t;
 
 static const char *gl_mode_name(uint32_t m)
 {
-    return m == GL_ALL ? "ALL 8 UI sites" : m == GL_MINIMAP ? "MINI-MAP ONLY" : m == 0 ? "OFF (real leader everywhere)" : "custom";
+    return m == GL_ALL ? "mini-map fix ON" : m == 0 ? "mini-map fix OFF (real leader)" : "custom";
 }
 
 /* same result as GetLeader, except a steady member while co-op runs (for the enabled sites) */
@@ -164,12 +166,12 @@ static void gl_load(void)
         for (int k = 0; k < SC_MAXCTL; k++) if (sc_pos[k] < gl_pos) gl_pos = sc_pos[k];
 }
 
-/* F5 (research build): all 8 -> mini-map only -> off -> all 8 */
+/* F5 (research build): mini-map fix on <-> off */
 static void display_fix_cycle(void)
 {
     char b[200];
     if (!gl_applied) { logs("=== F5: display fix not applied yet (it is applied when co-op first starts) ===\r\n"); return; }
-    gl_mask = gl_mask == GL_ALL ? GL_MINIMAP : gl_mask == GL_MINIMAP ? 0 : GL_ALL;
+    gl_mask = gl_mask ? 0 : GL_ALL;
     wsprintfA(b, "=== F5: display fix now %s (t=%lu ms) ===\r\n", gl_mode_name(gl_mask), (unsigned long)GetTickCount64());
     logs(b);
 }
@@ -182,8 +184,8 @@ static void display_fix_poll(void)
         uint64_t now = GetTickCount64();
         if (now - gl_report_t >= 10000) {
             gl_report_t = now;
-            wsprintfA(b, "  [display] %s; UI calls: mini-map %ld %ld %ld %ld, sight cursor %ld %ld, sight outline %ld, target board %ld; steady %ld of %ld\r\n",
-                      gl_mode_name(gl_mask), gl_cnt[0], gl_cnt[1], gl_cnt[2], gl_cnt[3], gl_cnt[4], gl_cnt[5], gl_cnt[6], gl_cnt[7], gl_shown, gl_calls);
+            wsprintfA(b, "  [display] %s; mini-map calls %ld %ld %ld %ld; steady %ld of %ld\r\n",
+                      gl_mode_name(gl_mask), gl_cnt[0], gl_cnt[1], gl_cnt[2], gl_cnt[3], gl_shown, gl_calls);
             logs(b);
         }
     }
@@ -196,7 +198,7 @@ static void display_fix_poll(void)
     int ok = gl_patch(s, GL_NSITES, game_base + GL_RVA, (void *)gl_display, cs_tid, why);
     gl_applied = ok;
     gl_report_t = GetTickCount64();
-    wsprintfA(b, "  display fix: %s; %lu UI call sites patched, steady display leader = party position %lu during co-op, mode %s; F5 cycles (%s)\r\n",
+    wsprintfA(b, "  display fix: %s; %lu mini-map call sites patched, steady display leader = party position %lu during co-op, %s; F5 toggles (%s)\r\n",
               ok ? "ON" : "NOT applied", (unsigned long)GL_NSITES, (unsigned long)gl_pos, gl_mode_name(gl_mask), why);
     logs(b);
 }
