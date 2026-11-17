@@ -373,7 +373,7 @@ BOOL WINAPI DllMain(HMODULE self, DWORD reason, LPVOID unused)
             self_end = self_base + *(uint32_t *)(sb + *(int32_t *)(sb + 0x3c) + 24 + 56);
         }
         open_log(self);
-        logs("so4coop probe v0.15 loaded (F7 = auto-capture on R1 switches (status board), F9 = scan + dump Battle:: objects, F10 = mark; F8 disabled)\r\n");
+        logs("so4coop probe v0.16 loaded (F7 = auto-capture on R1 switches (status board, 100 ms samples), F9 = scan + dump Battle:: objects, F10 = mark; F8 disabled)\r\n");
         describe_game_module();   /* the real XInput is loaded on the first call, not under the loader lock */
         CreateThread(0, 0, hotkey_thread, 0, 0, 0);
     }

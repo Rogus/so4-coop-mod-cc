@@ -210,3 +210,12 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
 - O que segue o R1 de forma direta é o painel (CStatusBoardWindow+0x1f0, x = 70 + 283 × posição).
 - v0.15: a captura automática dispara e rotula pela posição do painel (estável 1,5 s); o foco da
   câmera fica só como referência; diff_battle.py usa as linhas "POSITION: p".
+
+### Execução 15 (v0.15) - notes/run15_v0.15
+- F7 ligado duas vezes (painel na posição 1, depois 0), **nenhuma captura**: com amostras a cada
+  250 ms a posição do painel nunca ficou igual por 1,5 s seguidos -> ela também muda sozinha
+  (anima ou percorre os membros), não só no R1.
+- v0.16: amostra a cada 100 ms, registra cada mudança com o tempo e o foco da câmera (até 400
+  linhas) e captura quando uma posição ocupa >= 80% das últimas 15 amostras.
+- Observação do usuário na execução 15: o personagem realmente controlado **muda junto com o destaque
+  do painel** ao apertar R1. O painel é um bom indicador do membro controlado.
