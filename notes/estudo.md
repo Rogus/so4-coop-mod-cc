@@ -252,3 +252,14 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   a criação da janela/dispositivo do jogo (possível corrida no Wine).
 - v0.19: nenhuma chamada de teclado nos primeiros 45 s ("hotkeys active" no log). Se travar de novo,
   o próximo passo é iniciar sem a sonda (WINEDLLOVERRIDES=xinput1_3=b) para descartá-la.
+
+### Execução 19 (v0.19)
+- Iniciou normal (sem travar; teclado só depois de 45 s). Uma execução não prova que a causa era essa.
+- F8: **checagem 1 falhou**, nada gravado: CBattleMainTask+0x3a0 = 1083249128 (parece float ~4,5), +0x3a4 = 1.
+  Ou não estava em combate ativo no momento, ou o bloco muda de batalha para batalha. Próximo: F8 e
+  depois F9 em combate ativo, para ver o bloco inteiro nesse momento.
+- **Mecânica do jogo (relato do usuário):** em batalha só o **líder** é controlado; L1/R1 troca o
+  líder; a câmera e o foco seguem o líder; os outros membros são sempre IA. Logo +0x3a4 = posição do
+  **líder** no grupo. Para o co-op: o membro do jogador 2 precisa receber entrada do controle 2 no
+  lugar da IA, sem virar líder. Próximos alvos: onde a entrada do controle é aplicada ao líder e onde
+  a IA decide as ações dos outros membros.
