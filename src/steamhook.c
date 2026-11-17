@@ -22,6 +22,9 @@ typedef uint64_t (*pSetM)(void *, uint64_t);
 typedef void (*pActM)(void *, uint64_t, uint64_t);
 
 static void *sh_orig[SH_SLOTS], *sh_new[SH_SLOTS];
+static volatile uint64_t sh_leader_h;       /* v0.31: leader's controller handle (0 = no filtering) */
+static volatile int sh_filter;
+static volatile long sh_neutral;
 static void **sh_obj;
 static int sh_on;
 static uint64_t sh_t0, sh_last;
@@ -78,15 +81,28 @@ static uint64_t sh_set(void *self, uint64_t h)
     if (!sh_mine()) sh_note(SH_SET, h, 0, (uintptr_t)__builtin_return_address(0));
     return ((pSetM)sh_orig[7])(self, h);
 }
+/* v0.31 leader_only_input: the game's queries on a controller that is not the leader's get
+ * "not pressed" / "stick centred" (bActive kept); the mod's own queries are never filtered */
+static int sh_block(uint64_t h)
+{
+    uint64_t l = sh_leader_h;
+    return sh_filter && l && h != l && h != SH_ALL;
+}
 static void *sh_dig(void *self, void *ret, uint64_t h, uint64_t act)
 {
-    if (!sh_mine()) sh_note(SH_DIG, h, act, (uintptr_t)__builtin_return_address(0));
-    return ((pDataM)sh_orig[9])(self, ret, h, act);
+    int game = !sh_mine();
+    if (game) sh_note(SH_DIG, h, act, (uintptr_t)__builtin_return_address(0));
+    void *r = ((pDataM)sh_orig[9])(self, ret, h, act);
+    if (game && r && sh_block(h)) { ((uint8_t *)r)[0] = 0; __sync_fetch_and_add(&sh_neutral, 1); }
+    return r;
 }
 static void *sh_ana(void *self, void *ret, uint64_t h, uint64_t act)
 {
-    if (!sh_mine()) sh_note(SH_ANA, h, act, (uintptr_t)__builtin_return_address(0));
-    return ((pDataM)sh_orig[12])(self, ret, h, act);
+    int game = !sh_mine();
+    if (game) sh_note(SH_ANA, h, act, (uintptr_t)__builtin_return_address(0));
+    void *r = ((pDataM)sh_orig[12])(self, ret, h, act);
+    if (game && r && sh_block(h)) { ((float *)r)[1] = 0.0f; ((float *)r)[2] = 0.0f; __sync_fetch_and_add(&sh_neutral, 1); }
+    return r;
 }
 
 static int sh_install(void *iface)
@@ -111,7 +127,8 @@ static int sh_install(void *iface)
 static void sh_report(void)
 {
     char b[300], ra[24];
-    wsprintfA(b, "  [steam hook t=%lus] calls by the game (not the mod):\r\n", (unsigned long)((GetTickCount64() - sh_t0) / 1000));
+    wsprintfA(b, "  [steam hook t=%lus] calls by the game (not the mod); leader-only filter %s, leader handle %p, neutralised %ld:\r\n",
+              (unsigned long)((GetTickCount64() - sh_t0) / 1000), sh_filter ? "ON" : "off", (void *)(uintptr_t)sh_leader_h, sh_neutral);
     logs(b);
     for (int m = 0; m < SH_NM; m++) {
         if (!sh_calls[m]) continue;
@@ -170,6 +187,21 @@ static DWORD WINAPI fake_game_thread(LPVOID u)
     return 0;
 }
 
+static volatile uint8_t ft_lead, ft_other, ft_own;
+static volatile float ft_ana = 99.0f;
+static void *fake_dig_any(void *self, void *ret, uint64_t h, uint64_t act) { (void)self; (void)h; (void)act; ((uint8_t *)ret)[0] = 1; ((uint8_t *)ret)[1] = 1; return ret; }
+static void *fake_ana_any(void *self, void *ret, uint64_t h, uint64_t act) { (void)self; (void)h; (void)act; ((int *)ret)[0] = 1; ((float *)ret)[1] = 0.7f; ((float *)ret)[2] = 0.7f; return ret; }
+static DWORD WINAPI fake_filter_thread(LPVOID u)
+{
+    (void)u;
+    void **o = (void **)fake_obj;
+    uint8_t d[2]; float an[4];
+    ((pDataM)((void **)o[0])[9])(o, d, 9, 1); ft_lead = d[0];
+    ((pDataM)((void **)o[0])[9])(o, d, 7, 1); ft_other = d[0];
+    ((pDataM)((void **)o[0])[12])(o, an, 7, 1); ft_ana = an[2];
+    return 0;
+}
+
 __declspec(dllexport) void WINAPI so4coop_hooktest(void)
 {
     char b[200];
@@ -185,6 +217,23 @@ __declspec(dllexport) void WINAPI so4coop_hooktest(void)
     HANDLE h = CreateThread(0, 0, fake_game_thread, 0, 0, 0);
     Sleep(300);
     if (h) CloseHandle(h);
+    sh_filter = 1; sh_leader_h = 9;              /* leader = handle 9: handle 7 must be neutralised */
+    sh_orig[9] = (void *)fake_dig_any; sh_orig[12] = (void *)fake_ana_any;   /* fakes that report 'pressed' / stick 0.7 on any controller */
+    h = CreateThread(0, 0, fake_filter_thread, 0, 0, 0);
+    Sleep(300);
+    if (h) CloseHandle(h);
+    wsprintfA(b, "steam hook filter self-test: leader 9 digital %u (expect 1), other 7 digital %u (expect 0), other analog y %d (expect 0)\r\n",
+              (unsigned)ft_lead, (unsigned)ft_other, (int)ft_ana);
+    logs(b);
+    {
+        uint8_t d2[2] = { 0, 0 };
+        my_tid = GetCurrentThreadId();           /* in rundll32 the probe thread may have taken my_tid meanwhile */
+        ((pDataM)((void **)fake_obj[0])[9])(fake_obj, d2, 7, 1);
+        ft_own = d2[0];
+    }
+    wsprintfA(b, "steam hook filter self-test: own (mod) query on a non-leader controller %u (expect 1)\r\n", (unsigned)ft_own);
+    logs(b);
+    sh_filter = 0; sh_leader_h = 0;
     sh_report();
     wsprintfA(b, "steam hook self-test: digital pass-through %s, analog pass-through %s\r\n", d[0] == 1 && d[1] == 1 ? "OK" : "WRONG",
               (int)an[1] == 3 ? "OK" : "WRONG");

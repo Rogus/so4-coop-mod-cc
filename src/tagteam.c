@@ -107,8 +107,36 @@ static void tt_load_config(void)
     logs(b);
 }
 
+/* v0.31: [game+0x1051838] = battle system (used by the game's GetLeader); its first field is the
+ * CBattleMainTask. No memory scan needed. */
+static uintptr_t tt_main_fast(void)
+{
+    uintptr_t g = game_base + 0x1051838;
+    if (!mem_readable(g, 8)) return 0;
+    uintptr_t sys = *(const uintptr_t *)g;
+    if (!sys || !mem_readable(sys, 8)) return 0;
+    uintptr_t mt = *(const uintptr_t *)sys;
+    const char *cn = class_of(mt);
+    return cn && str_eq(cn, "CBattleMainTask@Battle@@") ? mt : 0;
+}
+
+/* leader position, validated like tt_take; 0 = not in a battle */
+static int tt_leader_pos(uint32_t *pos)
+{
+    uintptr_t mt = tt_main_fast();
+    if (!mt || !mem_readable(mt + 0x58, 0x18)) return 0;
+    uintptr_t base = *(const uintptr_t *)(mt + 0x60), blk = *(const uintptr_t *)(mt + 0x68);
+    if (!(blk >= base && blk - base < 0x200) || !mem_readable(blk, 8)) return 0;
+    uint32_t mx = *(const uint32_t *)blk, cur = *(const uint32_t *)(blk + 4);
+    if (mx < 1 || mx > 3 || cur > mx) return 0;
+    *pos = cur;
+    return 1;
+}
+
 static uintptr_t tt_find_main(void)
 {
+    uintptr_t fast = tt_main_fast();
+    if (fast) { tt_main = fast; return fast; }
     if (tt_main) {
         const char *cn = class_of(tt_main);
         if (cn && str_eq(cn, "CBattleMainTask@Battle@@")) return tt_main;

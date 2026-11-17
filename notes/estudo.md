@@ -497,3 +497,20 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   própria sonda não contam.
 - Autoteste no Wine local com um objeto falso de mesma ABI: contagens certas, repasse correto (digital e
   analógico), chamadas próprias ignoradas. A release também tem o código, desligado por padrão.
+
+### Execução 30 (v0.30, hook_steam=1) - notes/run30_v0.30 — **o jogo pergunta por controle**
+- Gancho estável (~2,5 min, tag-team pelo R3 funcionando junto).
+- Em 100 s: RunFrame 30864, GetConnectedControllers 12346, **GetDigitalActionData 889056 = 296352 em cada um dos
+  3 handles**, **GetAnalogActionData 74088 = 24696 por handle**. Nenhuma chamada com "todos os controles".
+  Ações digitais 0..16, analógicas 1 e 2.
+- Chamadores no jogo (camada de entrada Aska): game+0x7a535a (GetConnected), 0x7a556d e 0x7a55a3 (digital),
+  0x7a55f8 (analógico), 0x7a5c59 (RunFrame). O jogo junta os controles depois.
+- Logo: o invólucro pode neutralizar os controles que não são do líder (estado solto, analógico zerado) e a
+  entrada de cada controle continua disponível para o mod (as consultas da própria sonda não são filtradas).
+- v0.31: leader_only_input=1 (com hook_steam=1): nos invólucros, as consultas do jogo num controle que não é
+  o do líder recebem "solto" / analógico zerado (bActive mantido); as consultas da própria sonda nunca são
+  filtradas (o R3 de todos continua funcionando). O controle do líder é recalculado a cada 60 ms: posição do
+  líder lida pelo global que o GetLeader do jogo usa ([game+0x1051838] -> CBattleMainTask, sem varredura) e
+  mapeada pelos steamN_position; fora de batalha, ou se o líder não tem controle mapeado, nada é filtrado.
+  tt_find_main também usa esse caminho rápido antes da varredura.
+- Autoteste (objeto falso): líder passa, outro controle zerado (botão e analógico), consulta da sonda não filtrada.
