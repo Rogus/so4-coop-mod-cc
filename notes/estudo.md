@@ -375,3 +375,31 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   ruído demais (offsets comuns e instruções mal decodificadas no código ofuscado).
 - Objeto do líder (CPlayerEdge, 256 KB) na execução 22: nenhum float ~0 no neutro e diferente em
   direita/baixo/esquerda -> a intenção de movimento não fica nos primeiros 256 KB do personagem.
+
+## Retomada (após a execução 23)
+- v0.23 instalada (F5 desligado). Commit 6333dec.
+- PadTask@Peripheral::vf12 (game+0x4e594d0) chama game+0x75c1b0 = **atualização de um controle**
+  (notes/pad_poll.txt): o objeto tem o dispositivo em [obj], botões OR em +0x5bc/+0x5be/+0x5c2,
+  analógicos em +0x5ca/+0x5cc (esquerdo) e +0x5ce/+0x5d0 (direito), gatilhos +0x5d2/+0x5d3.
+  Com obj = game+0x1059080 isso bate com o analógico do controle 0 (game+0x105964a): existem **dois
+  objetos de controle** de 0x6e8 bytes, em **game+0x1059080** e **game+0x1059768**; os "registros" são
+  a seção de estado deles em +0x5b4; o "mesclado" game+0x1059474 = objeto 0 + 0x3f4.
+- Nenhum global aponta para esses objetos; o cabeçalho game+0x1059000..0x105907f tem dezenas de campos
+  pequenos lidos por muitas classes, nenhum claramente base do analógico.
+- Busca frouxa em tudo da execução 22 (1221 objetos + 24 classes + globais): nenhum float ~0 no neutro
+  e não nulo em direita/baixo/esquerda. Estática e diff esgotados para "quem lê o analógico".
+- Próxima ferramenta proposta: **ponto de parada de software** (int3) em GetLeader/IsLeader, com o
+  manipulador da sonda registrando endereços de retorno e pilha por 1 s, parado vs andando; mexe no
+  código do jogo em memória (proteção da página de código), pedir autorização.
+
+## Modo tag-team (v0.24) — primeiro mod jogável
+- src/tagteam.c: cada jogador "é dono" de uma posição do grupo (padrão: jogador 1 = 0, jogador 2 = 1;
+  so4coop.ini opcional com p1_position= / p2_position=). **L3 no seu controle** (ou F3 / F4 no teclado)
+  torna o seu personagem o líder, gravando o byte do bloco do líder (como na execução 21).
+- Controles lidos pelo XInput real (sondagem própria a cada 30 ms, slots 0-3); os dois primeiros slots
+  conectados = jogador 1 e 2; o log mostra os slots vistos.
+- Checagens antes de gravar, sem varredura completa: CBattleMainTask em cache (verificado por RTTI),
+  bloco do líder válido, *(main+0x58) é CChrManager com membros[0..max] todos personagens, alvo existe.
+- Limite: o jogo ainda mescla os dois controles, então os dois movem quem for o líder.
+- Teste local (Wine do sistema): ini lido (2/3), slot 0 conectado (DualSense) -> jogador 1, sem jogador 2;
+  fora de batalha "no battle (nothing written)".

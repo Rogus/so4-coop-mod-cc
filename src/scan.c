@@ -531,10 +531,16 @@ static void write_test(void);
 static void autocap_toggle(void);
 static void stick_capture(void);
 static void guard_trace(void);
-static int f5_was;
+static int f5_was, f3_was, f4_was;
+static void tt_take(int player);
 
 static void poll_hotkeys(void)
 {
+    int f3 = (GetAsyncKeyState(0x72 /* VK_F3 */) & 0x8000) != 0;
+    int f4 = (GetAsyncKeyState(0x73 /* VK_F4 */) & 0x8000) != 0;
+    if (f3 && !f3_was) { logs("=== TAG-TEAM: F3 (player 1) ===\r\n"); tt_take(0); }
+    if (f4 && !f4_was) { logs("=== TAG-TEAM: F4 (player 2) ===\r\n"); tt_take(1); }
+    f3_was = f3; f4_was = f4;
     int f5 = (GetAsyncKeyState(0x74 /* VK_F5 */) & 0x8000) != 0;
     if (f5 && !f5_was) guard_trace();
     f5_was = f5;

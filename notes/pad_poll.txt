@@ -1,0 +1,161 @@
+   game+0x75c1b0: mov    r11,rsp
+   game+0x75c1b3: push   rbp
+   game+0x75c1b4: push   rdi
+   game+0x75c1b5: lea    rbp,[r11-0x5f]
+   game+0x75c1b9: sub    rsp,0x98
+   game+0x75c1c0: mov    rax,QWORD PTR [rip+0x8184d9]        # 0x140f746a0
+   game+0x75c1c7: xor    rax,rsp
+   game+0x75c1ca: mov    QWORD PTR [rbp+0x27],rax
+   game+0x75c1ce: mov    rdi,rcx
+   game+0x75c1d1: mov    rcx,QWORD PTR [rcx]
+   game+0x75c1d4: test   rcx,rcx
+   game+0x75c1d7: je     0x14075c54c
+   game+0x75c1dd: mov    QWORD PTR [r11+0x18],rsi
+   game+0x75c1e1: mov    QWORD PTR [r11-0x18],r12
+   game+0x75c1e5: xor    r12d,r12d
+   game+0x75c1e8: lea    rdx,[rbp-0x29]
+   game+0x75c1ec: mov    QWORD PTR [r11-0x20],r14
+   game+0x75c1f0: mov    QWORD PTR [r11-0x28],r15
+   game+0x75c1f4: movzx  eax,r12w
+   game+0x75c1f8: test   rdx,rdx
+   game+0x75c1fb: je     0x14075c204
+   game+0x75c1fd: movzx  eax,WORD PTR [rcx+0x160]
+   game+0x75c204: mov    WORD PTR [rdi+0x406],ax
+   game+0x75c20b: call   0x140059780
+   game+0x75c210: lea    rcx,[rdi+0x210]
+   game+0x75c217: mov    BYTE PTR [rdi+0x403],al
+   game+0x75c21d: call   0x1407a5c30
+   game+0x75c222: mov    rcx,QWORD PTR [rdi]
+   game+0x75c225: movzx  eax,WORD PTR [rcx+0x9c]
+   game+0x75c22c: lea    rsi,[rdi+0x5bc]
+   game+0x75c233: test   WORD PTR [rcx+0x98],ax
+   game+0x75c23a: mov    rdx,rsi
+   game+0x75c23d: setne  al
+   game+0x75c240: xor    al,BYTE PTR [rdi+0x5b5]
+   game+0x75c246: and    al,0x1
+   game+0x75c248: xor    BYTE PTR [rdi+0x5b5],al
+   game+0x75c24e: call   0x14075c5a0
+   game+0x75c253: mov    rcx,QWORD PTR [rdi]
+   game+0x75c256: lea    rdx,[rdi+0x5e4]
+   game+0x75c25d: call   0x14075c5a0
+   game+0x75c262: cmp    BYTE PTR [rdi+0x5b4],r12b
+   game+0x75c269: jne    0x14075c405
+   game+0x75c26f: lea    rdx,[rbp-0x21]
+   game+0x75c273: lea    rcx,[rdi+0x8]
+   game+0x75c277: mov    QWORD PTR [rsp+0xb8],rbx
+   game+0x75c27e: 
+   game+0x75c27f: call   0x1407a1cd0
+   game+0x75c284: lea    rdx,[rbp+0xf]
+   game+0x75c288: lea    rcx,[rdi+0x8]
+   game+0x75c28c: call   0x1407a20f0
+   game+0x75c291: movzx  eax,WORD PTR [rbp-0x21]
+   game+0x75c295: mov    rbx,QWORD PTR [rsp+0xb8]
+   game+0x75c29c: 
+   game+0x75c29d: or     WORD PTR [rsi],ax
+   game+0x75c2a0: movzx  eax,WORD PTR [rbp-0x1f]
+   game+0x75c2a4: or     WORD PTR [rdi+0x5be],ax
+   game+0x75c2ab: movzx  eax,WORD PTR [rbp-0x1d]
+   game+0x75c2af: or     WORD PTR [rdi+0x5c2],ax
+   game+0x75c2b6: movzx  eax,WORD PTR [rbp+0xf]
+   game+0x75c2ba: or     WORD PTR [rdi+0x5e4],ax
+   game+0x75c2c1: movzx  eax,WORD PTR [rbp+0x11]
+   game+0x75c2c5: or     WORD PTR [rdi+0x5e6],ax
+   game+0x75c2cc: movzx  eax,WORD PTR [rbp+0x13]
+   game+0x75c2d0: or     WORD PTR [rdi+0x5ea],ax
+   game+0x75c2d7: cmp    WORD PTR [rdi+0x5ca],r12w
+   game+0x75c2de: 
+   game+0x75c2df: jne    0x14075c2ec
+   game+0x75c2e1: movzx  eax,WORD PTR [rbp-0x1b]
+   game+0x75c2e5: mov    WORD PTR [rdi+0x5ca],ax
+   game+0x75c2ec: cmp    WORD PTR [rdi+0x5cc],r12w
+   game+0x75c2f3: 
+   game+0x75c2f4: jne    0x14075c301
+   game+0x75c2f6: movzx  eax,WORD PTR [rbp-0x19]
+   game+0x75c2fa: mov    WORD PTR [rdi+0x5cc],ax
+   game+0x75c301: cmp    BYTE PTR [rdi+0x5d2],r12b
+   game+0x75c308: jne    0x14075c314
+   game+0x75c30a: movzx  eax,BYTE PTR [rbp-0x17]
+   game+0x75c30e: mov    BYTE PTR [rdi+0x5d2],al
+   game+0x75c314: cmp    WORD PTR [rdi+0x5ce],r12w
+   game+0x75c31b: 
+   game+0x75c31c: jne    0x14075c329
+   game+0x75c31e: movzx  eax,WORD PTR [rbp-0x15]
+   game+0x75c322: mov    WORD PTR [rdi+0x5ce],ax
+   game+0x75c329: cmp    WORD PTR [rdi+0x5d0],r12w
+   game+0x75c330: 
+   game+0x75c331: jne    0x14075c33e
+   game+0x75c333: movzx  eax,WORD PTR [rbp-0x13]
+   game+0x75c337: mov    WORD PTR [rdi+0x5d0],ax
+   game+0x75c33e: cmp    BYTE PTR [rdi+0x5d3],r12b
+   game+0x75c345: jne    0x14075c351
+   game+0x75c347: movzx  eax,BYTE PTR [rbp-0x11]
+   game+0x75c34b: mov    BYTE PTR [rdi+0x5d3],al
+   game+0x75c351: cmp    BYTE PTR [rip+0x8fccf3],r12b        # 0x14105904b
+   game+0x75c358: je     0x14075c405
+   game+0x75c35e: lea    rdx,[rbp-0x9]
+   game+0x75c362: lea    rcx,[rdi+0x210]
+   game+0x75c369: call   0x1407a53b0
+   game+0x75c36e: movzx  eax,WORD PTR [rbp-0x9]
+   game+0x75c372: or     WORD PTR [rsi],ax
+   game+0x75c375: movzx  eax,WORD PTR [rbp-0x7]
+   game+0x75c379: or     WORD PTR [rdi+0x5be],ax
+   game+0x75c380: movzx  eax,WORD PTR [rbp-0x5]
+   game+0x75c384: or     WORD PTR [rdi+0x5c2],ax
+   game+0x75c38b: cmp    WORD PTR [rdi+0x5ca],r12w
+   game+0x75c392: 
+   game+0x75c393: jne    0x14075c3a0
+   game+0x75c395: movzx  eax,WORD PTR [rbp-0x3]
+   game+0x75c399: mov    WORD PTR [rdi+0x5ca],ax
+   game+0x75c3a0: cmp    WORD PTR [rdi+0x5cc],r12w
+   game+0x75c3a7: 
+   game+0x75c3a8: jne    0x14075c3b5
+   game+0x75c3aa: movzx  eax,WORD PTR [rbp-0x1]
+   game+0x75c3ae: mov    WORD PTR [rdi+0x5cc],ax
+   game+0x75c3b5: cmp    BYTE PTR [rdi+0x5d2],r12b
+   game+0x75c3bc: jne    0x14075c3c8
+   game+0x75c3be: movzx  eax,BYTE PTR [rbp+0x1]
+   game+0x75c3c2: mov    BYTE PTR [rdi+0x5d2],al
+   game+0x75c3c8: cmp    WORD PTR [rdi+0x5ce],r12w
+   game+0x75c3cf: 
+   game+0x75c3d0: jne    0x14075c3dd
+   game+0x75c3d2: movzx  eax,WORD PTR [rbp+0x3]
+   game+0x75c3d6: mov    WORD PTR [rdi+0x5ce],ax
+   game+0x75c3dd: cmp    WORD PTR [rdi+0x5d0],r12w
+   game+0x75c3e4: 
+   game+0x75c3e5: jne    0x14075c3f2
+   game+0x75c3e7: movzx  eax,WORD PTR [rbp+0x5]
+   game+0x75c3eb: mov    WORD PTR [rdi+0x5d0],ax
+   game+0x75c3f2: cmp    BYTE PTR [rdi+0x5d3],r12b
+   game+0x75c3f9: jne    0x14075c405
+   game+0x75c3fb: movzx  eax,BYTE PTR [rbp+0x7]
+   game+0x75c3ff: mov    BYTE PTR [rdi+0x5d3],al
+   game+0x75c405: movss  xmm2,DWORD PTR [rip+0x8fcc2f]        # 0x14105903c
+   game+0x75c40c: 
+   game+0x75c40d: movzx  r10d,WORD PTR [rsi]
+   game+0x75c411: movzx  r11d,WORD PTR [rdi+0x5be]
+   game+0x75c418: 
+   game+0x75c419: movzx  r9d,WORD PTR [rdi+0x5c2]
+   game+0x75c420: 
+   game+0x75c421: movss  xmm1,DWORD PTR [rdi+0x5b0]
+   game+0x75c428: 
+   game+0x75c429: mov    r15,QWORD PTR [rsp+0x80]
+   game+0x75c430: 
+   game+0x75c431: mov    r14,QWORD PTR [rsp+0x88]
+   game+0x75c438: 
+   game+0x75c439: mov    ecx,0x1
+   game+0x75c43e: lea    rdx,[rdi+0x570]
+   game+0x75c445: lea    r8d,[rcx+0xf]
+   game+0x75c449: mov    WORD PTR [rdi+0x5c6],r12w
+   game+0x75c450: 
+   game+0x75c451: test   r10w,cx
+   game+0x75c455: je     0x14075c47a
+   game+0x75c457: test   r11w,cx
+   game+0x75c45b: je     0x14075c47a
+   game+0x75c45d: movaps xmm0,xmm2
+   game+0x75c460: addss  xmm0,DWORD PTR [rdx]
+   game+0x75c464: comiss xmm0,xmm1
+   game+0x75c467: movss  DWORD PTR [rdx],xmm0
+   game+0x75c46b: jb     0x14075c47d
+   game+0x75c46d: or     WORD PTR [rdi+0x5c6],cx
+   game+0x75c474: movss  DWORD PTR [rdx],xmm1
+   game+0x75c478: jmp    0x14075c48b

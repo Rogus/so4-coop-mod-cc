@@ -1,0 +1,139 @@
+/*
+ * so4coop - tag-team mode (v0.24).  Included by probe.c after guardtrace.c.
+ *
+ * Built on what works (run 21): writing the leader position in the leader block
+ * (*(CBattleMainTask+0x68))[4] switches the battle leader completely (camera, status board,
+ * control). Here each player owns a party position; pressing L3 (left stick click) on your
+ * controller makes your character the leader. F3 / F4 do the same for player 1 / 2 (testing).
+ * The game still merges both controllers, so both pads move whoever is the leader.
+ *
+ * Controllers are read with the real XInput (our own polling, slots 0-3); the first two connected
+ * slots are player 1 and player 2. Optional so4coop.ini next to the DLL:
+ *     p1_position=0
+ *     p2_position=1
+ * Checks before every write (no full-memory scan): CBattleMainTask (cached, verified by RTTI),
+ * leader block within 0x200 after *(main+0x60), highest position 1-3, current <= highest,
+ * *(main+0x58) is a CChrManager whose members[0..highest] are all party characters, and the target
+ * position exists. Only that one byte is written.
+ */
+
+__declspec(dllimport) BOOL WINAPI ReadFile(HANDLE, void *, DWORD, DWORD *, void *);
+#define GENERIC_READ 0x80000000
+#define OPEN_EXISTING 3
+#define XI_L3 0x0040
+
+static uint32_t tt_owner[2] = { 0, 1 };
+static int tt_ready;
+static DWORD tt_slot[2] = { 0xffffffff, 0xffffffff };
+static WORD tt_prev[4];
+static DWORD tt_mask = 0xffffffff;
+static uintptr_t tt_main;
+static uint64_t tt_last_scan;
+
+static int tt_find_value(const char *buf, DWORD n, const char *key, uint32_t *out)
+{
+    uint32_t k = 0;
+    while (key[k]) k++;
+    for (DWORD i = 0; i + k < n; i++) {
+        DWORD j = 0;
+        while (j < k && buf[i + j] == key[j]) j++;
+        if (j == k && buf[i + k] >= '0' && buf[i + k] <= '3') { *out = (uint32_t)(buf[i + k] - '0'); return 1; }
+    }
+    return 0;
+}
+
+static void tt_load_config(void)
+{
+    char b[200];
+    uint16_t path[520];
+    DWORD n = GetModuleFileNameW(self_module, path, 512);
+    while (n && path[n - 1] != '\\' && path[n - 1] != '/') n--;
+    path[n] = 0;
+    wcat(path, "so4coop.ini");
+    HANDLE h = CreateFileW(path, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+    if (h != (HANDLE)-1) {
+        static char buf[4096];
+        DWORD r = 0;
+        ReadFile(h, buf, sizeof buf - 1, &r, 0);
+        CloseHandle(h);
+        tt_find_value(buf, r, "p1_position=", &tt_owner[0]);
+        tt_find_value(buf, r, "p2_position=", &tt_owner[1]);
+    }
+    wsprintfA(b, "=== TAG-TEAM ready: L3 on your controller takes control (F3 = player 1, F4 = player 2); player 1 = party position %lu, player 2 = position %lu%s ===\r\n",
+              (unsigned long)tt_owner[0], (unsigned long)tt_owner[1], h != (HANDLE)-1 ? " (from so4coop.ini)" : " (defaults)");
+    logs(b);
+}
+
+static uintptr_t tt_find_main(void)
+{
+    if (tt_main) {
+        const char *cn = class_of(tt_main);
+        if (cn && str_eq(cn, "CBattleMainTask@Battle@@")) return tt_main;
+        tt_main = 0;
+    }
+    uint64_t now = GetTickCount64();
+    if (now - tt_last_scan < 5000) return 0;          /* not in a battle: rescan at most every 5 s */
+    tt_last_scan = now;
+    if (!rtti_done) rtti_init();
+    nobj = 0;
+    for (uint32_t k = 0; k < NCLASS; k++) cls_count[k] = 0;
+    own_stack();
+    each_region(0x10000, (uintptr_t)0x7fffffff0000ULL, 1, find_objs, 0);
+    for (uint32_t i = 0; i < nobj; i++) if (objs[i].cls == 21) { tt_main = objs[i].addr; break; }
+    return tt_main;
+}
+
+static void tt_take(int player)
+{
+    char b[300];
+    uint32_t target = tt_owner[player];
+    uintptr_t mt = tt_find_main();
+    if (!mt || !mem_readable(mt + 0x58, 0x18)) { wsprintfA(b, "  P%d: no battle (nothing written)\r\n", player + 1); logs(b); return; }
+    uintptr_t party = *(const uintptr_t *)(mt + 0x58), base = *(const uintptr_t *)(mt + 0x60), blk = *(const uintptr_t *)(mt + 0x68);
+    if (!(blk >= base && blk - base < 0x200) || !mem_readable(blk, 8)) { logs("  leader block not valid: nothing written\r\n"); return; }
+    uint32_t mx = *(const uint32_t *)blk, cur = *(const uint32_t *)(blk + 4);
+    const char *pc = class_of(party);
+    if (mx < 1 || mx > 3 || cur > mx || !pc || !str_eq(pc, "CChrManager@Battle@@") || !mem_readable(party + 0x5a0, 8 * (mx + 1))) {
+        logs("  leader block or party not as expected: nothing written\r\n");
+        return;
+    }
+    for (uint32_t i = 0; i <= mx; i++)
+        if (!party_name(*(const uintptr_t *)(party + 0x5a0 + 8 * i))) { logs("  a party slot is not a character: nothing written\r\n"); return; }
+    if (target > mx) { wsprintfA(b, "  P%d owns position %lu but the party has only %lu members\r\n", player + 1, (unsigned long)target, (unsigned long)mx + 1); logs(b); return; }
+    const char *who = party_name(*(const uintptr_t *)(party + 0x5a0 + 8 * target));
+    if (cur == target) { wsprintfA(b, "  P%d: %s is already the leader\r\n", player + 1, who); logs(b); return; }
+    *(volatile BYTE *)(blk + 4) = (BYTE)target;
+    wsprintfA(b, "  P%d takes control: position %lu -> %lu (%s)\r\n", player + 1, (unsigned long)cur, (unsigned long)target, who);
+    logs(b);
+}
+
+/* called every 30 ms by the hotkey thread (after the 45 s start delay) */
+static void tagteam_poll(void)
+{
+    char b[200];
+    if (!tt_ready) { tt_ready = 1; tt_load_config(); }
+    ENSURE();
+    if (!r_GetState) return;
+    XINPUT_STATE st[4];
+    DWORD mask = 0;
+    for (DWORD s = 0; s < 4; s++) if (r_GetState(s, &st[s]) == 0) mask |= 1u << s;
+    if (mask != tt_mask) {
+        tt_mask = mask;
+        tt_slot[0] = tt_slot[1] = 0xffffffff;
+        for (DWORD s = 0, p = 0; s < 4 && p < 2; s++) if (mask & (1u << s)) tt_slot[p++] = s;
+        wsprintfA(b, "  controllers: XInput slots connected %s%s%s%s -> player 1 = slot %ld, player 2 = slot %ld\r\n",
+                  mask & 1 ? "0 " : "", mask & 2 ? "1 " : "", mask & 4 ? "2 " : "", mask & 8 ? "3 " : "",
+                  tt_slot[0] == 0xffffffff ? -1L : (long)tt_slot[0], tt_slot[1] == 0xffffffff ? -1L : (long)tt_slot[1]);
+        logs(b);
+    }
+    for (int p = 0; p < 2; p++) {
+        DWORD s = tt_slot[p];
+        if (s > 3) continue;
+        WORD bt = st[s].Gamepad.wButtons;
+        if ((bt & XI_L3) && !(tt_prev[s] & XI_L3)) tt_take(p);
+        tt_prev[s] = bt;
+    }
+}
+
+/* test hook (not used by the game): config + one controller poll + "player 2 takes control" */
+__declspec(dllexport) void WINAPI so4coop_tagtest(void) { tagteam_poll(); tt_take(1); }
