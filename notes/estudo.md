@@ -292,3 +292,18 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   (1) como a entrada do controle chega ao líder (começar pelos métodos do CBtlPad, vtable game+0x9d6c78,
   offline); (2) onde a IA decide as ações dos outros membros; (3) leitura do 2º controle (Steam Input,
   2 objetos WindowsPad).
+
+## Fase 3 - entrada do controle (offline, código salvo na execução 10)
+- analysis/vtable.py: imagem = exe do disco + seção .xpdata salva; lista a vtable e desmonta o início
+  de cada método (para no ret/jmp por causa do lixo anti-disassembly). Saída em notes/cbtlpad_vtable.txt.
+- **CBtlPad** (vtable game+0x9d6c78): 19 métodos, a maioria stubs. O [12] (game+0x2f9bae0) percorre 2
+  registros de 0x14 bytes em this+0x28 (contador float + flag em +0x10) e, ao zerar, chama
+  game+0x75c840 -> **temporizador de vibração de 2 controles** (o 32767.0 visto na execução 5).
+- **Camada de entrada**: tabela global de **2 controles** em game+0x1059634 (registros de 0x6e8 bytes,
+  1º byte = id 0 e 1). game+0x75c660(id) procura o registro; se o id não existe, faz OR dos botões do
+  registro 1 no registro 0 e devolve um registro padrão -> o jogo lê os 2 controles **separados** e os
+  **junta** para um jogador só.
+- 43 chamadas diretas a game+0x75c660: a maioria pede o controle 0; 4 funções pedem 0 e 1
+  (game+0x7b1510, 0x7b2e60, 0x7b7090, 0x7d2870). Todas em .data1 (não cifrada no disco).
+- Próximo: descobrir qual chamada do controle 0 alimenta o líder em batalha; para o co-op, o 2º membro
+  precisaria receber os dados do controle 1 (exige alterar código em execução, como o SO4Fix faz).
