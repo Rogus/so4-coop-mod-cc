@@ -541,6 +541,9 @@ static void poll_hotkeys(void)
     if (f3 && !f3_was) { logs("=== TAG-TEAM: F3 (player 1) ===\r\n"); tt_take(0); }
     if (f4 && !f4_was) { logs("=== TAG-TEAM: F4 (player 2) ===\r\n"); tt_take(1); }
     f3_was = f3; f4_was = f4;
+#ifdef SO4COOP_RELEASE
+    return;                      /* release build: only the tag-team keys */
+#endif
     int f5 = (GetAsyncKeyState(0x74 /* VK_F5 */) & 0x8000) != 0;
     if (f5 && !f5_was) guard_trace();
     f5_was = f5;

@@ -312,7 +312,11 @@ static void open_log(HMODULE self)
     wcopy(from, dir); wcat(from, "so4coop_dumps");
     wcopy(to, dir); wcat(to, "so4coop_dumps_before_"); wcat(to, session);
     int moved = MoveFileW(from, to) != 0;                  /* fails harmlessly when there is none */
+#ifdef SO4COOP_RELEASE
+    wcopy(to, dir); wcat(to, "so4coop.log");
+#else
     wcopy(to, dir); wcat(to, "so4coop_probe.log");
+#endif
     logf = CreateFileW(to, FILE_APPEND_DATA, FILE_SHARE_READ, 0, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
     char b[160];
     wsprintfA(b, "\r\n===== session %s =====%s\r\n", session, moved ? " (previous so4coop_dumps renamed to so4coop_dumps_before_<session>)" : "");
@@ -389,7 +393,11 @@ BOOL WINAPI DllMain(HMODULE self, DWORD reason, LPVOID unused)
             self_end = self_base + *(uint32_t *)(sb + *(int32_t *)(sb + 0x3c) + 24 + 56);
         }
         open_log(self);
+#ifdef SO4COOP_RELEASE
+        logs("so4coop tag-team 1.0 loaded (R3 on your controller = your character becomes the battle leader; F3/F4 = keyboard; settings in so4coop.ini)\r\n");
+#else
         logs("so4coop probe v0.29 loaded (TAG-TEAM: R3 = Steam action 10 per controller (take_action=, p1_steam=, activate_all= in so4coop.ini), R3 via XInput, F3/F4 = player 1/2; F3/F4 = player 1/2; hotkeys after 45 s; F5 disabled; F6 = stick capture (neutral,up,right,down,left x2); F7 = auto-capture, F8 = WRITE TEST on the leader block at *(CBattleMainTask+0x68) (3 checks), F9 = scan + dump, F10 = mark)\r\n");
+#endif
         describe_game_module();   /* the real XInput is loaded on the first call, not under the loader lock */
         CreateThread(0, 0, hotkey_thread, 0, 0, 0);
     }

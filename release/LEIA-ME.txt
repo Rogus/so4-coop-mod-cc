@@ -1,0 +1,41 @@
+so4coop tag-team 1.0 - STAR OCEAN - THE LAST HOPE - 4K & Full HD Remaster (Steam)
+==================================================================================
+
+O que faz
+---------
+Cada controle fica com um membro do grupo. Na batalha, apertar R3 (clicar o analógico direito)
+no seu controle torna o seu personagem o líder da batalha (o personagem que o jogo deixa
+controlar), como L1/R1 fariam, mas direto para o seu personagem. F3 / F4 no teclado fazem o
+mesmo para o jogador 1 / jogador 2.
+
+Limites (leia)
+--------------
+- O próprio jogo só deixa controlar UM personagem por vez (o líder); os outros são IA. O mod
+  troca o líder; não deixa dois personagens controláveis ao mesmo tempo.
+- O jogo mistura todos os controles numa entrada só: todo controle move quem for o líder.
+  Se você não é o líder, não mexa no analógico nem nos botões.
+- Só em batalha. O mod começa a reagir uns 45 segundos depois de o jogo abrir.
+- O R3 também recentraliza a câmera atrás do novo líder (ação própria do jogo).
+
+Instalação
+----------
+1. Copie xinput1_3.dll e so4coop.ini para a pasta do jogo (onde fica o StarOceanTheLastHope.exe).
+2. Linux / Steam Deck (Proton): Steam -> Propriedades do jogo -> Opções de inicialização:
+       WINEDLLOVERRIDES="xinput1_3=n,b" %command%
+   Windows: nada mais.
+3. Deixe o Steam Input LIGADO para o jogo (desligado, o jogo não recebe o controle).
+
+Configuração (so4coop.ini)
+--------------------------
+take_action=10        R3 (ação 10 do Steam no jogo). Não mude.
+steamN_position=P     O controle N do Steam controla a posição P do grupo (0 = primeiro membro).
+Qual é o "controle N do Steam"? Numa batalha, aperte R3 num controle e procure no so4coop.log
+(pasta do jogo) uma linha como "steamctl ... controller 2 action 10: pressed".
+A numeração segue a ordem de controles do Steam e pode mudar se você reconectar os controles.
+
+Desinstalar
+-----------
+Apague xinput1_3.dll, so4coop.ini e so4coop.log da pasta do jogo (e a opção de inicialização).
+
+O mod só grava um byte na memória do jogo (a posição do líder, o mesmo valor que R1/L1 mudam)
+depois de verificar que há uma batalha; nunca mexe nos saves.

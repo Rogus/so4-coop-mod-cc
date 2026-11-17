@@ -473,3 +473,13 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   controle 3 -> Edge, controle 2 -> Sarah, controle 1 -> Arumat (6 apertos, todas as checagens ok, sem travar).
 - Falta o usuário dizer qual controle físico é o 2 e qual é o 1 (GameSir / DualShock 4) e se o R3 fez algo além
   de recentralizar a câmera.
+
+## Release: so4coop tag-team 1.0
+- build_release.sh compila as mesmas fontes com SO4COOP_RELEASE: só F3/F4 + R3 pelos controles do Steam,
+  log em so4coop.log. Pacote build/release/so4coop-tagteam-1.0.zip (xinput1_3.dll, so4coop.ini modelo,
+  README.txt, LEIA-ME.txt; arquivos-fonte do pacote em release/). Testado no Wine local.
+- Pedido do usuário: os outros controles jogarem com os outros membros **ao mesmo tempo** na batalha.
+  Ainda não é possível: o jogo só tem um personagem controlado (líder) e não sabemos como injetar comandos
+  na IA dos outros membros. Passo seguinte proposto: interceptar as chamadas do jogo à ISteamController
+  (tabela virtual da interface) para separar a entrada por controle (só o controle do líder dirige; a
+  entrada dos outros fica disponível para alimentar outro personagem) e então estudar o "pensar" da IA.
