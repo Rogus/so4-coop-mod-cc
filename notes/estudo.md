@@ -85,3 +85,19 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   registra cada instrução do jogo que lê/escreve neles e salva o código da função em
   so4coop_dumps/code_<rva>.bin. F11 = relatório e remove os watchpoints. Autoteste no Wine 11.22
   local: funciona (Dr7 lido de volta, DR6 preenchido). No Proton, o autoteste vai no início do log.
+
+### Execução 6 (v0.7) - notes/run6_v0.7
+- Autoteste no Proton 11.0-100: watchpoints de hardware **funcionam**, mas o DR6 vem vazio
+  (atribuição só por mudança de valor; leituras ficam como "w?").
+- 4 watchpoints armados em 61 threads (Dr7 = 0xBBBB0055, correto), **0 acessos** em 4 min.
+- Causa: os "campos do heap sem classe" em 0xC2xxxx (inclusive o 0xC2EC00 da execução 5) são a
+  **pilha da própria sonda**: as variáveis locais do F9 guardam o personagem controlado; três
+  deles já tinham outro valor no momento de armar. Artefato da sonda, não do jogo.
+- Sem esse artefato, só seguem a troca objetos de câmera (CCameraManager+0x360,
+  CCameraUserCtrl+0xc0, CCameraAngleLock+0x190) e CFaceMorphManager+0x540.
+- find_controlled.py na execução 3 (7 capturas): os 46 candidatos estão todos no bloco da
+  câmera (+0x129a0..+0x12a24): o personagem **não** tem flag própria de "controlado".
+- v0.8: ignora a pilha da sonda (registra o intervalo no log), vigia os campos de câmera
+  (quem escreve neles na troca deve ser a rotina de troca de personagem), não rearma nos F9
+  seguintes, limita leituras não atribuídas, e salva as variáveis globais do jogo a cada F9
+  (procurar um índice do grupo: Edge 0, Sarah 1, Arumat 2...).

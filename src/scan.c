@@ -42,6 +42,23 @@ static const char *const CLASSES[] = {
 #define K_BTLPAD 12
 
 static uintptr_t self_base, self_end;   /* the probe's own image, skipped by the scan */
+static uintptr_t stk_lo, stk_hi;        /* the scanning thread's own stack, skipped too (v0.8):
+                                           its locals hold the controlled character during F9 */
+
+static void own_stack(void)
+{
+    uintptr_t base;
+    __asm__ volatile("movq %%gs:0x8, %0" : "=r"(base));        /* TEB.StackBase */
+    MBI64 m;
+    VirtualQuery((void *)&base, &m, sizeof m);              /* any local: it lives on this stack */
+    stk_lo = (uintptr_t)m.AllocationBase;
+    stk_hi = base;
+}
+
+static int own_memory(uintptr_t a)
+{
+    return (a >= self_base && a < self_end) || (a >= stk_lo && a < stk_hi);
+}
 
 #define MAXVT 64
 static struct { uintptr_t vt; uint32_t cls; } vtabs[MAXVT];
@@ -173,7 +190,7 @@ static void find_objs(uintptr_t a, uintptr_t b, void *ctx)
 {
     (void)ctx;
     if (a >= game_base && a < game_end) return;      /* skip the module's own data (vtables live there) */
-    if (a >= self_base && a < self_end) return;      /* skip the probe itself (its vtable table) */
+    if (own_memory(a)) return;                       /* skip the probe itself (its tables and stack) */
     for (uintptr_t p = (a + 7) & ~(uintptr_t)7; p + 8 <= b; p += 8) {
         int k = vt_class(*(const uintptr_t *)p);
         if (k < 0) continue;
@@ -192,6 +209,7 @@ static uint32_t scan_no;
 static void dump_objects(void);
 static void dump_one(const char *tag, uintptr_t o, uintptr_t size);
 static void dump_path(uint16_t *path, const char *nm);
+static void dump_globals(void);
 
 static int mem_readable(uintptr_t p, uintptr_t n)
 {
@@ -294,7 +312,7 @@ static void ref_line(uintptr_t loc, uintptr_t region_lo, uint32_t ci, uintptr_t 
 static void find_refs(uintptr_t a, uintptr_t b, void *ctx)
 {
     (void)ctx;
-    if (a >= self_base && a < self_end) return;
+    if (own_memory(a)) return;
     for (uintptr_t p = (a + 7) & ~(uintptr_t)7; p + 8 <= b; p += 8) {
         uintptr_t v = *(const uintptr_t *)p;
         for (uint32_t i = 0; i < nref_chr; i++) {
@@ -365,10 +383,12 @@ static void scan_now(void)
     if (!rtti_done) rtti_init();
     nobj = 0;
     controlled_cur = 0;
+    own_stack();
     for (uint32_t k = 0; k < NCLASS; k++) cls_count[k] = 0;
     uint64_t t0 = GetTickCount64();
     each_region(0x10000, (uintptr_t)0x7fffffff0000ULL, 1, find_objs, 0);
-    wsprintfA(b, "=== SCAN #%u (%lu ms) ===\r\n", ++scan_no, (unsigned long)(GetTickCount64() - t0));
+    wsprintfA(b, "=== SCAN #%u (%lu ms) === (probe stack %p-%p skipped)\r\n", ++scan_no, (unsigned long)(GetTickCount64() - t0),
+              (void *)stk_lo, (void *)stk_hi);
     logs(b);
     for (uint32_t k = 0; k < NCLASS; k++)
         if (cls_count[k]) {
@@ -398,7 +418,43 @@ static void scan_now(void)
     analyse_operator();
     search_refs();
     dump_objects();
+    dump_globals();
     watch_after_scan();
+}
+
+/* the game's writable, non-executable sections (its global variables), for offline diffing:
+ * a party index ("member 1 is controlled") would not show up in the pointer search */
+static BYTE zero_page[0x1000];
+static void dump_globals(void)
+{
+    BYTE *b = (BYTE *)game_base;
+    int32_t pe = *(int32_t *)(b + 0x3c);
+    uint16_t nsec = *(uint16_t *)(b + pe + 6), optsz = *(uint16_t *)(b + pe + 20);
+    BYTE *sec = b + pe + 24 + optsz;
+    for (uint16_t i = 0; i < nsec; i++, sec += 40) {
+        uint32_t vsize = *(uint32_t *)(sec + 8), rva = *(uint32_t *)(sec + 12), fl = *(uint32_t *)(sec + 36);
+        if (!(fl & 0x80000000) || (fl & 0x20000000) || vsize > 0x2000000) continue;   /* writable, not code, < 32 MB */
+        char nm[64];
+        wsprintfA(nm, "\\s%02u_globals_%08lx.bin", scan_no, (unsigned long)rva);
+        uint16_t path[700];
+        dump_path(path, nm);
+        HANDLE h = CreateFileW(path, GENERIC_WRITE, FILE_SHARE_READ, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+        if (h == (HANDLE)-1) continue;
+        uint32_t zeros = 0;
+        for (uint32_t off = 0; off < vsize; off += 0x1000) {
+            uint32_t n = vsize - off < 0x1000 ? vsize - off : 0x1000;
+            uintptr_t p = game_base + rva + off;
+            int ok = mem_readable(p, n);
+            if (!ok) zeros++;
+            DWORD w;
+            WriteFile(h, ok ? (const void *)p : zero_page, n, &w, 0);
+        }
+        CloseHandle(h);
+        char line[160];
+        wsprintfA(line, "  globals: rva 0x%08lx size 0x%08lx -> s%02u_globals_%08lx.bin (%lu unreadable pages)\r\n",
+                  (unsigned long)rva, (unsigned long)vsize, scan_no, (unsigned long)rva, (unsigned long)zeros);
+        logs(line);
+    }
 }
 
 static void dump_path(uint16_t *path, const char *nm)

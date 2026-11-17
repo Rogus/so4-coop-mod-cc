@@ -1,0 +1,195 @@
+so4coop probe v0.7 loaded (F9 = scan battle objects + arm watchpoints after a switch, F10 = mark, F11 = watch report)
+game module base=0000000140000000 size=0x0585d000 sections=10
+  .data1   rva=0x00001000 vsize=0x0090b000 flags=0x60000020
+  .xdata   rva=0x0090c000 vsize=0x00320800 flags=0x40000040
+  .arch    rva=0x00c2d000 vsize=0x0070ed68 flags=0xc0000020
+  .pdata   rva=0x0133c000 vsize=0x00065e00 flags=0x40000040
+  .xpdata  rva=0x013a2000 vsize=0x04487932 flags=0xe0000020
+  .text    rva=0x0582a000 vsize=0x00002d3b flags=0x60000020
+  .link    rva=0x0582d000 vsize=0x00000b1b flags=0x60000020
+  .srdata  rva=0x0582e000 vsize=0x000015da flags=0x40000040
+  .xtext   rva=0x05830000 vsize=0x000014b0 flags=0x40000040
+  .bind    rva=0x05832000 vsize=0x0002acd0 flags=0x60000000
+watch: code game+0x013a2000-0x05829932, 34735 function entries
+watch self-test: SetThreadContext ok, Dr7 read back 0000000000090001, hits 2 (writes seen 2, DR6 empty 2) -> hardware watchpoints WORK
+[alive t=0s] GetState calls so far: 0
+first call: XInputGetCapabilities from game+0x01f15bc0
+real XInput: system32\xinput1_3.dll
+first call: XInputSetState from game+0x003786cd
+new caller: game+0x003786cd
+[alive t=30s] GetState calls so far: 0
+[alive t=60s] GetState calls so far: 0
+[alive t=90s] GetState calls so far: 0
+[alive t=120s] GetState calls so far: 0
+[alive t=150s] GetState calls so far: 0
+[alive t=180s] GetState calls so far: 0
+[alive t=210s] GetState calls so far: 0
+[alive t=240s] GetState calls so far: 0
+[alive t=270s] GetState calls so far: 0
+RTTI map built in 233 ms, 24 vtables:
+  CPlayerEdge@Battle       TD=+0x00f0c380 vtable=game+0x009f48b8
+  CPlayerReimi@Battle      TD=+0x00f0c508 vtable=game+0x009f59a8
+  CPlayerFaiz@Battle       TD=+0x00f0c6a8 vtable=game+0x009f6b78
+  CPlayerLymle@Battle      TD=+0x00f0d080 vtable=game+0x009fcf58
+  CPlayerBackus@Battle     TD=+0x00f0c830 vtable=game+0x009f7bf8
+  CPlayerArumat@Battle     TD=+0x00f0cf00 vtable=game+0x009fbe98
+  CPlayerMelicle@Battle    TD=+0x00f0c9b0 vtable=game+0x009f8dd8
+  CPlayerMuria@Battle      TD=+0x00f0ccf8 vtable=game+0x009fae98
+  CPlayerSarah@Battle      TD=+0x00f0cb38 vtable=game+0x009f9e88
+  CPlayerChr@Battle        TD=+0x00efeda0 vtable=game+0x009e01d8
+  CPlayerThinkChr@Battle   TD=+0x00efed70 vtable=game+0x009dcc78
+  CEnemyThinkChr@Battle    TD=+0x00f0c1c8 vtable=game+0x009f3a28
+  CBtlPad@Battle           TD=+0x00efb5f0 vtable=game+0x009d6c78
+  Pad@Aska                 TD=+0x00c30df8 vtable=game+0x00913418
+  PadXe@Aska               TD=+0x00c30e40 vtable=game+0x009134b8
+  WindowsPad@Aska          TD=+0x00c30e68 vtable=game+0x00913558
+  BasePad@Aska             TD=+0x00c30e18 (no vtable found)
+  PadTask@Peripheral       TD=+0x00f39740 vtable=game+0x00a8e538
+  CTacticsMode@Battle      TD=+0x00f15d50 vtable=game+0x00a3f548
+  CReplaceMember@Battle    TD=+0x00f16340 vtable=game+0x00a400f8
+  CMemberBoard@Battle      TD=+0x00f224f8 vtable=game+0x00a577c8
+  CBattleMainTask@Battle   TD=+0x00efb078 vtable=game+0x009d5af8
+  CBattleCampMember@Battle TD=+0x00f22528 vtable=game+0x00a579f8
+  CTacticsChoice@Battle    TD=+0x00f22298 vtable=game+0x00a57018
+  CSelectTarget@Battle     TD=+0x00f22748 vtable=game+0x00a57c68
+=== SCAN #1 (874 ms) ===
+  CPlayerEdge@Battle       x1: 00000001B26B01B0
+  CPlayerArumat@Battle     x1: 00000001B28D3770
+  CPlayerMuria@Battle      x1: 00000001B2B601B0
+  CPlayerSarah@Battle      x1: 00000001B28C01B0
+  CBtlPad@Battle           x1: 00000001472100D0
+  WindowsPad@Aska          x2: 000000014975C570 000000014975E370
+  PadTask@Peripheral       x1: 000000014722DE90
+  CTacticsMode@Battle      x1: 00000001C0177DF0
+  CBattleMainTask@Battle   x1: 00000001459FAD90
+  CSelectTarget@Battle     x1: 00000001C070B2B0
+  CBattleMainTask@Battle@00000001459FAD90 -> +0x90=CBtlPad@Battle@00000001472100D0
+  WindowsPad@Aska@000000014975E370 -> +0xf30=PadTask@Peripheral@000000014722DE90
+  CPlayerEdge@Battle@00000001B26B01B0 -> +0x10=CPlayerSarah@Battle@00000001B28C01B0
+  CPlayerSarah@Battle@00000001B28C01B0 -> +0x8=CPlayerEdge@Battle@00000001B26B01B0 +0x10=CPlayerArumat@Battle@00000001B28D3770
+  CPlayerArumat@Battle@00000001B28D3770 -> +0x8=CPlayerSarah@Battle@00000001B28C01B0 +0x10=CPlayerMuria@Battle@00000001B2B601B0
+  CPlayerMuria@Battle@00000001B2B601B0 -> +0x8=CPlayerArumat@Battle@00000001B28D3770
+  CTacticsMode@Battle@00000001C0177DF0 -> +0xab8=CSelectTarget@Battle@00000001C070B2B0
+  CBattleMainTask@00000001459FAD90 +0x410 (operator X) = 3F8000003F800000
+  X @3F8000003F800000 class=?
+  CONTROLLED: CPlayerEdge@Battle@00000001B26B01B0  +0x129a0=00000001BFE001B0  +0x129c0=00000001BFFFDB20  +0x129d8=42f00000
+     chr+0x12998 -> 00000001B26B01B0 CPlayerEdge@Battle@@
+     chr+0x129a0 -> 00000001BFE001B0 CCm140@Battle@@
+     chr+0x129a8 -> 00000001C05CF910 HierarchicalObject@Aska@@
+     chr+0x129b0 -> 00000001C05DD380 HierarchicalObject@Aska@@
+     chr+0x129b8 -> 00000001C05DCFE0 HierarchicalObject@Aska@@
+     chr+0x129c0 -> 00000001BFFFDB20 JointObject@Aska@@
+     chr+0x12a20 -> 00000001BFE001B0 CCm140@Battle@@
+  Y @00000001BFFFDB20 class=JointObject@Aska@@
+     +0x00e0 -> 00000001BFFFD940 JointObject@Aska@@
+     +0x00e8 -> 00000001BFFFDD00 JointObject@Aska@@
+     +0x00f0 -> 00000001BFFFDB20 JointObject@Aska@@
+     +0x00f8 -> 00000001BFFFDB20 JointObject@Aska@@
+     +0x01c8 -> 0000000145860050 MemoryManager@Aska@@
+     +0x02c0 -> 00000001BFFFDB20 JointObject@Aska@@
+     +0x02d0 -> 00000001C0026540 CBattleAofObject@Battle@@
+     +0x02d8 -> 00000001BFFFDEE0 JointObject@Aska@@
+     +0x03a8 -> 0000000145860050 MemoryManager@Aska@@
+     +0x04a0 -> 00000001BFFFDB20 JointObject@Aska@@
+     +0x04a8 -> 00000001BFFFE0C0 JointObject@Aska@@
+     +0x04b0 -> 00000001BFFFDD00 JointObject@Aska@@
+     +0x04b8 -> 00000001BFFFEA20 JointObject@Aska@@
+     +0x0588 -> 0000000145860050 MemoryManager@Aska@@
+     +0x0680 -> 00000001BFFFDEE0 JointObject@Aska@@
+     +0x0688 -> 00000001BFFFE2A0 JointObject@Aska@@
+     +0x0690 -> 00000001BFFFE0C0 JointObject@Aska@@
+     +0x0698 -> 00000001BFFFE0C0 JointObject@Aska@@
+     +0x0768 -> 0000000145860050 MemoryManager@Aska@@
+  references to party characters: 441 (2647 ms) -> s01_refs.txt
+  11 objects dumped to so4coop_dumps\
+  watch: references saved; switch character (R1/L1) and press F9 again to arm the watchpoints
+=== SCAN #2 (839 ms) ===
+  CPlayerEdge@Battle       x1: 00000001B26B01B0
+  CPlayerArumat@Battle     x1: 00000001B28D3770
+  CPlayerMuria@Battle      x1: 00000001B2B601B0
+  CPlayerSarah@Battle      x1: 00000001B28C01B0
+  CBtlPad@Battle           x1: 00000001472100D0
+  WindowsPad@Aska          x2: 000000014975C570 000000014975E370
+  PadTask@Peripheral       x1: 000000014722DE90
+  CTacticsMode@Battle      x1: 00000001C0177DF0
+  CBattleMainTask@Battle   x1: 00000001459FAD90
+  CSelectTarget@Battle     x1: 00000001C070B2B0
+  CBattleMainTask@Battle@00000001459FAD90 -> +0x90=CBtlPad@Battle@00000001472100D0
+  WindowsPad@Aska@000000014975E370 -> +0xf30=PadTask@Peripheral@000000014722DE90
+  CPlayerEdge@Battle@00000001B26B01B0 -> +0x10=CPlayerSarah@Battle@00000001B28C01B0
+  CPlayerSarah@Battle@00000001B28C01B0 -> +0x8=CPlayerEdge@Battle@00000001B26B01B0 +0x10=CPlayerArumat@Battle@00000001B28D3770
+  CPlayerArumat@Battle@00000001B28D3770 -> +0x8=CPlayerSarah@Battle@00000001B28C01B0 +0x10=CPlayerMuria@Battle@00000001B2B601B0
+  CPlayerMuria@Battle@00000001B2B601B0 -> +0x8=CPlayerArumat@Battle@00000001B28D3770
+  CTacticsMode@Battle@00000001C0177DF0 -> +0xab8=CSelectTarget@Battle@00000001C070B2B0
+  CBattleMainTask@00000001459FAD90 +0x410 (operator X) = 3F8000003F800000
+  X @3F8000003F800000 class=?
+  CONTROLLED: CPlayerSarah@Battle@00000001B28C01B0  +0x129a0=00000001BFE001B0  +0x129c0=00000001BFFFDB20  +0x129d8=42f00000
+     chr+0x12998 -> 00000001B28C01B0 CPlayerSarah@Battle@@
+     chr+0x129a0 -> 00000001BFE001B0 CCm140@Battle@@
+     chr+0x129a8 -> 00000001C0BB9350 HierarchicalObject@Aska@@
+     chr+0x129b0 -> 00000001C0BBD300 JointObject@Aska@@
+     chr+0x129b8 -> 00000001C0BBCF60 HierarchicalObject@Aska@@
+     chr+0x129c0 -> 00000001BFFFDB20 JointObject@Aska@@
+     chr+0x12a20 -> 00000001BFE001B0 CCm140@Battle@@
+  Y @00000001BFFFDB20 class=JointObject@Aska@@
+     +0x00e0 -> 00000001BFFFD940 JointObject@Aska@@
+     +0x00e8 -> 00000001BFFFDD00 JointObject@Aska@@
+     +0x00f0 -> 00000001BFFFDB20 JointObject@Aska@@
+     +0x00f8 -> 00000001BFFFDB20 JointObject@Aska@@
+     +0x01c8 -> 0000000145860050 MemoryManager@Aska@@
+     +0x02c0 -> 00000001BFFFDB20 JointObject@Aska@@
+     +0x02d0 -> 00000001C0026540 CBattleAofObject@Battle@@
+     +0x02d8 -> 00000001BFFFDEE0 JointObject@Aska@@
+     +0x03a8 -> 0000000145860050 MemoryManager@Aska@@
+     +0x04a0 -> 00000001BFFFDB20 JointObject@Aska@@
+     +0x04a8 -> 00000001BFFFE0C0 JointObject@Aska@@
+     +0x04b0 -> 00000001BFFFDD00 JointObject@Aska@@
+     +0x04b8 -> 00000001BFFFEA20 JointObject@Aska@@
+     +0x0588 -> 0000000145860050 MemoryManager@Aska@@
+     +0x0680 -> 00000001BFFFDEE0 JointObject@Aska@@
+     +0x0688 -> 00000001BFFFE2A0 JointObject@Aska@@
+     +0x0690 -> 00000001BFFFE0C0 JointObject@Aska@@
+     +0x0698 -> 00000001BFFFE0C0 JointObject@Aska@@
+     +0x0768 -> 0000000145860050 MemoryManager@Aska@@
+  references to party characters: 466 (2649 ms) -> s02_refs.txt
+  11 objects dumped to so4coop_dumps\
+  watch: 6 slots followed the switch to the new character:
+    0000000000C2EAD0 (heap, no class)
+    0000000000C2F0F8 (heap, no class)
+    0000000000C2F128 (heap, no class)
+    0000000000C2F148 (heap, no class)
+    000000015A71BB80 in CCameraManager@Battle@@@000000015A71B820+0x360  (not watched: only 4 debug registers)
+    000000017F47FBB0 in CCameraAngleLock@Battle@@@000000017F47FA20+0x190  (not watched: only 4 debug registers)
+  watch: 4 watchpoints armed on 61 threads (0 failed), Dr7 read back 00000000BBBB0055
+    w0 = 0000000000C2EAD0 (heap, no class)  (now -> CPlayerSarah@Battle@@)
+    w1 = 0000000000C2F0F8 (heap, no class)  (now -> ?)
+    w2 = 0000000000C2F128 (heap, no class)  (now -> ?)
+    w3 = 0000000000C2F148 (heap, no class)  (now -> ?)
+  watch: now switch characters a few times (R1/L1), move and attack for ~20 s, then F11 and close the game
+  [watch] hits w0=0 w1=0 w2=0 w3=0 unknown=0 (DR6 empty 0) writes=0 unique=0 dropped=0/0
+[alive t=301s] GetState calls so far: 0
+  [watch] hits w0=0 w1=0 w2=0 w3=0 unknown=0 (DR6 empty 0) writes=0 unique=0 dropped=0/0
+  [watch] hits w0=0 w1=0 w2=0 w3=0 unknown=0 (DR6 empty 0) writes=0 unique=0 dropped=0/0
+[alive t=331s] GetState calls so far: 0
+  [watch] hits w0=0 w1=0 w2=0 w3=0 unknown=0 (DR6 empty 0) writes=0 unique=0 dropped=0/0
+  [watch] hits w0=0 w1=0 w2=0 w3=0 unknown=0 (DR6 empty 0) writes=0 unique=0 dropped=0/0
+[alive t=361s] GetState calls so far: 0
+  [watch] hits w0=0 w1=0 w2=0 w3=0 unknown=0 (DR6 empty 0) writes=0 unique=0 dropped=0/0
+  [watch] hits w0=0 w1=0 w2=0 w3=0 unknown=0 (DR6 empty 0) writes=0 unique=0 dropped=0/0
+[alive t=391s] GetState calls so far: 0
+  [watch] hits w0=0 w1=0 w2=0 w3=0 unknown=0 (DR6 empty 0) writes=0 unique=0 dropped=0/0
+  [watch] hits w0=0 w1=0 w2=0 w3=0 unknown=0 (DR6 empty 0) writes=0 unique=0 dropped=0/0
+[alive t=421s] GetState calls so far: 0
+  [watch] hits w0=0 w1=0 w2=0 w3=0 unknown=0 (DR6 empty 0) writes=0 unique=0 dropped=0/0
+  [watch] hits w0=0 w1=0 w2=0 w3=0 unknown=0 (DR6 empty 0) writes=0 unique=0 dropped=0/0
+[alive t=451s] GetState calls so far: 0
+  [watch] hits w0=0 w1=0 w2=0 w3=0 unknown=0 (DR6 empty 0) writes=0 unique=0 dropped=0/0
+  [watch] hits w0=0 w1=0 w2=0 w3=0 unknown=0 (DR6 empty 0) writes=0 unique=0 dropped=0/0
+[alive t=481s] GetState calls so far: 0
+  [watch] hits w0=0 w1=0 w2=0 w3=0 unknown=0 (DR6 empty 0) writes=0 unique=0 dropped=0/0
+  watch: armed 1 new threads
+  [watch] hits w0=0 w1=0 w2=0 w3=0 unknown=0 (DR6 empty 0) writes=0 unique=0 dropped=0/0
+[alive t=511s] GetState calls so far: 0
+  [watch] hits w0=0 w1=0 w2=0 w3=0 unknown=0 (DR6 empty 0) writes=0 unique=0 dropped=0/0
+  [watch] hits w0=0 w1=0 w2=0 w3=0 unknown=0 (DR6 empty 0) writes=0 unique=0 dropped=0/0
+[alive t=541s] GetState calls so far: 0

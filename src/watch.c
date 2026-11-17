@@ -67,6 +67,7 @@ static ev_t evs[MAXEV];
 static volatile long nev, ev_dropped;
 static uint32_t ev_logged;
 static volatile long unknown_hits, dr6_empty;
+static long unknown_mark;
 
 static DWORD my_tid, test_tid;
 #define MAXTID 512
@@ -338,10 +339,11 @@ __declspec(dllexport) void WINAPI so4coop_selftest(void) { watch_setup(); }
 /* ---- arming from two F9 scans ---- */
 static int cand_prio(const ref_t *r)
 {
-    if (!r->cls) return 0;                              /* global or heap object without RTTI */
-    if (has(r->cls, "CCameraUserCtrl")) return 1;
-    if (has(r->cls, "CCameraManager")) return 2;
-    return 3;
+    if (!r->cls) return (r->slot >= game_base && r->slot < game_end) ? 0 : 3;   /* global first, bare heap later */
+    if (has(r->cls, "CCameraUserCtrl") || has(r->cls, "CCameraManager")) return 1;
+    if (has(r->cls, "CCameraAngleLock")) return 2;
+    if (has(r->cls, "CFaceMorph")) return 5;            /* facial animation: cosmetic */
+    return 4;
 }
 
 static void describe_ref(char *out, const ref_t *r)
@@ -368,6 +370,7 @@ static void watch_arm(ref_t **c, uint32_t n)
     Sleep(50);
     reset_tables();
     narmed = 0;
+    unknown_mark = 0;
     for (int i = 0; i < NW; i++) {
         w_addr[i] = (uint32_t)i < n ? c[i]->slot : 0;
         w_rw[i] = 3;
@@ -417,10 +420,11 @@ static void watch_after_scan(void)
         for (uint32_t i = 0; i < nc; i++) {
             char d[200];
             describe_ref(d, cand[i]);
-            wsprintfA(b, "    %s%s\r\n", d, i < NW ? "" : "  (not watched: only 4 debug registers)");
+            wsprintfA(b, "    %s%s\r\n", d, w_any || i < NW ? "" : "  (not watched: only 4 debug registers)");
             logs(b);
         }
-        watch_arm(cand, nc < NW ? nc : NW);
+        if (w_any) logs("  watch: already armed, keeping the current watchpoints (F11 = report and reset)\r\n");
+        else watch_arm(cand, nc < NW ? nc : NW);
     }
     memcpy(refs_prev, refs_cur, nref_cur * sizeof(ref_t));
     nref_prev = nref_cur;
@@ -480,6 +484,12 @@ static void watch_poll(void)
                 wsprintfA(b, "  watch: w%d read %ld times in 1 s -> now write-only\r\n", i, d);
                 logs(b);
             }
+        }
+        long du = unknown_hits - unknown_mark;          /* Proton leaves DR6 empty: reads are not attributed */
+        unknown_mark = unknown_hits;
+        if (du > 3000) {
+            for (int i = 0; i < NW; i++) if (w_addr[i] && w_rw[i] == 3) { w_rw[i] = 1; changed = 1; }
+            if (changed) { wsprintfA(b, "  watch: %ld unattributed reads in 1 s -> all watchpoints now write-only\r\n", du); logs(b); }
         }
         if (changed) { uint32_t ok = 0, fail = 0; arm_threads(1, &ok, &fail); }
     }
