@@ -483,3 +483,17 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   na IA dos outros membros. Passo seguinte proposto: interceptar as chamadas do jogo à ISteamController
   (tabela virtual da interface) para separar a entrada por controle (só o controle do líder dirige; a
   entrada dos outros fica disponível para alimentar outro personagem) e então estudar o "pensar" da IA.
+
+## Fase 4 - separar a entrada por controle
+- Release 1.0 instalada no jogo (xinput1_3.dll f244b3d6…), so4coop.ini do usuário mantido.
+- Desmontagem dos thunks planos do steam_api64.dll do jogo: RunFrame +0x10, GetConnectedControllers +0x18,
+  ActivateActionSet +0x30, GetCurrentActionSet +0x38, GetDigitalActionData +0x48, GetAnalogActionData +0x60.
+  Os dois "Get…Data" são métodos MSVC que devolvem struct por ponteiro oculto: (this=rcx, ret=rdx,
+  controle=r8, ação=r9) -> rax = ret. Analógico = {int modo; float x; float y; bool ativo} (16 bytes).
+- v0.30 (src/steamhook.c, hook_steam=1 no ini): copia a tabela virtual do objeto da interface, troca esses
+  6 métodos por invólucros que só contam e repassam, e aponta o objeto para a cópia (uma escrita de 8 bytes
+  no objeto do Steam; nenhum código alterado). Relatório a cada 10 s (2 min) e depois a cada 60 s: chamadas
+  por método, por handle de controle (ou "todos"), ações consultadas e quem chamou no jogo. Chamadas da
+  própria sonda não contam.
+- Autoteste no Wine local com um objeto falso de mesma ABI: contagens certas, repasse correto (digital e
+  analógico), chamadas próprias ignoradas. A release também tem o código, desligado por padrão.

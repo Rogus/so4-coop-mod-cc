@@ -117,6 +117,7 @@ static void wcat(uint16_t *d, const char *s)
 #include "guardtrace.c"
 #include "tagteam.c"
 #include "steamctl.c"
+#include "steamhook.c"
 
 /* ---- statistics (written from the game's input thread, flushed every 2 s) ---- */
 #define MAXCALLERS 16
@@ -371,6 +372,7 @@ static DWORD WINAPI hotkey_thread(LPVOID unused)
         guard_poll();
         tagteam_poll();
         steamctl_poll();
+        steamhook_poll();
         if (now - last >= 30000) {            /* heartbeat: shows the game is still running */
             last = now;
             char b[96];
@@ -396,7 +398,7 @@ BOOL WINAPI DllMain(HMODULE self, DWORD reason, LPVOID unused)
 #ifdef SO4COOP_RELEASE
         logs("so4coop tag-team 1.0 loaded (R3 on your controller = your character becomes the battle leader; F3/F4 = keyboard; settings in so4coop.ini)\r\n");
 #else
-        logs("so4coop probe v0.29 loaded (TAG-TEAM: R3 = Steam action 10 per controller (take_action=, p1_steam=, activate_all= in so4coop.ini), R3 via XInput, F3/F4 = player 1/2; F3/F4 = player 1/2; hotkeys after 45 s; F5 disabled; F6 = stick capture (neutral,up,right,down,left x2); F7 = auto-capture, F8 = WRITE TEST on the leader block at *(CBattleMainTask+0x68) (3 checks), F9 = scan + dump, F10 = mark)\r\n");
+        logs("so4coop probe v0.30 loaded (TAG-TEAM: R3 = Steam action 10 per controller; hook_steam=1 counts the game's ISteamController calls; R3 via XInput, F3/F4 = player 1/2; F3/F4 = player 1/2; hotkeys after 45 s; F5 disabled; F6 = stick capture (neutral,up,right,down,left x2); F7 = auto-capture, F8 = WRITE TEST on the leader block at *(CBattleMainTask+0x68) (3 checks), F9 = scan + dump, F10 = mark)\r\n");
 #endif
         describe_game_module();   /* the real XInput is loaded on the first call, not under the loader lock */
         CreateThread(0, 0, hotkey_thread, 0, 0, 0);

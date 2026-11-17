@@ -46,6 +46,9 @@ static uint8_t sc_prev[SC_MAXCTL][SC_MAXACT + 1];
 static uint32_t sc_logged, sc_take, sc_actall, sc_activations, sc_p1 = 1;
 static uint32_t sc_pos[SC_MAXCTL] = { 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff };   /* v0.29: steamN_position= */
 
+static int sh_install(void *iface);
+static uint32_t sc_hook;
+
 static void sc_init(void)
 {
     char b[200];
@@ -106,6 +109,7 @@ static void sc_load_config(void)
         if (sc_find_dec(buf, r, "take_action=", &v) && v >= 1 && v <= SC_MAXACT) sc_take = v;
         if (tt_find_value(buf, r, "activate_all=", &v)) sc_actall = v ? 1 : 0;
         if (sc_find_dec(buf, r, "p1_steam=", &v) && v >= 1 && v <= SC_MAXCTL) sc_p1 = v;
+        if (tt_find_value(buf, r, "hook_steam=", &v)) sc_hook = v ? 1 : 0;
         static const char *const keys[SC_MAXCTL] = { "steam1_position=", "steam2_position=", "steam3_position=", "steam4_position=" };
         for (int k = 0; k < SC_MAXCTL; k++) if (tt_find_value(buf, r, keys[k], &v)) sc_pos[k] = v;
     }
@@ -114,6 +118,12 @@ static void sc_load_config(void)
     logs(b);
     for (int k = 0; k < SC_MAXCTL; k++)
         if (sc_pos[k] != 0xffffffff) { wsprintfA(b, "  steam controller %d -> party position %lu\r\n", k + 1, (unsigned long)sc_pos[k]); logs(b); }
+}
+
+static void sc_maybe_hook(void)
+{
+    if (sc_hook && sc_iface) sh_install((void *)sc_iface);
+    else if (sc_iface) logs("  steam hook: off (hook_steam=1 in so4coop.ini to enable)\r\n");
 }
 
 static void sc_describe(int n)
@@ -156,7 +166,7 @@ static void sc_activate_all(int n)
 static void steamctl_poll(void)
 {
     char b[200];
-    if (!sc_tried) { sc_init(); sc_load_config(); }
+    if (!sc_tried) { sc_init(); sc_load_config(); sc_maybe_hook(); }
     if (!sc_iface) return;
     uint64_t now = GetTickCount64();
     if (now - sc_last < 60) return;
