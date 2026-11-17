@@ -425,3 +425,15 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
 - L3 = trava de alvo; R3 = recentraliza a câmera no controlado (aceitável para trocar de jogador).
 - v0.26: o caminho XInput usa R3 (0x0080). Proposta: **desligar o Steam Input só para este jogo**; aí o
   XInput do Proton vê cada controle num slot próprio e o mod distingue jogador 1 e 2.
+
+### Execução 26 (v0.26) — Steam Input desligado
+- Jogo rodou 67 s; o XInput do mod continuou sem controles, o jogo não chamou GetState e os objetos de
+  controle do jogo não mudaram: **sem Steam Input o jogo não recebe controle** (religar).
+- O exe só referencia XINPUT1_3.dll (checagem/vibração) e "SteamController005": o jogo lê a entrada pela
+  **ISteamController**. Não há arquivo de ações do Steam para o jogo no disco; os nomes das ações não
+  aparecem no exe nem no código decifrado.
+- v0.27 (src/steamctl.c): pega a interface pelo steam_api64.dll do jogo (SteamClient ->
+  SteamAPI_ISteamClient_GetISteamController(..., "SteamController005")), lista os controles físicos
+  (GetConnectedControllers) e consulta as ações 1..32 em cada um (GetDigitalActionData) a cada 60 ms,
+  registrando cada mudança (calibração). take_action=<n> no so4coop.ini: ação n no controle k do Steam
+  -> jogador k assume.
