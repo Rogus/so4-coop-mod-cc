@@ -235,3 +235,10 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   CBattleMainTask não aparece por deslocamento direto (escreve por ponteiro ou cópia embutida).
 - Próximo: teste de escrita em +0x3a4 com checagem cruzada (painel e CThisIs) para ver se só
   esse campo troca o controle; depois achar como a entrada do controle chega ao personagem.
+
+### Execução 17 (v0.17) - notes/run17_v0.17
+- F8: checagens 1 (+0x3a0 = 3, +0x3a4 = 0) e 2 (painel = 0) passaram; **checagem 3 falhou** (o primeiro
+  CThisIs encontrado não apontava para um personagem do grupo pela lista de 24 classes) -> **nada gravado**.
+  O usuário relatou "yes it does" (o destaque/câmera mudou?), mas não foi efeito da sonda.
+- v0.18: a checagem 3 percorre todas as instâncias de CThisIs e identifica o personagem pelo RTTI
+  (class_of), sem depender da lista limitada a 256 objetos; se falhar, registra cada instância e o alvo.

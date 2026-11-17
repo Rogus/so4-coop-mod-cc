@@ -60,11 +60,31 @@ static const char *controlled_now(uintptr_t *who)
     return "(none)";
 }
 
+/* v0.18: by RTTI (run 17: the 256-entry objs list and the first CThisIs were not reliable) */
 static const char *party_name(uintptr_t p)
 {
-    for (uint32_t i = 0; i < nobj; i++)
-        if (objs[i].cls <= 8 && objs[i].addr == p) return CLASSES[objs[i].cls];
-    return 0;
+    const char *cn = class_of(p);                        /* "CPlayerEdge@Battle@@" ... */
+    if (!cn || cn[0] != 'C' || cn[1] != 'P' || cn[2] != 'l' || cn[3] != 'a' || cn[4] != 'y' || cn[5] != 'e' || cn[6] != 'r') return 0;
+    if (str_eq(cn, "CPlayerChr@Battle@@") || str_eq(cn, "CPlayerThinkChr@Battle@@")) return 0;
+    return cn;
+}
+
+/* every CThisIs instance; returns the one pointing to a party character (logs all of them) */
+static uintptr_t find_thisis(int verbose)
+{
+    char b[200];
+    uintptr_t found = 0;
+    for (uint32_t i = 0; i < nbobj; i++) {
+        if (!str_eq(bcls[bobj[i].cls].name, "CThisIs@Battle@@")) continue;
+        uintptr_t o = bobj[i].addr, t = mem_readable(o + 0x38, 8) ? *(const uintptr_t *)(o + 0x38) : 0;
+        const char *pn = t ? party_name(t) : 0, *cn = t ? class_of(t) : 0;
+        if (verbose) {
+            wsprintfA(b, "    CThisIs@%p +0x38 -> %p %s\r\n", (void *)o, (void *)t, pn ? pn : (cn ? cn : "(no class)"));
+            logs(b);
+        }
+        if (pn && !found) found = o;
+    }
+    return found;
 }
 
 static void log_state(const char *tag, uintptr_t mt, uintptr_t board, uintptr_t thisis)
@@ -101,16 +121,17 @@ static void write_test(void)
     }
     if (!mt) { logs("  check 1 failed (no CBattleMainTask with a valid position): nothing written\r\n"); return; }
     battle_pass();
-    uintptr_t board = battle_find("CStatusBoardWindow@Battle@@"), thisis = battle_find("CThisIs@Battle@@");
+    uintptr_t board = battle_find("CStatusBoardWindow@Battle@@"), thisis = find_thisis(0);
     BYTE cur = *(const BYTE *)(mt + MT_POS), mx = *(const BYTE *)(mt + MT_MAX);
     if (!board || !mem_readable(board + 0x1f0, 4) || *(const uint32_t *)(board + 0x1f0) != cur) {
         logs("  check 2 failed (status board missing or showing another position): nothing written\r\n");
         if (board) log_state("state", mt, board, thisis);
         return;
     }
-    if (!thisis || !mem_readable(thisis + 0x38, 8) || !party_name(*(const uintptr_t *)(thisis + 0x38))) {
-        logs("  check 3 failed (CThisIs missing or not pointing to a party character): nothing written\r\n");
-        log_state("state", mt, board, thisis);
+    if (!thisis) {
+        logs("  check 3 failed (no CThisIs points to a party character): nothing written; instances:\r\n");
+        find_thisis(1);
+        log_state("state", mt, board, 0);
         return;
     }
     log_state("before", mt, board, thisis);
