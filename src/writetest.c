@@ -1,24 +1,25 @@
 /*
- * so4coop probe - write test (v0.17).  Included by probe.c after allrtti.c.
+ * so4coop probe - write test (v0.20).  Included by probe.c after allrtti.c.
  *
- * Run 16 (8 auto captures, positions 1,2,3,0 twice): CBattleMainTask+0x3a4 = 0-based party
- * position of the controlled member, +0x3a0 = highest position; CThisIs+0x38 points to the
- * controlled character; CStatusBoardWindow+0x1f0 shows the same position (highlight x at +0x1f4).
- * (v0.13 targeted +0x3c4, which run 13 showed to be something else; that write never happened.)
+ * The battle leader (the only member the player controls; L1/R1 changes it) is kept in a small
+ * block reached through CBattleMainTask+0x68: [0] = highest party position, [4] = leader position.
+ * Run 16 found the values at main+0x3a0 only because the block happened to sit right after the
+ * battle manager; in run 20 +0x68 pointed to main+0x3e0 (+0x60 = the same base in both: it looks
+ * like a small stack of state entries). Reading main+0x3a0 directly was wrong in runs 13/17/19/20.
+ * CStatusBoardWindow+0x1f0 shows the same position (highlight x at +0x1f4 = 70 + 283 * position).
  *
- * F8 writes ONE byte, +0x3a4 = position + 1 (wrapping), only if three independent checks agree:
- *   1. +0x3a0 is 1..3 and +0x3a4 <= +0x3a0;
+ * F8 writes ONE byte, leader position + 1 (wrapping), only if three independent checks agree:
+ *   1. block = *(main+0x68) is readable, within 0x200 bytes after *(main+0x60), [0] is 1..3 and
+ *      [4] <= [0];
  *   2. the status board shows the same position;
- *   3. CThisIs+0x38 points to a party character object.
- * Then logs, before and 0.2 s / 1 s / 3 s after: the field, the board, the CThisIs target and the
- * camera focus. This is the probe's only write into game memory; no game file is touched.
+ *   3. [0] == number of party characters in memory - 1 (counted by RTTI class).
+ * Then logs block, board, CThisIs target and camera focus before and 0.2 s / 1 s / 3 s after.
+ * This is the probe's only write into game memory; no game file is touched.
  */
 
 int _fltused = 0x9875;          /* no CRT: the MSVC target references this when floats are used */
 
 #define WRITE_TEST 1
-#define MT_MAX 0x3a0
-#define MT_POS 0x3a4
 
 static int str_eq(const char *a, const char *b)
 {
@@ -48,7 +49,7 @@ static uintptr_t find_board(void)
     return battle_find("CStatusBoardWindow@Battle@@");
 }
 
-/* camera focus (the +0x129a0 block): logged for reference only, it is not the controlled member */
+/* camera focus (the +0x129a0 block): logged for reference only, it is not the leader */
 static const char *controlled_now(uintptr_t *who)
 {
     for (uint32_t i = 0; i < nobj; i++)
@@ -60,44 +61,40 @@ static const char *controlled_now(uintptr_t *who)
     return "(none)";
 }
 
-/* v0.18: by RTTI (run 17: the 256-entry objs list and the first CThisIs were not reliable) */
 static const char *party_name(uintptr_t p)
 {
     const char *cn = class_of(p);                        /* "CPlayerEdge@Battle@@" ... */
     if (!cn || cn[0] != 'C' || cn[1] != 'P' || cn[2] != 'l' || cn[3] != 'a' || cn[4] != 'y' || cn[5] != 'e' || cn[6] != 'r') return 0;
-    if (str_eq(cn, "CPlayerChr@Battle@@") || str_eq(cn, "CPlayerThinkChr@Battle@@")) return 0;
+    if (str_eq(cn, "CPlayerChr@Battle@@") || str_eq(cn, "CPlayerThinkChr@Battle@@") || str_eq(cn, "CPlayerWireframeEdge@Battle@@")) return 0;
     return cn;
 }
 
-/* every CThisIs instance; returns the one pointing to a party character (logs all of them) */
-static uintptr_t find_thisis(int verbose)
+/* number of distinct party character objects found by the all-class pass */
+static uint32_t party_count(void)
 {
-    char b[200];
-    uintptr_t found = 0;
-    for (uint32_t i = 0; i < nbobj; i++) {
-        if (!str_eq(bcls[bobj[i].cls].name, "CThisIs@Battle@@")) continue;
-        uintptr_t o = bobj[i].addr, t = mem_readable(o + 0x38, 8) ? *(const uintptr_t *)(o + 0x38) : 0;
-        const char *pn = t ? party_name(t) : 0, *cn = t ? class_of(t) : 0;
-        if (verbose) {
-            wsprintfA(b, "    CThisIs@%p +0x38 -> %p %s\r\n", (void *)o, (void *)t, pn ? pn : (cn ? cn : "(no class)"));
-            logs(b);
-        }
-        if (pn && !found) found = o;
-    }
-    return found;
+    uint32_t n = 0;
+    for (uint32_t i = 0; i < nbobj; i++) if (party_name(bobj[i].addr)) n++;
+    return n;
 }
 
-static void log_state(const char *tag, uintptr_t mt, uintptr_t board, uintptr_t thisis)
+/* first CThisIs pointing to a party character (reference only: run 20 had it pointing to 0) */
+static const char *thisis_target(void)
 {
-    char b[320], bs[48] = "-", ts[64] = "-";
+    for (uint32_t i = 0; i < nbobj; i++) {
+        if (!str_eq(bcls[bobj[i].cls].name, "CThisIs@Battle@@") || !mem_readable(bobj[i].addr + 0x38, 8)) continue;
+        const char *pn = party_name(*(const uintptr_t *)(bobj[i].addr + 0x38));
+        if (pn) return pn;
+    }
+    return "-";
+}
+
+static void log_state(const char *tag, uintptr_t blk, uintptr_t board)
+{
+    char b[320], bs[48] = "-";
     if (board && mem_readable(board + 0x1f0, 8))
         wsprintfA(bs, "%lu (x=%d)", (unsigned long)*(const uint32_t *)(board + 0x1f0), (int)*(const float *)(board + 0x1f4));
-    if (thisis && mem_readable(thisis + 0x38, 8)) {
-        const char *n = party_name(*(const uintptr_t *)(thisis + 0x38));
-        wsprintfA(ts, "%s", n ? n : "(not a party character)");
-    }
-    wsprintfA(b, "  %-12s main+0x3a4=%u (max %u) | board %s | CThisIs -> %s | camera focus: %s\r\n", tag,
-              (unsigned)*(const BYTE *)(mt + MT_POS), (unsigned)*(const BYTE *)(mt + MT_MAX), bs, ts, controlled_now(0));
+    wsprintfA(b, "  %-12s block leader=%u (max %u) | board %s | CThisIs -> %s | camera focus: %s\r\n", tag,
+              (unsigned)*(const BYTE *)(blk + 4), (unsigned)*(const BYTE *)blk, bs, thisis_target(), controlled_now(0));
     logs(b);
 }
 
@@ -111,40 +108,45 @@ static void write_test(void)
     for (uint32_t k = 0; k < NCLASS; k++) cls_count[k] = 0;
     own_stack();
     each_region(0x10000, (uintptr_t)0x7fffffff0000ULL, 1, find_objs, 0);
-    uintptr_t mt = 0;
-    for (uint32_t i = 0; i < nobj; i++) {
-        if (objs[i].cls != 21 /* CBattleMainTask */ || !mem_readable(objs[i].addr, MT_POS + 4)) continue;
-        uint32_t mx = *(const uint32_t *)(objs[i].addr + MT_MAX), cur = *(const uint32_t *)(objs[i].addr + MT_POS);
-        wsprintfA(b, "  CBattleMainTask@%p +0x3a0=%lu +0x3a4=%lu\r\n", (void *)objs[i].addr, (unsigned long)mx, (unsigned long)cur);
+    uintptr_t blk = 0;
+    for (uint32_t i = 0; i < nobj && !blk; i++) {
+        uintptr_t mt = objs[i].addr;
+        if (objs[i].cls != 21 /* CBattleMainTask */ || !mem_readable(mt + 0x60, 16)) continue;
+        uintptr_t base = *(const uintptr_t *)(mt + 0x60), p = *(const uintptr_t *)(mt + 0x68);
+        int ok = p >= base && p - base < 0x200 && mem_readable(p, 8);
+        uint32_t mx = ok ? *(const uint32_t *)p : 0xffffffff, cur = ok ? *(const uint32_t *)(p + 4) : 0xffffffff;
+        wsprintfA(b, "  CBattleMainTask@%p +0x60=%p +0x68=%p -> max=%ld leader=%ld\r\n", (void *)mt, (void *)base, (void *)p,
+                  ok ? (long)mx : -1L, ok ? (long)cur : -1L);
         logs(b);
-        if (mx >= 1 && mx <= 3 && cur <= mx) mt = objs[i].addr;
+        if (ok && mx >= 1 && mx <= 3 && cur <= mx) blk = p;
     }
-    if (!mt) { logs("  check 1 failed (no CBattleMainTask with a valid position): nothing written\r\n"); return; }
+    if (!blk) { logs("  check 1 failed (no valid leader block behind CBattleMainTask+0x68): nothing written\r\n"); return; }
     battle_pass();
-    uintptr_t board = battle_find("CStatusBoardWindow@Battle@@"), thisis = find_thisis(0);
-    BYTE cur = *(const BYTE *)(mt + MT_POS), mx = *(const BYTE *)(mt + MT_MAX);
+    uintptr_t board = battle_find("CStatusBoardWindow@Battle@@");
+    BYTE cur = *(const BYTE *)(blk + 4), mx = *(const BYTE *)blk;
     if (!board || !mem_readable(board + 0x1f0, 4) || *(const uint32_t *)(board + 0x1f0) != cur) {
         logs("  check 2 failed (status board missing or showing another position): nothing written\r\n");
-        if (board) log_state("state", mt, board, thisis);
+        log_state("state", blk, board);
         return;
     }
-    if (!thisis) {
-        logs("  check 3 failed (no CThisIs points to a party character): nothing written; instances:\r\n");
-        find_thisis(1);
-        log_state("state", mt, board, 0);
+    uint32_t pc = party_count();
+    if (pc != (uint32_t)mx + 1) {
+        wsprintfA(b, "  check 3 failed (%lu party characters in memory, block says %u): nothing written\r\n", (unsigned long)pc, (unsigned)mx + 1);
+        logs(b);
+        log_state("state", blk, board);
         return;
     }
-    log_state("before", mt, board, thisis);
+    log_state("before", blk, board);
     BYTE nw = (BYTE)((cur + 1) % (mx + 1));
-    *(volatile BYTE *)(mt + MT_POS) = nw;
-    wsprintfA(b, "  WROTE CBattleMainTask@%p +0x3a4: %u -> %u\r\n", (void *)mt, (unsigned)cur, (unsigned)nw);
+    *(volatile BYTE *)(blk + 4) = nw;
+    wsprintfA(b, "  WROTE leader block %p +4: %u -> %u\r\n", (void *)blk, (unsigned)cur, (unsigned)nw);
     logs(b);
     static const DWORD waits[3] = { 200, 800, 2000 };
     static const char *const tags[3] = { "after 0.2 s", "after 1 s", "after 3 s" };
     for (int i = 0; i < 3; i++) {
         Sleep(waits[i]);
-        if (!mem_readable(mt, MT_POS + 4)) { logs("  CBattleMainTask no longer readable (battle ended?)\r\n"); return; }
-        log_state(tags[i], mt, board, thisis);
+        if (!mem_readable(blk, 8)) { logs("  leader block no longer readable (battle ended?)\r\n"); return; }
+        log_state(tags[i], blk, board);
     }
 }
 

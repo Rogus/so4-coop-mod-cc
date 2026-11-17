@@ -263,3 +263,16 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   **líder** no grupo. Para o co-op: o membro do jogador 2 precisa receber entrada do controle 2 no
   lugar da IA, sem virar líder. Próximos alvos: onde a entrada do controle é aplicada ao líder e onde
   a IA decide as ações dos outros membros.
+
+### Execução 20 (v0.19) - notes/run20_v0.19 — **líder encontrado de forma estável**
+- F8 recusou (main+0x3a0 = 0 / +0x3a4 = 0); o F9 logo depois mostrou que a região main+0x380.. tinha
+  outro conteúdo: o CBattleMainTask termina antes de +0x3a0 e o dump de 4 KB lia o vizinho.
+- **`CBattleMainTask+0x68` aponta para o bloco do líder**: [0] = maior posição (3), [4] = posição do
+  líder; +0x60 = base comum (pilha de estados?). O bloco muda de lugar (main+0x3a0, +0x3c0, +0x3e0).
+- Validado em **19 capturas de 5 batalhas** (exec. 11, 12, 13, 16, 20): sempre max = 3 e líder = painel.
+  Explica tudo: o "+0x3c4" das exec. 11-12 era este bloco em +0x3c0; o "0/256" da 13, leitura fixa errada.
+- CThisIs/CTargetSign/CHitCounter não são estáveis (na exec. 20 apontam para o CThisIs ou para 0).
+- v0.20: F8 grava 1 byte em [bloco+4] só se: (1) bloco válido via +0x68 (até 0x200 após +0x60, max 1-3,
+  líder <= max); (2) painel = líder; (3) max + 1 = nº de personagens do grupo na memória (RTTI).
+  As 3 checagens passam nas 19 capturas.
+- Sessões curtas às 03:02 (30 s) e 03:02:53: inícios extras, sem dados.
