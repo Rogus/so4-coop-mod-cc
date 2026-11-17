@@ -28,6 +28,7 @@ typedef uint16_t (*pGetDigital)(intptr_t, uint64_t, uint64_t);   /* struct {bool
 typedef uint64_t (*pGetSet)(intptr_t, uint64_t);
 typedef void (*pActivate)(intptr_t, uint64_t, uint64_t);
 typedef int (*pPadIndex)(intptr_t, uint64_t);
+typedef void *(*pGetAnalogFlat)(void *, intptr_t, uint64_t, uint64_t);   /* flat: (ret, instance, controller, action) */
 
 #define SC_MAXCTL 4
 #define SC_MAXACT 32
@@ -38,6 +39,8 @@ static pGetDigital sc_digital;
 static pGetSet sc_getset;
 static pActivate sc_activate;
 static pPadIndex sc_padindex;
+static pGetAnalogFlat sc_analog;
+static volatile uint64_t sc_active_t[SC_MAXCTL];   /* v0.33: last time each controller had input */
 static int sc_tried;
 static uint64_t sc_last, sc_t0, sc_last_act;
 static uint64_t sc_handles[16];
@@ -67,6 +70,7 @@ static void sc_init(void)
     sc_getset = (pGetSet)GetProcAddress(m, "SteamAPI_ISteamController_GetCurrentActionSet");
     sc_activate = (pActivate)GetProcAddress(m, "SteamAPI_ISteamController_ActivateActionSet");
     sc_padindex = (pPadIndex)GetProcAddress(m, "SteamAPI_ISteamController_GetGamepadIndexForController");
+    sc_analog = (pGetAnalogFlat)GetProcAddress(m, "SteamAPI_ISteamController_GetAnalogActionData");
     if (!client || !user || !pipe || !getctl || !sc_connected || !sc_digital) { logs("  steam controller: exports missing\r\n"); return; }
     void *c = client();
     if (!c) { logs("  steam controller: SteamClient() returned null\r\n"); return; }
@@ -189,10 +193,18 @@ static void steamctl_poll(void)
             for (int k = 0; k < n && k < SC_MAXCTL; k++) if (sc_pos[k] == pos) { lh = sc_handles[k]; break; }
         sh_leader_h = lh;
     }
+    for (int c = 0; c < n && c < SC_MAXCTL && sc_analog; c++)      /* v0.33: stick activity */
+        for (uint32_t a = 1; a <= 2; a++) {
+            struct { int mode; float x, y; uint8_t active; uint8_t pad[3]; } ad;
+            ad.x = ad.y = 0.0f;
+            sc_analog(&ad, sc_iface, sc_handles[c], a);
+            if (ad.x > 0.25f || ad.x < -0.25f || ad.y > 0.25f || ad.y < -0.25f) sc_active_t[c] = now;
+        }
     for (int c = 0; c < n && c < SC_MAXCTL; c++)
         for (uint32_t a = 1; a <= SC_MAXACT; a++) {
             uint16_t d = sc_digital(sc_iface, sc_handles[c], a);
             uint8_t st = (uint8_t)((d & 0xff) ? 1 : 0) | (uint8_t)(((d >> 8) & 0xff) ? 2 : 0);   /* bit0 pressed, bit1 active */
+            if (st & 1) sc_active_t[c] = now;
             if (st == sc_prev[c][a]) continue;
             if ((st & 1) != (sc_prev[c][a] & 1) && sc_logged < SC_LOGMAX) {
                 sc_logged++;

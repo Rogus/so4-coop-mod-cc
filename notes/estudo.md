@@ -537,3 +537,17 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   leader_only_input=1 para separar a entrada. Teste local: recusa fora de batalha. Na release o código fica
   inerte (F2 não existe lá).
 - Problemas esperados: câmera indo e voltando, animação de troca, IA assumindo na outra metade do tempo.
+
+### Execução 32 (v0.32) - notes/run32_v0.32 — fatias de co-op
+- F2 ligou, desligou após 16 fatias (~1 s, toque duplo?) e ligou de novo: ~20 s, 321 fatias, 0 puladas; o
+  filtro acompanhou (handle do líder alternando DualSense / controle 2). Desligou sozinho no fim da batalha.
+- Fatias de ~60 ms (~16 trocas/s), não 50 ms: o laço da sonda dorme 30 ms entre voltas.
+- Sem travar. Falta o relato do usuário (câmera, controle de cada personagem, fluidez).
+- **Relato do usuário (exec. 32):** câmera estável; Edge e Sarah seguiram cada um o seu controle; ações completas com
+  as próprias habilidades; a IA nunca assumiu; "quase jogável". Pedido: co-op de 4 jogadores.
+- v0.33 (coopslice.c reescrito): participantes = todo controle do Steam conectado com steamN_position (até 4);
+  só jogadores **ativos** ganham fatias (analógico > 0,25 ou botão nos últimos coop_idle_ms = 1500 ms; um só ativo
+  = 100% do controle; ninguém ativo = líder fica como está); thread própria com passo de ~1 ms, fatia
+  coop_slice_ms = 40; coop_auto=1 liga ao começar a batalha e pausa no fim (F2 continua alternando).
+  Atividade medida na thread principal da sonda (steamctl: ações digitais + analógicas 1 e 2 pelo Steam,
+  nunca filtradas). Teste local: ini lido, recusa fora de batalha.

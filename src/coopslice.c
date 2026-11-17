@@ -1,20 +1,24 @@
 /*
- * so4coop - co-op experiment: time-sliced leader (v0.32, research).  Included after steamhook.c.
+ * so4coop - co-op: time-sliced leader for up to 4 players (v0.33).  Included after steamhook.c.
  *
- * The game controls one character (the leader); the others are AI. Run 31 proved that the leader
- * byte switches control completely and that the Steam hook can give the game only one controller's
- * input. This experiment alternates both, every coop_slice_ms (default 50 ms): leader = coop_a's
- * position with only coop_a's controller, then coop_b's position with only coop_b's controller.
- * Controllers come from steamN_position in so4coop.ini (the controller whose position is coop_a /
- * coop_b). F2 toggles it during a battle; turning it off gives the leader back to coop_a.
- * Expected problems: the camera chasing the alternating leader, switch animations, AI taking over
- * in the other half. Uses only proven pieces: the validated leader write and the input filter.
+ * The game controls one character (the leader); the others are AI. Run 32 (v0.32, 2 players,
+ * ~60 ms slices): camera steady, Edge and Sarah each followed their own controller, actions
+ * completed with their own skills, the AI never took over -> "almost playable".
+ * v0.33:
+ *   - participants = every connected Steam controller with a steamN_position (up to 4 players);
+ *   - only ACTIVE players get slices (stick beyond 0.25 or any button within coop_idle_ms, default
+ *     1500 ms); one active player gets 100% control; nobody active -> leader left as it is;
+ *   - own thread with ~1 ms timing, slice coop_slice_ms (default 40);
+ *   - coop_auto=1: starts when a battle starts and pauses when it ends (F2 still toggles).
+ * Each slice: validated leader write (same checks as tag-team) + input filter on that player's
+ * controller (needs hook_steam=1 and leader_only_input=1).
  */
 
-static uint32_t cs_a = 0, cs_b = 1, cs_ms = 50;
-static int cs_loaded, cs_on, cs_phase;
-static uint64_t cs_last, cs_t0, cs_report;
-static volatile long cs_slices, cs_skips;
+static uint32_t cs_ms = 40, cs_idle = 1500, cs_auto, cs_active_only = 1;
+static int cs_loaded, cs_thread_started;
+static volatile int cs_on;
+static uint64_t cs_t0, cs_report;
+static volatile long cs_slices, cs_skips, cs_per[SC_MAXCTL];
 
 static void cs_load(void)
 {
@@ -32,22 +36,17 @@ static void cs_load(void)
         DWORD r = 0;
         ReadFile(h, buf, sizeof buf - 1, &r, 0);
         CloseHandle(h);
-        if (tt_find_value(buf, r, "coop_a=", &v)) cs_a = v;
-        if (tt_find_value(buf, r, "coop_b=", &v)) cs_b = v;
-        if (sc_find_dec(buf, r, "coop_slice_ms=", &v) && v >= 16 && v <= 2000) cs_ms = v;
+        if (sc_find_dec(buf, r, "coop_slice_ms=", &v) && v >= 10 && v <= 2000) cs_ms = v;
+        if (sc_find_dec(buf, r, "coop_idle_ms=", &v) && v >= 100 && v <= 60000) cs_idle = v;
+        if (tt_find_value(buf, r, "coop_auto=", &v)) cs_auto = v ? 1 : 0;
+        if (tt_find_value(buf, r, "coop_active_only=", &v)) cs_active_only = v ? 1 : 0;
     }
-    wsprintfA(b, "  co-op slice: F2 toggles; positions %lu and %lu, %lu ms each\r\n", (unsigned long)cs_a, (unsigned long)cs_b, (unsigned long)cs_ms);
+    wsprintfA(b, "  co-op: F2 toggles; auto %lu, slice %lu ms, active players only %lu (idle after %lu ms)\r\n", (unsigned long)cs_auto,
+              (unsigned long)cs_ms, (unsigned long)cs_active_only, (unsigned long)cs_idle);
     logs(b);
 }
 
-/* controller handle whose steamN_position is pos (0 = none) */
-static uint64_t cs_handle_for(uint32_t pos)
-{
-    for (int k = 0; k < sc_nctl && k < SC_MAXCTL; k++) if (sc_pos[k] == pos) return sc_handles[k];
-    return 0;
-}
-
-/* validated leader write (same checks as tt_take_pos, no log): 1 = written */
+/* validated leader write (same checks as tt_take_pos, no log): 1 = written or already set */
 static int cs_write(uint32_t target)
 {
     uintptr_t mt = tt_main_fast();
@@ -62,50 +61,86 @@ static int cs_write(uint32_t target)
     return 1;
 }
 
+static DWORD WINAPI cs_thread(LPVOID u)
+{
+    char b[300];
+    (void)u;
+    int turn = 0;
+    uint64_t last = 0;
+    for (;;) {
+        Sleep(1);
+        if (!cs_on) {
+            if (cs_auto) {                                 /* auto: start with the battle */
+                uint32_t p;
+                if (tt_leader_pos(&p)) { cs_on = 1; cs_t0 = cs_report = GetTickCount64(); logs("=== CO-OP ON (battle started) ===\r\n"); }
+                else Sleep(200);
+            } else Sleep(50);
+            continue;
+        }
+        uint64_t now = GetTickCount64();
+        if (now - last < cs_ms) continue;
+        last = now;
+        /* participants: connected controllers with a position, active recently (or all) */
+        int idx[SC_MAXCTL], np = 0;
+        for (int k = 0; k < sc_nctl && k < SC_MAXCTL; k++)
+            if (sc_pos[k] != 0xffffffff && (!cs_active_only || now - sc_active_t[k] < cs_idle)) idx[np++] = k;
+        if (!np) continue;                                 /* nobody active: leave the leader as it is */
+        turn = (turn + 1) % np;
+        int k = idx[turn];
+        if (!cs_write(sc_pos[k])) {
+            __sync_fetch_and_add(&cs_skips, 1);
+            uint32_t p;
+            if (!tt_leader_pos(&p)) {                      /* battle over */
+                cs_on = 0;
+                wsprintfA(b, "=== CO-OP %s: battle ended (%ld slices) ===\r\n", cs_auto ? "paused" : "OFF", cs_slices);
+                logs(b);
+            }
+            continue;
+        }
+        sh_leader_h = sc_handles[k];                       /* only this player's controller reaches the game */
+        __sync_fetch_and_add(&cs_slices, 1);
+        __sync_fetch_and_add(&cs_per[k], 1);
+        if (now - cs_report >= 10000) {
+            cs_report = now;
+            wsprintfA(b, "  [co-op t=%lus] %ld slices (%ld skipped); per Steam controller: 1=%ld 2=%ld 3=%ld 4=%ld; active now: %d\r\n",
+                      (unsigned long)((now - cs_t0) / 1000), cs_slices, cs_skips, cs_per[0], cs_per[1], cs_per[2], cs_per[3], np);
+            logs(b);
+        }
+    }
+    return 0;
+}
+
+static void cs_start_thread(void)
+{
+    if (cs_thread_started) return;
+    cs_thread_started = 1;
+    CreateThread(0, 0, cs_thread, 0, 0, 0);
+}
+
 static void coop_toggle(void)
 {
-    char b[160];
+    char b[200];
     if (!cs_loaded) cs_load();
+    cs_start_thread();
     if (cs_on) {
         cs_on = 0;
-        cs_write(cs_a);
-        wsprintfA(b, "=== CO-OP SLICE OFF after %ld slices (%ld skipped); leader back to position %lu ===\r\n", cs_slices, cs_skips, (unsigned long)cs_a);
+        Sleep(5);
+        wsprintfA(b, "=== CO-OP OFF after %ld slices (%ld skipped) ===\r\n", cs_slices, cs_skips);
         logs(b);
         return;
     }
     uint32_t pos;
-    if (!tt_leader_pos(&pos)) { logs("=== CO-OP SLICE: no battle ===\r\n"); return; }
-    cs_on = 1; cs_phase = 0; cs_slices = cs_skips = 0;
-    cs_t0 = cs_last = cs_report = GetTickCount64();
-    wsprintfA(b, "=== CO-OP SLICE ON: position %lu (controller %p) <-> position %lu (controller %p), %lu ms ===\r\n",
-              (unsigned long)cs_a, (void *)(uintptr_t)cs_handle_for(cs_a), (unsigned long)cs_b, (void *)(uintptr_t)cs_handle_for(cs_b), (unsigned long)cs_ms);
-    logs(b);
+    if (!tt_leader_pos(&pos)) { logs("=== CO-OP: no battle ===\r\n"); return; }
+    cs_t0 = cs_report = GetTickCount64();
+    cs_on = 1;
+    logs("=== CO-OP ON ===\r\n");
 }
 
-/* hotkey thread, every loop (30 ms Sleep; slices are timed by cs_ms) */
+/* hotkey thread: load the settings once; start the scheduler thread when coop_auto=1 */
 static void coop_slice_poll(void)
 {
-    char b[160];
-    if (!cs_on) return;
-    uint64_t now = GetTickCount64();
-    if (now - cs_last < cs_ms) return;
-    cs_last = now;
-    cs_phase ^= 1;
-    uint32_t pos = cs_phase ? cs_b : cs_a;
-    if (!cs_write(pos)) {
-        __sync_fetch_and_add(&cs_skips, 1);
-        uint32_t p;
-        if (!tt_leader_pos(&p)) { cs_on = 0; logs("=== CO-OP SLICE OFF: battle ended ===\r\n"); }
-        return;
-    }
-    sh_leader_h = cs_handle_for(pos);                  /* only this position's controller reaches the game */
-    __sync_fetch_and_add(&cs_slices, 1);
-    if (now - cs_report >= 10000) {
-        cs_report = now;
-        wsprintfA(b, "  [co-op slice t=%lus] %ld slices, %ld skipped\r\n", (unsigned long)((now - cs_t0) / 1000), cs_slices, cs_skips);
-        logs(b);
-    }
+    if (!cs_loaded && sc_tried) { cs_load(); if (cs_auto) cs_start_thread(); }
 }
 
-/* test hook (not used by the game): toggle the experiment; outside a battle it must refuse */
+/* test hook (not used by the game): toggle co-op; outside a battle it must refuse */
 __declspec(dllexport) void WINAPI so4coop_cooptest(void) { coop_toggle(); }
