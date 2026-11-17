@@ -256,19 +256,34 @@ static uint32_t nref_chr;
 static HANDLE ref_file;
 static uint32_t ref_hits;
 
+/* exact (+0) references of the current and previous scan, kept for watch.c */
+typedef struct { uintptr_t slot, target, base; const char *cls; } ref_t;   /* cls 0: global or heap without RTTI */
+#define MAXREF 4096
+static ref_t refs_cur[MAXREF], refs_prev[MAXREF];
+static uint32_t nref_cur, nref_prev;
+static uintptr_t controlled_cur, controlled_prev;   /* character with the camera block (+0x129a0) */
+static void watch_after_scan(void);
+static void watch_report(void);
+
 static void ref_line(uintptr_t loc, uintptr_t region_lo, uint32_t ci, uintptr_t delta)
 {
     char b[256], where[160];
+    const char *cls = 0;
+    uintptr_t base = 0;
     if (loc >= game_base && loc < game_end)
         wsprintfA(where, "game+0x%08lx", (unsigned long)(loc - game_base));
     else {
         where[0] = 0;
         for (uintptr_t q = loc & ~(uintptr_t)7; q >= region_lo && loc - q < 0x4000; q -= 8) {
             const char *cn = class_of_fast(q);
-            if (cn) { wsprintfA(where, "%p in %s@%p+0x%lx", (void *)loc, cn, (void *)q, (unsigned long)(loc - q)); break; }
+            if (cn) { cls = cn; base = q; wsprintfA(where, "%p in %s@%p+0x%lx", (void *)loc, cn, (void *)q, (unsigned long)(loc - q)); break; }
             if (q < 8) break;
         }
         if (!where[0]) wsprintfA(where, "%p (heap)", (void *)loc);
+    }
+    if (delta == 0 && nref_cur < MAXREF) {
+        ref_t *r = &refs_cur[nref_cur++];
+        r->slot = loc; r->target = ref_chr[ci]; r->base = base; r->cls = cls;
     }
     wsprintfA(b, "%s -> %s+0x%lx\r\n", where, ref_name[ci], (unsigned long)delta);
     DWORD n = 0, w;
@@ -296,6 +311,7 @@ static void find_refs(uintptr_t a, uintptr_t b, void *ctx)
 static void search_refs(void)
 {
     nref_chr = 0;
+    nref_cur = 0;
     for (uint32_t i = 0; i < nobj && nref_chr < MAXCHR; i++)
         if (objs[i].cls <= 8) { ref_chr[nref_chr] = objs[i].addr; ref_name[nref_chr] = CLASSES[objs[i].cls]; nref_chr++; }
     if (!nref_chr) return;
@@ -329,6 +345,7 @@ static void analyse_operator(void)
         if (k <= 8 /* player characters */ && mem_readable(o + 0x12990, 0xb0)) {
             uintptr_t x = *(const uintptr_t *)(o + 0x129a0), y = *(const uintptr_t *)(o + 0x129c0);
             if (!x) continue;
+            controlled_cur = o;
             wsprintfA(b, "  CONTROLLED: %s@%p  +0x129a0=%p  +0x129c0=%p  +0x129d8=%08lx\r\n", CLASSES[k], (void *)o,
                       (void *)x, (void *)y, (unsigned long)*(const uint32_t *)(o + 0x129d8));
             logs(b);
@@ -347,6 +364,7 @@ static void scan_now(void)
     char b[200];
     if (!rtti_done) rtti_init();
     nobj = 0;
+    controlled_cur = 0;
     for (uint32_t k = 0; k < NCLASS; k++) cls_count[k] = 0;
     uint64_t t0 = GetTickCount64();
     each_region(0x10000, (uintptr_t)0x7fffffff0000ULL, 1, find_objs, 0);
@@ -380,6 +398,7 @@ static void scan_now(void)
     analyse_operator();
     search_refs();
     dump_objects();
+    watch_after_scan();
 }
 
 static void dump_path(uint16_t *path, const char *nm)
@@ -447,14 +466,17 @@ static void dump_objects(void)
     logs(b);
 }
 
-static int f9_was, f10_was;
+static int f9_was, f10_was, f11_was;
 static uint32_t marks;
+#define VK_F11 0x7a
 
 static void poll_hotkeys(void)
 {
     int f9 = (GetAsyncKeyState(VK_F9) & 0x8000) != 0;
     int f10 = (GetAsyncKeyState(VK_F10) & 0x8000) != 0;
+    int f11 = (GetAsyncKeyState(VK_F11) & 0x8000) != 0;
     if (f9 && !f9_was) scan_now();
     if (f10 && !f10_was) { char b[64]; wsprintfA(b, "----- MARK #%u -----\r\n", ++marks); logs(b); }
-    f9_was = f9; f10_was = f10;
+    if (f11 && !f11_was) watch_report();
+    f9_was = f9; f10_was = f10; f11_was = f11;
 }

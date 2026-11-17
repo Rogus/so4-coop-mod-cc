@@ -61,3 +61,27 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
 - Nenhum objeto já mapeado (gerente, CBtlPad, WindowsPad, táticas, alvo) aponta para o controlado.
 - v0.6: procura em toda a memória gravável (inclusive globais do executável) os ponteiros para cada
   personagem do grupo e identifica a classe do objeto que os contém (s<NN>_refs.txt).
+
+### Execução 5 (v0.6) - notes/run5_v0.6
+- Edge (F9 #1) -> R1 -> Sarah (F9 #2): a troca foi registrada. Câmera desta batalha: `CCm103`;
+  desta vez X (câmera) e Y **não** foram recriados na troca (mesmos endereços).
+- Busca de ponteiros (analysis/diff_refs.py): 573/591 referências; quase tudo é
+  `MessageDispatcherBlockForList+0x60` (pool de mensagens reciclado = ruído).
+  Só 6 campos pulam Edge -> Sarah:
+  - `CCameraManager+0x360`, `CCameraUserCtrl+0xc0` (câmera)
+  - `CFaceMorphManager+0x540` e um campo no heap ao lado dele (expressão facial)
+  - **`0x0000000000C2EC00` (heap baixo, sem RTTI)**: único candidato não explicado.
+- Nada da cadeia de entrada (CBtlPad, PadTask, WindowsPad, CBattleMainTask, CTacticsMode)
+  aponta para personagem. Os 8 KB de CBattleMainTask, CTacticsMode e CSelectTarget ficaram
+  **idênticos** entre Edge e Sarah; CBtlPad/WindowsPad/PadTask só mudaram estado de
+  botões/analógico e contadores.
+- Conclusão: a entrada provavelmente escolhe o personagem por **índice** do grupo ou por um
+  objeto fora dos já mapeados; busca por ponteiro não acha índice.
+- Próximo (v0.7): breakpoint de escrita (registradores de depuração) no campo 0xC2EC00 e em
+  CCameraUserCtrl+0xc0 para registrar a instrução que troca o personagem ao apertar R1 ->
+  essa função é a "troca de personagem controlado", a alavanca real para o co-op.
+- v0.7 (src/watch.c): após dois F9 com personagens diferentes, arma até 4 watchpoints de
+  hardware (leitura/escrita, 8 bytes) nos campos que pularam para o novo personagem; um VEH
+  registra cada instrução do jogo que lê/escreve neles e salva o código da função em
+  so4coop_dumps/code_<rva>.bin. F11 = relatório e remove os watchpoints. Autoteste no Wine 11.22
+  local: funciona (Dr7 lido de volta, DR6 preenchido). No Proton, o autoteste vai no início do log.

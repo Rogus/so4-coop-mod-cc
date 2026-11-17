@@ -18,3 +18,13 @@ Sleep
 VirtualQuery
 CreateDirectoryW
 CreateThread
+AddVectoredExceptionHandler
+CreateToolhelp32Snapshot
+Thread32First
+Thread32Next
+OpenThread
+SuspendThread
+ResumeThread
+GetThreadContext
+SetThreadContext
+GetCurrentProcessId
