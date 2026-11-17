@@ -3,3 +3,6 @@ recon/*.txt
 recon/*.asm
 __pycache__/
 backups/
+# game code dumps: never commit (copyrighted game code)
+code_*.bin
+*.bin

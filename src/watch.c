@@ -492,10 +492,40 @@ static void xref_scan(void)
     }
 }
 
+/* v0.11: the whole executable section, once, for offline static analysis (searches for field
+ * offsets such as the camera block +0x129a0, callers of functions, ...). Stays on the local
+ * disk; it is the game's code, so it must never be committed or shared. */
+static int code_dumped;
+static void dump_code_section(void)
+{
+    char b[200], nm[64];
+    code_dumped = 1;
+    if (!code_lo) return;
+    wsprintfA(nm, "\\code_full_%08lx.bin", (unsigned long)(code_lo - game_base));
+    uint16_t path[700];
+    dump_path(path, nm);
+    HANDLE h = CreateFileW(path, GENERIC_WRITE, FILE_SHARE_READ, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+    if (h == (HANDLE)-1) { logs("  code dump: cannot create file\r\n"); return; }
+    uint32_t zeros = 0;
+    for (uintptr_t p = code_lo; p < code_hi; p += 0x1000) {
+        uint32_t n = code_hi - p < 0x1000 ? (uint32_t)(code_hi - p) : 0x1000;
+        int ok = mem_readable(p, n);
+        if (!ok) zeros++;
+        DWORD w;
+        WriteFile(h, ok ? (const void *)p : zero_page, n, &w, 0);
+    }
+    CloseHandle(h);
+    wsprintfA(b, "  code dump: game+0x%08lx-0x%08lx -> code_full_%08lx.bin (%lu unreadable pages)\r\n",
+              (unsigned long)(code_lo - game_base), (unsigned long)(code_hi - game_base),
+              (unsigned long)(code_lo - game_base), (unsigned long)zeros);
+    logs(b);
+}
+
 static void watch_after_scan(void)
 {
     char b[300];
     if (!xref_done) xref_scan();
+    if (!code_dumped) dump_code_section();
     if (WATCH_HW && controlled_cur && !w_any) watch_arm_fixed();
     if (!controlled_cur) {
         logs("  watch: no controlled character in this scan (press F9 during a battle, not mid-switch)\r\n");

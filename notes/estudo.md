@@ -130,3 +130,17 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
 - Som: PulseAudio e PipeWire/WirePlumber rodando juntos; o WirePlumber detém a reserva
   (org.freedesktop.ReserveDevice1) das 4 placas, então as saídas do PulseAudio (que o Proton usa)
   ficam suspensas. Não é problema do jogo nem da sonda.
+
+### Execução 9 (v0.10) - notes/run9_v0.10
+- Opções de inicialização: com `WINEDLLOVERRIDES=xinput1_3=n,b` o jogo parava antes do título
+  (tela cinza + 1280x720 preto, threads dormindo, sem diálogo). Com só `DXVK_FRAME_RATE=60 %command%`
+  iniciou normal. O override do registro do prefixo basta para carregar a sonda.
+- Som: resolvido trocando PulseAudio por pipewire-pulse (o WirePlumber detinha as placas).
+  analysis/live_check.sh mediu o áudio do jogo em HDMI 2: picos de -17 a -0,2 dBFS (som real).
+- Edge (#1) -> Arumat (#2): o bloco global ficou `02 01 / 02` nos dois -> **não** é o membro
+  controlado (a coincidência da execução 7 acompanhava outra coisa). Hipótese descartada.
+- 14 referências estáticas ao intervalo; 10 leem game+0xf77ea8 = ponteiro global para um alocador
+  (alinha endereço e chama métodos +0x58/+0x70 do objeto em +0x2a8). Sem relação com o controle.
+- Fato firme que resta: só o personagem controlado tem o bloco da câmera em +0x129a0.
+  v0.11: salva a seção de código inteira uma vez (68 MB, fica no disco, nunca no git) para buscar
+  offline quem escreve +0x129a0 e subir pelos chamadores até a rotina de troca de personagem.
