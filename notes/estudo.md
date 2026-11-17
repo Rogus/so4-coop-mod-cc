@@ -328,3 +328,12 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
 - Hipótese para o co-op: fazer IsLeader responder "sim" também para o personagem do jogador 2 e dar a
   ele a entrada do controle 1 (o movimento do líder não parece vir de game+0x75c660; falta achar a
   interface de entrada por quadro). Isso exige alterar código em execução: pedir autorização antes.
+- analysis/users.py: o que vem logo depois de cada chamada a uma função. Nos 31 usos de IsLeader o que
+  segue é comportamento (vibração, vozes, despachante de comandos game+0x500b40 com tabela de 10 casos,
+  dados de grupo/personagem), **não** a leitura do controle.
+- Referências a game+0x1059000..0x105a500 (625 em 337 funções, notes/input_globals_xref.txt): a área
+  game+0x1059e78..0x1059ea0 é um registro de eventos/ouvintes (bitmask por categoria + listas de ids,
+  game+0x762e40), não controle; o "vf142" marcado era falso positivo (bytes dentro de chamadas).
+- Conclusão: estática achou **quem é o líder** (GetLeader/IsLeader), mas não **por onde entra o
+  movimento** (deve passar por métodos virtuais dos objetos de controle). Próximo: captura dirigida
+  pelo analógico (neutro/cima/direita/baixo/esquerda, repetido) e diff, como foi feito com o líder.

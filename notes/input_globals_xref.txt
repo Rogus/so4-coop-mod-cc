@@ -1,0 +1,338 @@
+625 references in 337 functions
+game+0x1fa0: 1 refs ['0x1059080']  <-1 SozApp@Soz@@::vf3
+game+0x24e0: 1 refs ['0x105904b']  SozApp@Soz@@::vf1
+game+0x2520: 4 refs ['0x105900f', '0x1059038', '0x1059048', '0x1059049']  <-1 SozApp@Soz@@::vf3
+game+0x28d0: 5 refs ['0x1059e50']  <-1 SozApp@Soz@@::vf3
+game+0x9890: 1 refs ['0x105956f']  (unlabelled)
+game+0x30a70: 1 refs ['0x10596e4']  (unlabelled)
+game+0x56900: 1 refs ['0x105906b']  <-1 PostProcessCombiner@Aska@@::vf74 | <-2 ShadowMapResolver@Aska@@::vf74
+game+0x58f70: 1 refs ['0x105900e']  (unlabelled)
+game+0x8fbf0: 2 refs ['0x1059904', '0x1059997']  (unlabelled)
+game+0x1505c0: 1 refs ['0x1059052']  (unlabelled)
+game+0x151400: 1 refs ['0x1059e62']  ?$ParticleEmitter@U?$FeatureList@USpeed@ParticleFeatures@Aska@@U?$FeatureList@UMotion@ParticleFeatures@Aska@@U?$FeatureList@URotation@ParticleFeatures@Aska@@UStNULL@3@@3@@3@@Aska@@@Aska@@::vf5
+game+0x18aa50: 1 refs ['0x1059bb0']  (unlabelled)
+game+0x1a0e20: 1 refs ['0x1059416']  (unlabelled)
+game+0x20d030: 1 refs ['0x1059751']  (unlabelled)
+game+0x20e200: 3 refs ['0x1059108', '0x10593de', '0x1059ebe']  (unlabelled)
+game+0x20f3d0: 2 refs ['0x105975c', '0x105a2e8']  (unlabelled)
+game+0x2507a0: 3 refs ['0x1059695', '0x10599cf', '0x10599e6']  (unlabelled)
+game+0x2ceb90: 1 refs ['0x1059810']  (unlabelled)
+game+0x30f1e0: 5 refs ['0x10594ac', '0x1059984', '0x10599c3', '0x1059d07', '0x1059dbc']  (unlabelled)
+game+0x34dea0: 1 refs ['0x1059af9']  (unlabelled)
+game+0x34e7a0: 1 refs ['0x1059ba0']  (unlabelled)
+game+0x3500c0: 1 refs ['0x1059fca']  DynamicsCube@Aska@@::vf6
+game+0x3505b0: 1 refs ['0x1059ce3']  DynamicsSquare@Aska@@::vf6
+game+0x38a530: 1 refs ['0x1059e93']  (unlabelled)
+game+0x38f240: 1 refs ['0x105a4c6']  <-2 DiffuseCubeMap@Aska@@::vf2
+game+0x3c0d50: 1 refs ['0x1059094']  <-1 RenderPassManager@Aska@@::vf0 | <-1 CBase2DScissorObject@Base2DLib@@::vf0
+game+0x4102e0: 1 refs ['0x10592eb']  (unlabelled)
+game+0x431f30: 1 refs ['0x105a3df']  (unlabelled)
+game+0x44ec60: 1 refs ['0x1059557']  FastIkEndEffector@Aska@@::vf41
+game+0x45f5b0: 1 refs ['0x105a468']  (unlabelled)
+game+0x4f6e90: 1 refs ['0x1059e50']  (unlabelled)
+game+0x4f7c00: 21 refs ['0x1059e78']  <-1 CBattleMainTask@Battle@@::vf12
+game+0x508860: 2 refs ['0x1059e88', '0x1059e8c']  <-2 CBattleMainTask@Battle@@::vf12
+game+0x50ae00: 1 refs ['0x1059048']  (unlabelled)
+game+0x512aa0: 6 refs ['0x1059e88', '0x1059e8c']  <-1 CKernel@Battle@@::vf12
+game+0x514450: 1 refs ['0x1059049']  <-1 CKernel@Battle@@::vf12
+game+0x514c80: 4 refs ['0x1059e88', '0x1059e8c']  <-2 CKernel@Battle@@::vf12
+game+0x520f10: 1 refs ['0x1059916']  (unlabelled)
+game+0x521cf0: 1 refs ['0x105a43e']  <-2 CBattleMainTask@Battle@@::vf12
+game+0x52eaf0: 1 refs ['0x1059e87']  (unlabelled)
+game+0x5316d0: 1 refs ['0x1059048']  <-1 CBattleEnd@Battle@@::vf12
+game+0x539a10: 1 refs ['0x105987a']  (unlabelled)
+game+0x53d070: 1 refs ['0x1059e78']  CChrElement@Battle@@::vf309; CRigidbodyChr@Battle@@::vf309; CEnemyChr@Battle@@::vf309
+game+0x53e360: 1 refs ['0x1059e78']  (unlabelled)
+game+0x557f90: 1 refs ['0x1059e78']  (unlabelled)
+game+0x557ff0: 1 refs ['0x1059e78']  (unlabelled)
+game+0x55b230: 1 refs ['0x1059e78']  (unlabelled)
+game+0x55b280: 1 refs ['0x1059e78']  <-1 COpeningVoice@Battle@@::vf12
+game+0x55b2d0: 1 refs ['0x1059e78']  (unlabelled)
+game+0x566bc0: 1 refs ['0x105903c']  CInformationArtsCollections@Battle@@::vf12
+game+0x5673d0: 1 refs ['0x105903c']  CInformationSkills@Battle@@::vf12
+game+0x5a0c10: 1 refs ['0x1059a8f']  CEnemyChr@Battle@@::vf41; CEnemyThinkChr@Battle@@::vf41; CEnemyEffectChr@Battle@@::vf41
+game+0x608b60: 1 refs ['0x1059ccc']  CMinimapViewFrameElement@Battle@@::vf41
+game+0x60cd40: 1 refs ['0x105903c']  CThisIs@Battle@@::vf12
+game+0x610e70: 1 refs ['0x1059c45']  C2DHitCountElement@Battle@@::vf41
+game+0x6131f0: 1 refs ['0x105903c']  CStatusBoardManager@Battle@@::vf12
+game+0x613950: 1 refs ['0x105903c']  <-1 CBattleCamp@Battle@@::vf12
+game+0x614630: 1 refs ['0x105903c']  CBattleCamp@Battle@@::vf12
+game+0x634450: 1 refs ['0x105903c']  CResultLevelUp@Battle@@::vf12
+game+0x634f10: 1 refs ['0x1059e88']  (unlabelled)
+game+0x650f40: 1 refs ['0x105a07c']  (unlabelled)
+game+0x6575c0: 1 refs ['0x1059ef9']  CStatusBoard@Battle@@::vf45; CMemberBoard@Battle@@::vf45
+game+0x657fc0: 1 refs ['0x105a4d8']  CTargetBoard@Battle@@::vf29
+game+0x65b6c0: 1 refs ['0x105a031']  (unlabelled)
+game+0x66ebf0: 1 refs ['0x105903c']  CSelectRangeObject@Battle@@::vf12
+game+0x674e20: 1 refs ['0x105903c']  (unlabelled)
+game+0x67a5c0: 1 refs ['0x1059e50']  <-1 CampMainTask@Camp@@::vf12
+game+0x67ca30: 1 refs ['0x1059e50']  <-1 CampMainTask@Camp@@::vf12
+game+0x684280: 1 refs ['0x1059e78']  <-1 COracleWindow@Camp@@::vf43
+game+0x6848b0: 1 refs ['0x1059e78']  <-1 COracleWindow@Camp@@::vf43
+game+0x6848e0: 1 refs ['0x1059e78']  <-1 COracleWindow@Camp@@::vf43 | <-1 CSpaceView@Camp@@::vf21 | <-2 CPlotListWindow@Camp@@::vf28
+game+0x684a40: 1 refs ['0x1059e78']  <-1 CCampMemoMemo@Camp@@::vf23 | <-1 CVanishSelect@Camp@@::vf61 | <-2 CSkillMenu@Camp@@::vf23
+game+0x684ba0: 1 refs ['0x105903c']  <-1 CampMainTask@Camp@@::vf12
+game+0x684d50: 1 refs ['0x1059e78']  <-1 CSkillSelect@Camp@@::vf61 | <-1 CSkillSelect@Camp@@::vf49 | <-1 CSkillSelect@Camp@@::vf93 | <-2 CSkillMenu@Camp@@::vf23
+game+0x684ee0: 1 refs ['0x1059e78']  <-1 CSkillSelect@Camp@@::vf61 | <-1 CSkillSelect@Camp@@::vf49 | <-1 CSkillSelect@Camp@@::vf93 | <-2 CSkillMenu@Camp@@::vf23
+game+0x686650: 2 refs ['0x1059e78']  (unlabelled)
+game+0x691010: 1 refs ['0x1059b93']  CTacticsMenu@Camp@@::vf23
+game+0x695d80: 1 refs ['0x1059e50']  <-2 CSettingMenu@Camp@@::vf23
+game+0x696600: 1 refs ['0x1059e50']  CSettingMenu@Camp@@::vf27
+game+0x6975b0: 1 refs ['0x1059008']  CSettingMenu@Camp@@::vf20
+game+0x6988f0: 2 refs ['0x1059008', '0x1059047']  CSettingMenu@Camp@@::vf23
+game+0x698f60: 2 refs ['0x1059e50']  <-1 CSettingMenu@Camp@@::vf23
+game+0x6995e0: 1 refs ['0x1059e50']  <-1 CSettingMenu@Camp@@::vf23
+game+0x69ad60: 1 refs ['0x1059e50']  <-2 CSettingMenu@Camp@@::vf23
+game+0x6a2200: 1 refs ['0x1059e78']  <-1 CICView@Camp@@::vf23
+game+0x6a3010: 1 refs ['0x1059e78']  <-1 CICView@Camp@@::vf23
+game+0x6a8200: 1 refs ['0x1059e78']  <-2 CSpaceView@Camp@@::vf31 | <-2 CSpaceView@Camp@@::vf21 | <-2 CSpaceView@Camp@@::vf23
+game+0x6a8750: 1 refs ['0x1059e78']  CSpaceView@Camp@@::vf23
+game+0x6a8a10: 1 refs ['0x1059e78']  <-1 CSpaceView@Camp@@::vf23
+game+0x6a8fe0: 1 refs ['0x1059e78']  <-1 CSpaceView@Camp@@::vf23
+game+0x6aa370: 2 refs ['0x1059e50']  CNewGameView@Camp@@::vf23
+game+0x6ce940: 1 refs ['0x1059e50']  CCampKeyInput@Camp@@::vf23
+game+0x6d0400: 1 refs ['0x1059669']  CTacticsWindow@Camp@@::vf41
+game+0x6d11f0: 4 refs ['0x1059dd1', '0x1059e49', '0x1059e91', '0x1059edd']  <-1 CTacticsMenu@Camp@@::vf21 | <-1 CTacticsMenu@Camp@@::vf23
+game+0x6d14e0: 1 refs ['0x105a49b']  <-1 CTacticsMenu@Camp@@::vf21
+game+0x6d16c0: 1 refs ['0x105a2b4']  CTacticsCharaWindow@Camp@@::vf18
+game+0x6d19d0: 1 refs ['0x1059d86']  <-1 CBeatMenu@Camp@@::vf20
+game+0x6d1a20: 1 refs ['0x1059de4']  <-1 CBeatMenu@Camp@@::vf20
+game+0x6d72d0: 2 refs ['0x10597f7', '0x1059aa0']  <-1 CDictionaryListWindow@Camp@@::vf35 | <-1 CDictionaryListWindow@Camp@@::vf38 | <-1 CDictionaryListWindow@Camp@@::vf25 | <-1 CDictionaryListWindow@Camp@@::vf23
+game+0x6dc330: 1 refs ['0x1059e78']  <-1 CQuestListWindow@Camp@@::vf49
+game+0x6dd660: 1 refs ['0x1059e80']  CArtsMissionWindow@Camp@@::vf49
+game+0x6de740: 1 refs ['0x1059e80']  <-1 CArtsCollectionMenu@Camp@@::vf23
+game+0x6ec140: 1 refs ['0x1059e50']  <-2 CSettingMenu@Camp@@::vf23
+game+0x6ee6b0: 1 refs ['0x1059e50']  (unlabelled)
+game+0x6f68d0: 1 refs ['0x1059e78']  <-2 CICView@Camp@@::vf23
+game+0x711310: 1 refs ['0x10596e8']  <-1 CMenberWindow@Camp@@::vf20 | <-2 CItemMenberWindow@Camp@@::vf20 | <-2 CStatusAbility@Camp@@::vf18
+game+0x749170: 1 refs ['0x10590d2']  CShopDeliveryListWindow@Camp@@::vf28
+game+0x749360: 1 refs ['0x10592ba']  CShopSubDeliveryListWindow@Camp@@::vf28
+game+0x750630: 1 refs ['0x10597b7']  (unlabelled)
+game+0x7507d0: 1 refs ['0x1059916']  <-1 CSoftwareKeyboardBase@Camp@@::vf51 | <-2 CSoftwareKeyboardBase@Camp@@::vf53 | <-2 CSoftwareKeyboardBase@Camp@@::vf20 | <-2 CSoftwareKeyboardBase@Camp@@::vf23
+game+0x750870: 3 refs ['0x1059a05', '0x1059b19', '0x1059bb4']  <-1 CSoftwareKeyboardBase@Camp@@::vf51 | <-1 CSoftwareKeyboardBase@Camp@@::vf20
+game+0x751050: 4 refs ['0x105a175', '0x105a189', '0x105a215', '0x105a275']  CSoftwareKeyboardButton@Camp@@::vf3
+game+0x751200: 2 refs ['0x105a31a', '0x105a330']  <-1 CSoftwareKeyboardBase@Camp@@::vf53 | <-1 CSoftwareKeyboardBase@Camp@@::vf51 | <-1 CSoftwareKeyboardBase@Camp@@::vf20 | <-1 CSoftwareKeyboardButton@Camp@@::vf11
+game+0x7515c0: 1 refs ['0x1059f34']  <-1 CShopItemMemoWindow@Camp@@::vf20
+game+0x754620: 1 refs ['0x1059008']  <-2 SozInitResidentDataTask@@::vf12
+game+0x754670: 1 refs ['0x1059008']  <-2 CSettingPartsSurround@Camp@@::vf11
+game+0x7546a0: 5 refs ['0x1059008']  <-1 SceVerSave@SaveLoad@@::vf0
+game+0x754820: 4 refs ['0x1059004', '0x1059008']  (unlabelled)
+game+0x754890: 2 refs ['0x1059004', '0x1059008']  (unlabelled)
+game+0x754db0: 1 refs ['0x1059008']  <-2 CSettingMenu@Camp@@::vf20 | <-2 CSettingPartsSurround@Camp@@::vf11
+game+0x754ed0: 1 refs ['0x1059007']  (unlabelled)
+game+0x754ef0: 4 refs ['0x1059008', '0x1059e78']  <-1 CNewGameView@Camp@@::vf23
+game+0x754fe0: 4 refs ['0x1059008', '0x1059e78']  <-1 CLoadMenu@Camp@@::vf23 | <-1 CNewGameView@Camp@@::vf28 | <-1 CGameClearData@SaveLoad@@::vf12
+game+0x7555d0: 4 refs ['0x1059008']  <-2 SceVerSave@SaveLoad@@::vf0 | <-2 TitleMainTask@Title@@::vf12
+game+0x755810: 4 refs ['0x1059008', '0x1059e78']  <-2 CLoadMenu@Camp@@::vf23 | <-2 CNewGameView@Camp@@::vf28 | <-2 CGameClearData@SaveLoad@@::vf12
+game+0x7558c0: 4 refs ['0x1059008']  <-2 CSettingPartsSurround@Camp@@::vf11 | <-2 TitleMainTask@Title@@::vf12
+game+0x755990: 1 refs ['0x105900c']  (unlabelled)
+game+0x755a70: 3 refs ['0x1059010']  <-2 CNewGameView@Camp@@::vf23 | <-2 CLoadMenu@Camp@@::vf23 | <-2 CNewGameView@Camp@@::vf28 | <-2 CGameClearData@SaveLoad@@::vf12
+game+0x755bd0: 16 refs ['0x1059010', '0x1059018', '0x1059020', '0x1059024']  (unlabelled)
+game+0x755f00: 2 refs ['0x1059010']  (unlabelled)
+game+0x755fd0: 4 refs ['0x105900c', '0x1059010']  <-2 TitleMainTask@Title@@::vf12
+game+0x756040: 2 refs ['0x105900c', '0x1059010']  <-2 TitleMainTask@Title@@::vf12
+game+0x756210: 1 refs ['0x1059010']  <-1 CLoadMenu@Camp@@::vf23
+game+0x756500: 5 refs ['0x1059010', '0x1059e78']  <-1 CSaveLoadMenuBase@Camp@@::vf20 | <-1 CSaveMenu@Camp@@::vf20
+game+0x756600: 1 refs ['0x1059010']  <-1 CTalkMessage@WindowLib@@::vf24 | <-1 CTalkMessage@WindowLib@@::vf38
+game+0x756630: 1 refs ['0x1059010']  <-1 CArenaEnemyWindowTeam@Camp@@::vf49 | <-1 CArenaAppCharaGroupWindow@Camp@@::vf30 | <-2 CArenaView@Camp@@::vf21 | <-2 CArenaView@Camp@@::vf23
+game+0x756700: 4 refs ['0x1059010', '0x1059e78']  (unlabelled)
+game+0x7568c0: 1 refs ['0x1059010']  (unlabelled)
+game+0x756cd0: 3 refs ['0x1059010', '0x1059e78']  <-1 CRoomMateMainWindow@Camp@@::vf27 | <-2 CRoomMateMainWindow@Camp@@::vf23
+game+0x756df0: 3 refs ['0x1059010', '0x1059e78']  (unlabelled)
+game+0x756f30: 1 refs ['0x1059010']  <-2 SozApp@Soz@@::vf3 | <-2 FieldMainTask@Field@@::vf12
+game+0x757000: 7 refs ['0x1059010', '0x1059018', '0x1059020', '0x1059024', '0x1059e78']  <-1 CLoadMenu@Camp@@::vf23
+game+0x757100: 1 refs ['0x1059010']  (unlabelled)
+game+0x757180: 1 refs ['0x1059010']  <-2 CCampKeyInput@Camp@@::vf23
+game+0x7571d0: 1 refs ['0x1059010']  (unlabelled)
+game+0x757260: 15 refs ['0x1059010']  <-1 CSaveLoadMenuBase@Camp@@::vf20 | <-1 CSaveMenu@Camp@@::vf20
+game+0x7576c0: 2 refs ['0x1059028']  <-2 SozApp@Soz@@::vf3
+game+0x757710: 2 refs ['0x1059024', '0x1059028']  (unlabelled)
+game+0x758750: 1 refs ['0x105904a']  (unlabelled)
+game+0x7588e0: 2 refs ['0x105902f', '0x1059030']  <-2 SozApp@Soz@@::vf3
+game+0x758fe0: 3 refs ['0x1059038', '0x105903c', '0x1059040']  <-2 SozApp@Soz@@::vf3
+game+0x759100: 2 refs ['0x1059054', '0x1059058']  <-2 SozApp@Soz@@::vf3
+game+0x759380: 3 refs ['0x1059057', '0x1059058']  (unlabelled)
+game+0x759550: 1 refs ['0x1059e50']  <-1 SozInitResidentDataTask@@::vf12
+game+0x7598e0: 1 refs ['0x1059058']  SozInitResidentDataTask@@::vf12
+game+0x75b250: 4 refs ['0x1059080', '0x1059634', '0x1059e50', '0x105a404']  <-1 AppSetupTask@Soz@@::vf12
+game+0x75b4f0: 4 refs ['0x105904a', '0x1059e50']  AppSetupTask@Soz@@::vf12
+game+0x75bc60: 2 refs ['0x1059e50']  <-1 AppSetupTask@Soz@@::vf12
+game+0x75bf90: 1 refs ['0x1059080']  (unlabelled)
+game+0x75c1b0: 2 refs ['0x105903c', '0x105904b']  <-1 PadTask@Peripheral@@::vf12
+game+0x75c570: 2 refs ['0x105906c', '0x1059070']  (unlabelled)
+game+0x75c700: 3 refs ['0x105906c', '0x105906f', '0x1059070']  (unlabelled)
+game+0x75c8a0: 1 refs ['0x105903c']  <-2 PadTask@Peripheral@@::vf12
+game+0x75c990: 1 refs ['0x1059e50']  (unlabelled)
+game+0x75ca00: 2 refs ['0x1059e50']  (unlabelled)
+game+0x75f150: 1 refs ['0x1059e78']  <-1 CRoomMateMainWindow@Camp@@::vf27
+game+0x7605f0: 1 refs ['0x1059e78']  (unlabelled)
+game+0x760d40: 2 refs ['0x1059e78']  <-1 CSceVar@sce@@::vf0 | <-1 CSceVar@sce@@::vf1 | <-2 CSceVar@sce@@::vf11 | <-2 CSceVar@sce@@::vf12
+game+0x761180: 2 refs ['0x1059e78']  (unlabelled)
+game+0x761950: 4 refs ['0x1059e74', '0x1059e78']  (unlabelled)
+game+0x7619b0: 2 refs ['0x1059e74', '0x1059e78']  (unlabelled)
+game+0x762cf0: 2 refs ['0x1059e88']  <-2 CPlayerThinkChr@Battle@@::vf130 | <-2 CPlayerThinkChr@Battle@@::vf346 | <-2 CCm006_01@Battle@@::vf102 | <-2 CPlayerFaiz@Battle@@::vf428
+game+0x762e40: 2 refs ['0x1059e88']  <-2 CChrElement@Battle@@::vf88 | <-2 CPlayerThinkChr@Battle@@::vf120 | <-2 CPlayerThinkChr@Battle@@::vf110 | <-2 CPlayerThinkChr@Battle@@::vf135
+game+0x762fa0: 2 refs ['0x1059e88']  <-2 CPlayerThinkChr@Battle@@::vf88
+game+0x7630c0: 2 refs ['0x1059e88']  <-2 CPlayerThinkChr@Battle@@::vf88 | <-2 CCm006_02@Battle@@::vf87 | <-2 CPlayerThinkChr@Battle@@::vf89
+game+0x7637e0: 6 refs ['0x1059e88', '0x1059f70', '0x1059f74', '0x1059f78']  (unlabelled)
+game+0x765c30: 2 refs ['0x1059e80']  <-1 CArtsMissionWindow@Camp@@::vf49 | <-1 CArtsCharaWindow@Camp@@::vf38 | <-2 CChrElement@Battle@@::vf105 | <-2 CChrElement@Battle@@::vf78
+game+0x766730: 7 refs ['0x1059e7f', '0x1059e80', '0x1059e88', '0x1059e90']  <-2 SozInitResidentDataTask@@::vf12
+game+0x766970: 1 refs ['0x1059e90']  <-2 CPlayerThinkChr@Battle@@::vf88
+game+0x767510: 6 refs ['0x1059e88', '0x105a450', '0x105a454', '0x105a458']  <-2 CPlayerThinkChr@Battle@@::vf87 | <-2 CCm007@Battle@@::vf427 | <-2 CPlayerThinkChr@Battle@@::vf100
+game+0x767690: 2 refs ['0x1059e80', '0x1059e98']  (unlabelled)
+game+0x76d270: 1 refs ['0x1059010']  <-2 TitleMainTask@Title@@::vf12
+game+0x76f6a0: 1 refs ['0x1059032']  (unlabelled)
+game+0x76fa40: 1 refs ['0x1059031']  <-2 CBattleSwitcher@Field@@::vf12 | <-2 CFSQBeginPack@Field@@::vf19 | <-2 CFSQReadPack@Field@@::vf19
+game+0x76fb20: 1 refs ['0x1059031']  <-1 SozInitResidentCharacterDataTask@@::vf12 | <-1 SozInitResidentDataTask@@::vf12 | <-1 CBattleSwitcher@Field@@::vf12 | <-1 CWeaponCharacter@Field@@::vf23
+game+0x76fc90: 1 refs ['0x1059031']  <-1 CMapSwitcher@Field@@::vf18 | <-2 CDeleteDataManager@Field@@::vf12 | <-2 PackingData@Field@@::vf12 | <-2 CHeroCharacter@Field@@::vf63
+game+0x76fe50: 2 refs ['0x1059031']  <-1 CArenaView@Camp@@::vf20 | <-1 CSpaceTownLoad@Camp@@::vf12 | <-1 SozInitResidentCharacterDataTask@@::vf12 | <-1 CCampFastLoadSpriteElementAddFlash@Camp@@::vf54
+game+0x773230: 1 refs ['0x1059e78']  (unlabelled)
+game+0x775b30: 1 refs ['0x1059e78']  <-1 CBattleSwitcher@Field@@::vf12 | <-2 CSettingMenu@Camp@@::vf23
+game+0x775bf0: 1 refs ['0x1059e78']  (unlabelled)
+game+0x776bc0: 1 refs ['0x1059e78']  (unlabelled)
+game+0x77e890: 1 refs ['0x1059e50']  CBattleCrossFade@Drawing2D@@::vf12
+game+0x791220: 1 refs ['0x10592f4']  <-1 CEquipChildList@Battle@@::vf49 | <-1 CEquipEquipBox@Battle@@::vf49 | <-1 CEquipItemList@Battle@@::vf49 | <-1 CICComposeWindow@Camp@@::vf38
+game+0x79c920: 1 refs ['0x1059e50']  <-2 CSaveLoadMenuBase@Camp@@::vf20 | <-2 SceVerSave@SaveLoad@@::vf0
+game+0x79ebe0: 2 refs ['0x1059e50']  <-1 CSettingMenu@Camp@@::vf23 | <-1 CSaveMenu@Camp@@::vf32 | <-1 AppSetupTask@Soz@@::vf12 | <-1 CSystemSaveDataTask@SaveLoad@@::vf12
+game+0x79f1e0: 9 refs ['0x105903c', '0x1059e50']  CSystemSaveDataTask@SaveLoad@@::vf12
+game+0x79f9a0: 7 refs ['0x105903c', '0x1059e50']  (unlabelled)
+game+0x7a26b0: 4 refs ['0x1059e50']  SceVerSave@SaveLoad@@::vf4; ?$SceVerSaveBase@UtBackupInfo@SaveLoad@@@SaveLoad@@::vf4
+game+0x7a2b30: 3 refs ['0x1059008', '0x1059e50']  SceVerSave@SaveLoad@@::vf0
+game+0x7a3340: 1 refs ['0x105904a']  SceVerSave@SaveLoad@@::vf3
+game+0x7a5070: 1 refs ['0x1059ac6']  (unlabelled)
+game+0x7a5c30: 1 refs ['0x105904a']  <-2 PadTask@Peripheral@@::vf12
+game+0x7a7880: 1 refs ['0x1059e50']  CGameClearData@SaveLoad@@::vf12
+game+0x7ae450: 1 refs ['0x1059e78']  <-1 FieldMainTask@Field@@::vf12
+game+0x7aeca0: 1 refs ['0x1059049']  <-1 FieldMainTask@Field@@::vf12
+game+0x7af6f0: 1 refs ['0x1059e78']  <-1 CHeroCharacter@Field@@::vf40
+game+0x7b07e0: 1 refs ['0x1059031']  <-1 CBattleSwitcher@Field@@::vf12 | <-2 PackingData@Field@@::vf12 | <-2 CDeleteDataManager@Field@@::vf12 | <-2 CFSQBattleLoadRequest@Field@@::vf19
+game+0x7b0aa0: 1 refs ['0x1059032']  <-1 CFSQBeginPack@Field@@::vf19 | <-1 CFSQReadPack@Field@@::vf19
+game+0x7b0c00: 1 refs ['0x1059031']  <-1 CFSQBeginPack@Field@@::vf19 | <-1 CFSQReadPack@Field@@::vf19
+game+0x7b2600: 3 refs ['0x1059e50', '0x1059e78']  CScenarioManager@Field@@::vf12
+game+0x7b2b40: 1 refs ['0x1059e78']  (unlabelled)
+game+0x7b48d0: 1 refs ['0x1059e50']  (unlabelled)
+game+0x7b5530: 3 refs ['0x1059e78']  (unlabelled)
+game+0x7b5db0: 2 refs ['0x1059e50']  (unlabelled)
+game+0x7b7090: 1 refs ['0x1059e78']  <-1 CFSQSwitchCamp@Field@@::vf19 | <-2 FieldMainTask@Field@@::vf12 | <-2 CHeroCharacter@Field@@::vf63
+game+0x7b75e0: 1 refs ['0x1059e78']  (unlabelled)
+game+0x7b9220: 2 refs ['0x1059e78']  <-1 CMinimapManager@Field@@::vf12
+game+0x7bcfe0: 4 refs ['0x1059038']  CMinimapManager@Field@@::vf12
+game+0x7bdf70: 1 refs ['0x1059e78']  <-1 CMinimapManager@Field@@::vf12
+game+0x7be920: 1 refs ['0x1059e50']  (unlabelled)
+game+0x7c3390: 1 refs ['0x1059049']  (unlabelled)
+game+0x7c8050: 2 refs ['0x1059e78']  (unlabelled)
+game+0x7ced70: 1 refs ['0x1059e78']  (unlabelled)
+game+0x7d19b0: 2 refs ['0x1059e78', '0x105a493']  (unlabelled)
+game+0x7d1d00: 2 refs ['0x1059e50', '0x1059e78']  (unlabelled)
+game+0x7d2df0: 2 refs ['0x105904a', '0x1059e50']  CMapSwitcher@Field@@::vf12
+game+0x7d5a80: 1 refs ['0x1059e50']  <-1 CHeroCharacter@Field@@::vf40
+game+0x7d6d70: 1 refs ['0x1059e78']  <-1 CHeroCharacter@Field@@::vf63
+game+0x7d8df0: 1 refs ['0x1059e50']  (unlabelled)
+game+0x7daba0: 1 refs ['0x1059e78']  <-1 CHeroCharacter@Field@@::vf77 | <-2 CHeroCharacter@Field@@::vf63
+game+0x7db320: 1 refs ['0x1059e78']  <-2 CHeroCharacter@Field@@::vf63
+game+0x7db730: 1 refs ['0x1059e78']  <-2 CHeroCharacter@Field@@::vf63
+game+0x7dc640: 1 refs ['0x1059e78']  CHeroCharacter@Field@@::vf40
+game+0x7dcef0: 1 refs ['0x1059e78']  <-2 CHeroCharacter@Field@@::vf63 | <-2 CHeroCharacter@Field@@::vf77
+game+0x7dedc0: 1 refs ['0x1059e78']  (unlabelled)
+game+0x7dfa90: 1 refs ['0x1059e50']  CSceHighSpeedManager@Field@@::vf12
+game+0x7e0190: 1 refs ['0x1059e50']  CMakeMatrixForScene@Field@@::vf12
+game+0x7e0c70: 1 refs ['0x105960d']  <-1 CPolygonCharacter@Field@@::vf0 | <-1 CMoveCharacter@Field@@::vf0
+game+0x7e0cf0: 1 refs ['0x1059657']  CCharacterQueueManager@Field@@::vf0; CObjectQueueManager@Field@@::vf0; CCameraQueueManager@Field@@::vf0
+game+0x7e4240: 1 refs ['0x1059e78']  CStaffEndRole@Field@@::vf12
+game+0x7e5130: 5 refs ['0x1059044', '0x1059e78']  (unlabelled)
+game+0x7e5280: 2 refs ['0x1059044', '0x1059e78']  (unlabelled)
+game+0x7e52d0: 5 refs ['0x1059e78']  (unlabelled)
+game+0x7e5820: 1 refs ['0x1059e78']  (unlabelled)
+game+0x7e5920: 1 refs ['0x1059e78']  (unlabelled)
+game+0x7e8560: 1 refs ['0x10596e8']  CCameraCharacter@Field@@::vf43
+game+0x7f3320: 1 refs ['0x1059e78']  CSpaceGalaxyManager@Field@@::vf12
+game+0x7f3e50: 1 refs ['0x1059e50']  CTitleSwitcher@Field@@::vf12
+game+0x7f5ee0: 4 refs ['0x1059e78']  (unlabelled)
+game+0x7f6c40: 2 refs ['0x1059e50', '0x1059e78']  CWanderingDungeonManager@Field@@::vf12
+game+0x7fa500: 1 refs ['0x1059e78']  <-1 CNonePlayerCharacter@Field@@::vf63
+game+0x7fc550: 1 refs ['0x1059e78']  CHeroCharacter@Field@@::vf54; CEnemyCharacter@Field@@::vf54; CNonePlayerCharacter@Field@@::vf54
+game+0x7fdc50: 1 refs ['0x1059e78']  CEnemyCharacter@Field@@::vf23; CNonePlayerCharacter@Field@@::vf23; CTreasureBox@Field@@::vf23
+game+0x7fe640: 1 refs ['0x1059e78']  <-1 CHeroCharacter@Field@@::vf63
+game+0x7fed20: 1 refs ['0x1059e78']  <-2 CHeroCharacter@Field@@::vf63
+game+0x800f30: 1 refs ['0x105936f']  <-1 CHeroCharacter@Field@@::vf71 | <-2 CAnimationCharacter@Field@@::vf63
+game+0x8025d0: 4 refs ['0x105904a']  CFOQCourseMove@Field@@::vf19
+game+0x802dd0: 1 refs ['0x1059e50']  CFSQBeginPack@Field@@::vf19
+game+0x803250: 1 refs ['0x1059e78']  CFSQInn@Field@@::vf19
+game+0x80d270: 1 refs ['0x1059e78']  <-1 CCalnusSetItem@Field@@::vf12
+game+0x80d510: 2 refs ['0x1059e78']  <-2 CCalnusSetItem@Field@@::vf12
+game+0x80da30: 1 refs ['0x1059e78']  CTreasureBox@Field@@::vf63
+game+0x80f490: 3 refs ['0x1059e78']  CFSQMessage@Field@@::vf19
+game+0x812e60: 2 refs ['0x1059049', '0x1059e50']  CBattleSwitcher@Field@@::vf12
+game+0x8134e0: 1 refs ['0x1059e78']  (unlabelled)
+game+0x8144b0: 1 refs ['0x1059e78']  CControlTowerLaser@Field@@::vf12
+game+0x816c70: 1 refs ['0x1059e78']  (unlabelled)
+game+0x816e80: 1 refs ['0x1059e78']  (unlabelled)
+game+0x817240: 3 refs ['0x10595cb', '0x105988b', '0x1059e78']  CTPFireTrapInfo@Field@@::vf0
+game+0x817ca0: 1 refs ['0x1059e78']  <-1 CTemplePageTrapManager@Field@@::vf12
+game+0x817df0: 1 refs ['0x1059e78']  <-1 CTemplePageTrapManager@Field@@::vf12
+game+0x818600: 1 refs ['0x1059e78']  (unlabelled)
+game+0x818dc0: 1 refs ['0x1059e78']  <-1 CJukeBoxBGMChoice@Field@@::vf27 | <-1 CJukeBoxBGMListWindow@Field@@::vf61 | <-1 CJukeBoxBGMChoice@Field@@::vf21
+game+0x819ba0: 1 refs ['0x1059e78']  (unlabelled)
+game+0x819d50: 1 refs ['0x1059e78']  (unlabelled)
+game+0x81aa80: 1 refs ['0x1059e78']  (unlabelled)
+game+0x81ae60: 4 refs ['0x1059e78']  CCalnusSetItem@Field@@::vf12
+game+0x81bb20: 1 refs ['0x1059e78']  (unlabelled)
+game+0x81bf00: 1 refs ['0x1059e78']  <-1 CCalnusSetItem@Field@@::vf12
+game+0x81ce50: 1 refs ['0x1059e78']  (unlabelled)
+game+0x81d5f0: 1 refs ['0x1059e78']  (unlabelled)
+game+0x81d6c0: 2 refs ['0x1059e78']  CLoakQuicksand@Field@@::vf12
+game+0x81e050: 1 refs ['0x1059e78']  (unlabelled)
+game+0x81e760: 1 refs ['0x1059e78']  CEscapeBypassWall@Field@@::vf12
+game+0x820540: 3 refs ['0x1059e78']  (unlabelled)
+game+0x824920: 1 refs ['0x1059e78']  (unlabelled)
+game+0x825000: 3 refs ['0x1059e78']  (unlabelled)
+game+0x825c90: 1 refs ['0x1059e78']  (unlabelled)
+game+0x827a30: 1 refs ['0x1059e78']  (unlabelled)
+game+0x827e30: 1 refs ['0x1059e78']  (unlabelled)
+game+0x828390: 1 refs ['0x1059e78']  (unlabelled)
+game+0x8285a0: 2 refs ['0x1059e78']  <-1 CControlCreatorPalace@Field@@::vf12
+game+0x829020: 1 refs ['0x1059e78']  (unlabelled)
+game+0x8293b0: 1 refs ['0x1059e78']  <-1 CHeroCharacter@Field@@::vf66 | <-1 CEnemyCharacter@Field@@::vf64 | <-1 CEnemyCharacter@Field@@::vf40 | <-1 CMapObjectCharacter@Field@@::vf65
+game+0x8293e0: 1 refs ['0x1059e78']  CControlCreatorPalace@Field@@::vf12
+game+0x829fa0: 1 refs ['0x1059e78']  (unlabelled)
+game+0x82a500: 2 refs ['0x1059e78']  CControlBarockDark@Field@@::vf12
+game+0x82bf70: 2 refs ['0x1059e78']  (unlabelled)
+game+0x82c1f0: 13 refs ['0x10590b8', '0x10590c1', '0x10590da', '0x10590e6', '0x10590f2']  (unlabelled)
+game+0x82caa0: 11 refs ['0x1059e78', '0x105a3ef', '0x105a3f8', '0x105a41d', '0x105a432']  (unlabelled)
+game+0x82d3f0: 1 refs ['0x1059e78']  <-1 CArenaManager@Field@@::vf12
+game+0x82d580: 1 refs ['0x1059e50']  CArenaManager@Field@@::vf12
+game+0x82f940: 1 refs ['0x1059e78']  <-2 CHeroCharacter@Field@@::vf63 | <-2 CNonePlayerCharacter@Field@@::vf40
+game+0x834920: 1 refs ['0x105903c']  CCollectionWindow@Field@@::vf12; CSpaceShipWindow@Field@@::vf12; CWeaponWindow@Field@@::vf12
+game+0x837f90: 1 refs ['0x1059e78']  <-1 CWeaponCharacter@Field@@::vf23 | <-1 CWeaponCharacter@Field@@::vf63
+game+0x83f1e0: 1 refs ['0x1059e78']  (unlabelled)
+game+0x83f320: 1 refs ['0x1059e78']  <-2 CBunnyRaceWindow@Field@@::vf12
+game+0x83f720: 1 refs ['0x1059040']  <-1 CBunnyRaceWindow@Field@@::vf12
+game+0x843970: 1 refs ['0x1059e50']  <-1 TitleMainTask@Title@@::vf12
+game+0x843de0: 1 refs ['0x1059e50']  TitleMainTask@Title@@::vf12
+game+0x84f740: 1 refs ['0x1059e50']  CCommandHelpParts@UI@@::vf32
+game+0x8502a0: 4 refs ['0x1059036', '0x1059150', '0x1059843', '0x1059e50']  (unlabelled)
+game+0x850a60: 6 refs ['0x105940e', '0x10594c9', '0x1059628', '0x1059661', '0x1059683']  (unlabelled)
+game+0x851480: 1 refs ['0x105a094']  (unlabelled)
+game+0x851cb0: 1 refs ['0x1059e78']  (unlabelled)
+game+0x1654220: 1 refs ['0x10596c0']  MappedMemoryLocation@Aska@@::vf6
+game+0x1771aa0: 3 refs ['0x10594e6', '0x105a487', '0x105a4f0']  Occluder@Aska@@::vf4
+game+0x1baada0: 1 refs ['0x1059d9f']  AddressNode@Aska@@::vf3; DecodeTextureIdIterator@DecodeTextureQueue@Aska@@::vf3; TextureDecoderIterator@DecodeTextureQueue@Aska@@::vf3
+game+0x2649400: 1 refs ['0x105a12b']  DynamicsCircleWind@Aska@@::vf4; CFldDynamicsCircleWind@Field@@::vf4
+game+0x2819630: 1 refs ['0x105a30c']  ?$TAafNormalLinkController@U?$AafType@UAafControlPoint_Normal_U24@Aska@@$0A@$0A@$0A@@Aska@@@Aska@@::vf1; ?$TAafLinkController@V?$TAafNormalController@U?$AafType@UAafControlPoint_Normal_U24@Aska@@$0A@$0A@$0A@@Aska@@@Aska@@@Aska@@::vf1
+game+0x2972900: 2 refs ['0x10592d3', '0x105a15e']  ?$TAafFrameSortVectorElementController@U?$AafType@UAafControlPoint_Normal_Linear@Aska@@$00$0A@$02@Aska@@@Aska@@::vf5; ?$TAafFrameSortController@U?$AafType@UAafControlPoint_Normal_Linear@Aska@@$00$0A@$02@Aska@@@Aska@@::vf5
+game+0x2f9bae0: 1 refs ['0x1059038']  CBtlPad@Battle@@::vf12
+game+0x3369e30: 1 refs ['0x105981f']  CPlayerThinkChr@Battle@@::vf307; CChrElement@Battle@@::vf307; CRigidbodyChr@Battle@@::vf307
+game+0x3483300: 2 refs ['0x1059638', '0x105a2b2']  CPlayerThinkChr@Battle@@::vf142; CPlayerChr@Battle@@::vf142; CPlayerEdge@Battle@@::vf142
+game+0x3842140: 1 refs ['0x1059e78']  CPlayerFaiz@Battle@@::vf24
+game+0x3b2f5c0: 1 refs ['0x1059e78']  CCm203@Battle@@::vf24
+game+0x3c7e3c0: 1 refs ['0x105903c']  CInformationBattleStart@Battle@@::vf23; CBonusGauge@Battle@@::vf23; CInformationBattleBonus@Battle@@::vf23
+game+0x3e031c0: 1 refs ['0x105903c']  CBattleCampItem@Battle@@::vf19; CBattleCampMagic@Battle@@::vf19; CBattleCampSkill@Battle@@::vf19
+game+0x4149ee0: 1 refs ['0x1059e50']  CSettingMenu@Camp@@::vf24
+game+0x42d20d0: 2 refs ['0x10595e0', '0x10595f2']  CItemMemoWindow@Camp@@::vf47; CSkillSelectSkillUseMemoWindow@Camp@@::vf47; CReplicaMemoWindow@Camp@@::vf47
+game+0x46d74d0: 1 refs ['0x105a02c']  CBeatStatusWindow@Camp@@::vf20
+game+0x4d27cf0: 1 refs ['0x10593b6']  CSpaceShipDetail@Camp@@::vf25; CWeaponDetail@Camp@@::vf25; CMonsterDetail@Camp@@::vf25
+game+0x4e594d0: 1 refs ['0x1059080']  PadTask@Peripheral@@::vf12
+game+0x4e7d310: 1 refs ['0x105903c']  ?$TBattle2DHandlerUpdate@VCBase2DHandler@Base2DLib@@@Battle@@::vf23; ?$TBattle2DHandlerUpdate@VCMessageText@UI@@@Battle@@::vf23; CSkillsMessageText@Battle@@::vf23
+game+0x4f97740: 3 refs ['0x1059e50']  CMsgDialog@UI@@::vf12
+game+0x54f78a0: 1 refs ['0x105a17f']  CAnimationLoopCallback@Field@@::vf2; CFCQAnimationCallback@Field@@::vf2
+game+0x5583050: 1 refs ['0x1059e50']  CFootStepManager@Field@@::vf12
