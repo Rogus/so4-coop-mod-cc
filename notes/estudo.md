@@ -452,3 +452,18 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
 - v0.28: horário em cada linha de ação; por controle, índice de gamepad e conjunto de ações; activate_all=1
   (so4coop.ini criado no jogo só com essa linha): a cada 2 s o conjunto de ações do controle que tem um é
   ativado nos outros. take_action agora é decimal (o teste pegou 10 -> 16 com o leitor hex).
+
+### Execução 28 (v0.28) - notes/run28_v0.28 — **cada controle separado pelo Steam**
+- 3 controles do Steam, todos já com o conjunto de ações 1 do jogo (activate_all não precisou ativar nada);
+  índice de gamepad -1 em todos.
+- **Ação 10 = R3**, vista em cada controle separadamente: controle 3 (61-72 s, 3x), controle 2 (77-98 s, 4x),
+  controle 1 (104-121 s, 4x). O DualSense (apertado primeiro) deve ser o controle 3; o outro controle físico
+  parece aparecer como duas entradas do Steam (2 e 1). Ação 3 x43 a cada ~0,3 s = botão segurado repetindo.
+- v0.29: p1_steam=<n> no so4coop.ini = controle do Steam do jogador 1; qualquer outro controle = jogador 2.
+  so4coop.ini proposto: take_action=10, p1_steam=3, activate_all=0, p1_position=0, p2_position=1.
+- Controles do usuário: **DualSense, GameSir G7 (estilo Xbox One) e DualShock 4 v1** = os 3 controles do Steam.
+  Na exec. 28 o R3 foi apertado nos três: controle 3 = DualSense; 2 e 1 = GameSir / DualShock 4 (ordem a confirmar).
+- v0.29 (final): steamN_position=<0-3> no so4coop.ini dá a cada controle do Steam a sua posição no grupo
+  (até 4 jogadores); sem essas linhas vale p1_steam (jogador 1) / todos os outros (jogador 2). tt_take dividido
+  em tt_take_pos(rótulo, posição). Teste local: posições lidas (3->0, 2->1, 1->2), recusa fora de batalha.
+  A ordem dos controles no Steam pode mudar entre sessões (o log lista a cada início).

@@ -1,0 +1,34 @@
+game pid 185147 started 05:28:48
+===== 05:29:18  default sink: bluez_output.41_42_47_D8_D3_08.1
+threads:      70 S       2 swapchain 
+  stream #7919 Sink: 7091 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=-2.3 dBFS rms=-15.9 dBFS
+  default sink state: RUNNING
+===== 05:29:36  default sink: bluez_output.41_42_47_D8_D3_08.1
+threads:      70 S       2 swapchain 
+  stream #7919 Sink: 7091 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=-1.7 dBFS rms=-14.3 dBFS
+  default sink state: RUNNING
+===== 05:29:55  default sink: bluez_output.41_42_47_D8_D3_08.1
+threads:      70 S       2 swapchain 
+  stream #7919 Sink: 7091 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=-3.3 dBFS rms=-16.2 dBFS
+  default sink state: RUNNING
+===== 05:30:13  default sink: bluez_output.41_42_47_D8_D3_08.1
+threads:       2 R      68 S       2 swapchain 
+  stream #7919 Sink: 7091 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=-1.5 dBFS rms=-14.1 dBFS
+  default sink state: RUNNING
+===== 05:30:31  default sink: bluez_output.41_42_47_D8_D3_08.1
+threads:      71 S       2 swapchain 
+  stream #7919 Sink: 7091 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=-0.1 dBFS rms=-11.8 dBFS
+  default sink state: RUNNING
+===== 05:30:50  default sink: bluez_output.41_42_47_D8_D3_08.1
+threads:       1 R      70 S       2 swapchain 
+  stream #7919 Sink: 7091 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=0.0 dBFS rms=-13.3 dBFS
+  default sink state: RUNNING
+===== 05:31:08  default sink: bluez_output.41_42_47_D8_D3_08.1
+threads:       4 R      67 S       2 swapchain 
+  stream #7919 Sink: 7091 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=0.0 dBFS rms=-12.5 dBFS
+  default sink state: RUNNING
+===== 05:31:27  default sink: bluez_output.41_42_47_D8_D3_08.1
+threads:       1 R      70 S       2 swapchain 
+  stream #7919 Sink: 7091 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=-1.1 dBFS rms=-13.9 dBFS
+  default sink state: RUNNING
+game exited 05:31:45

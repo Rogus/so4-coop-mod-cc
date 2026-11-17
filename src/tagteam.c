@@ -126,10 +126,9 @@ static uintptr_t tt_find_main(void)
     return tt_main;
 }
 
-static void tt_take(int player)
+static void tt_take_pos(int player, uint32_t target)   /* player: label in the log (1-based when printed) */
 {
     char b[300];
-    uint32_t target = tt_owner[player];
     uintptr_t mt = tt_find_main();
     if (!mt || !mem_readable(mt + 0x58, 0x18)) { wsprintfA(b, "  P%d: no battle (nothing written)\r\n", player + 1); logs(b); return; }
     uintptr_t party = *(const uintptr_t *)(mt + 0x58), base = *(const uintptr_t *)(mt + 0x60), blk = *(const uintptr_t *)(mt + 0x68);
@@ -199,3 +198,6 @@ static void tagteam_poll(void)
 
 /* test hook (not used by the game): config + one controller poll + "player 2 takes control" */
 __declspec(dllexport) void WINAPI so4coop_tagtest(void) { tagteam_poll(); tt_take(1); }
+
+/* the player's own party position (tt_owner) */
+static void tt_take(int player) { tt_take_pos(player, tt_owner[player]); }

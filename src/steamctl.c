@@ -43,7 +43,8 @@ static uint64_t sc_last, sc_t0, sc_last_act;
 static uint64_t sc_handles[16];
 static int sc_nctl = -1;
 static uint8_t sc_prev[SC_MAXCTL][SC_MAXACT + 1];
-static uint32_t sc_logged, sc_take, sc_actall, sc_activations;
+static uint32_t sc_logged, sc_take, sc_actall, sc_activations, sc_p1 = 1;
+static uint32_t sc_pos[SC_MAXCTL] = { 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff };   /* v0.29: steamN_position= */
 
 static void sc_init(void)
 {
@@ -104,10 +105,15 @@ static void sc_load_config(void)
         CloseHandle(h);
         if (sc_find_dec(buf, r, "take_action=", &v) && v >= 1 && v <= SC_MAXACT) sc_take = v;
         if (tt_find_value(buf, r, "activate_all=", &v)) sc_actall = v ? 1 : 0;
+        if (sc_find_dec(buf, r, "p1_steam=", &v) && v >= 1 && v <= SC_MAXCTL) sc_p1 = v;
+        static const char *const keys[SC_MAXCTL] = { "steam1_position=", "steam2_position=", "steam3_position=", "steam4_position=" };
+        for (int k = 0; k < SC_MAXCTL; k++) if (tt_find_value(buf, r, keys[k], &v)) sc_pos[k] = v;
     }
-    wsprintfA(b, "  steam controller: take action = %s%lu, activate_all = %lu\r\n", sc_take ? "" : "(not set, calibration) ",
-              (unsigned long)sc_take, (unsigned long)sc_actall);
+    wsprintfA(b, "  steam controller: take action = %s%lu, player 1 = Steam controller %lu (every other controller = player 2), activate_all = %lu\r\n",
+              sc_take ? "" : "(not set, calibration) ", (unsigned long)sc_take, (unsigned long)sc_p1, (unsigned long)sc_actall);
     logs(b);
+    for (int k = 0; k < SC_MAXCTL; k++)
+        if (sc_pos[k] != 0xffffffff) { wsprintfA(b, "  steam controller %d -> party position %lu\r\n", k + 1, (unsigned long)sc_pos[k]); logs(b); }
 }
 
 static void sc_describe(int n)
@@ -171,10 +177,19 @@ static void steamctl_poll(void)
                           (st & 1) ? "pressed" : "released");
                 logs(b);
             }
-            if (sc_take == a && (st & 1) && !(sc_prev[c][a] & 1) && c < 2) {
-                wsprintfA(b, "=== TAG-TEAM: take action on Steam controller %d ===\r\n", c + 1);
-                logs(b);
-                tt_take(c);
+            if (sc_take == a && (st & 1) && !(sc_prev[c][a] & 1)) {
+                /* v0.29: run 28 showed one physical controller can appear as two Steam controllers, so
+                 * player 1 = the configured Steam controller, every other controller = player 2 */
+                if (c < SC_MAXCTL && sc_pos[c] != 0xffffffff) {      /* per-controller position (up to 4 players) */
+                    wsprintfA(b, "=== TAG-TEAM: take action on Steam controller %d -> position %lu ===\r\n", c + 1, (unsigned long)sc_pos[c]);
+                    logs(b);
+                    tt_take_pos(c, sc_pos[c]);
+                } else {
+                    int player = (uint32_t)(c + 1) == sc_p1 ? 0 : 1;
+                    wsprintfA(b, "=== TAG-TEAM: take action on Steam controller %d (player %d) ===\r\n", c + 1, player + 1);
+                    logs(b);
+                    tt_take(player);
+                }
             }
             sc_prev[c][a] = st;
         }
