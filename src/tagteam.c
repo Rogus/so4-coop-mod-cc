@@ -22,6 +22,43 @@ __declspec(dllimport) BOOL WINAPI ReadFile(HANDLE, void *, DWORD, DWORD *, void 
 #define OPEN_EXISTING 3
 #define XI_L3 0x0040
 
+/* v0.25: run 24 showed XInput sees no controller under Proton (the game uses Steam Input), so the
+ * buttons are read from the game's own controller objects: game+0x1059080 (controller 1) and
+ * game+0x1059768 (controller 2), button words at +0x5bc..+0x5c6 (game+0x75c660 ORs these 6 words
+ * of controller 2 into controller 1). Every change is logged (calibration); the take button is
+ * configured in so4coop.ini as take_word=<0-5> and take_mask=<hex>. */
+#define TT_PAD0 0x1059080
+#define TT_PADSZ 0x6e8
+#define TT_BTN 0x5bc
+#define TT_LOGMAX 600
+static uint32_t tt_word = 0xffffffff, tt_mask16;
+static WORD tt_btn_prev[2][6];
+static uint32_t tt_btn_logged;
+
+static int tt_find_hex(const char *buf, DWORD n, const char *key, uint32_t *out)
+{
+    uint32_t k = 0;
+    while (key[k]) k++;
+    for (DWORD i = 0; i + k < n; i++) {
+        DWORD j = 0;
+        while (j < k && buf[i + j] == key[j]) j++;
+        if (j != k) continue;
+        DWORD p = i + k;
+        if (p + 1 < n && buf[p] == '0' && (buf[p + 1] == 'x' || buf[p + 1] == 'X')) p += 2;
+        uint32_t v = 0, digits = 0;
+        for (; p < n && digits < 8; p++, digits++) {
+            char c = buf[p];
+            uint32_t d = c >= '0' && c <= '9' ? (uint32_t)(c - '0') : c >= 'a' && c <= 'f' ? (uint32_t)(c - 'a' + 10) : c >= 'A' && c <= 'F' ? (uint32_t)(c - 'A' + 10) : 99;
+            if (d > 15) break;
+            v = v * 16 + d;
+        }
+        if (!digits) return 0;
+        *out = v;
+        return 1;
+    }
+    return 0;
+}
+
 static uint32_t tt_owner[2] = { 0, 1 };
 static int tt_ready;
 static DWORD tt_slot[2] = { 0xffffffff, 0xffffffff };
@@ -58,8 +95,14 @@ static void tt_load_config(void)
         CloseHandle(h);
         tt_find_value(buf, r, "p1_position=", &tt_owner[0]);
         tt_find_value(buf, r, "p2_position=", &tt_owner[1]);
+        uint32_t w;
+        if (tt_find_value(buf, r, "take_word=", &w) && w <= 5 && tt_find_hex(buf, r, "take_mask=", &tt_mask16) && tt_mask16 && tt_mask16 <= 0xffff)
+            tt_word = w;
     }
-    wsprintfA(b, "=== TAG-TEAM ready: L3 on your controller takes control (F3 = player 1, F4 = player 2); player 1 = party position %lu, player 2 = position %lu%s ===\r\n",
+    if (tt_word <= 5) wsprintfA(b, "  take button: word %lu mask %#lx (from so4coop.ini)\r\n", (unsigned long)tt_word, (unsigned long)tt_mask16);
+    else wsprintfA(b, "  take button not configured yet: every button change of both controllers is logged (calibration)\r\n");
+    logs(b);
+    wsprintfA(b, "=== TAG-TEAM ready: the take button (R3, set in so4coop.ini after calibration) on your controller takes control (F3 = player 1, F4 = player 2); player 1 = party position %lu, player 2 = position %lu%s ===\r\n",
               (unsigned long)tt_owner[0], (unsigned long)tt_owner[1], h != (HANDLE)-1 ? " (from so4coop.ini)" : " (defaults)");
     logs(b);
 }
@@ -112,6 +155,25 @@ static void tagteam_poll(void)
 {
     char b[200];
     if (!tt_ready) { tt_ready = 1; tt_load_config(); }
+    /* the game's own controller objects (Steam Input fills them) */
+    for (int p = 0; p < 2; p++) {
+        uintptr_t w = game_base + TT_PAD0 + TT_PADSZ * p + TT_BTN;
+        if (!mem_readable(w, 12)) continue;
+        WORD cur[6];
+        int changed = 0;
+        for (int i = 0; i < 6; i++) { cur[i] = ((const WORD *)w)[i]; if (cur[i] != tt_btn_prev[p][i]) changed = 1; }
+        if (changed && tt_btn_logged < TT_LOGMAX) {
+            tt_btn_logged++;
+            wsprintfA(b, "  pad%d buttons: %04x %04x %04x %04x %04x %04x\r\n", p + 1, cur[0], cur[1], cur[2], cur[3], cur[4], cur[5]);
+            logs(b);
+        }
+        if (tt_word <= 5 && (cur[tt_word] & tt_mask16) == tt_mask16 && (tt_btn_prev[p][tt_word] & tt_mask16) != tt_mask16) {   /* all bits held: combinations work */
+            wsprintfA(b, "=== TAG-TEAM: take button on controller %d ===\r\n", p + 1);
+            logs(b);
+            tt_take(p);
+        }
+        for (int i = 0; i < 6; i++) tt_btn_prev[p][i] = cur[i];
+    }
     ENSURE();
     if (!r_GetState) return;
     XINPUT_STATE st[4];

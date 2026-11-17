@@ -403,3 +403,15 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
 - Limite: o jogo ainda mescla os dois controles, então os dois movem quem for o líder.
 - Teste local (Wine do sistema): ini lido (2/3), slot 0 conectado (DualSense) -> jogador 1, sem jogador 2;
   fora de batalha "no battle (nothing written)".
+
+### Execução 24 (v0.24) - notes/run24_v0.24 — tag-team pelo teclado funciona
+- **F3/F4 funcionaram**: 7 trocas Edge <-> Sarah com todas as checagens, jogo rodou 6 min sem problema.
+- **L3 não pode funcionar ainda**: o XInput não vê nenhum controle no Proton ("slots connected" vazio).
+  O jogo lê os controles pela API do Steam Input; o Proton não os expõe ao XInput.
+- Correção: ler os botões dos **objetos de controle do próprio jogo** (game+0x1059080 e game+0x1059768,
+  palavras de botão em +0x5bc..+0x5c6; game+0x75c660 junta as 6 palavras do controle 2 no 1). Falta
+  saber qual bit é o L3: rodada de calibração registrando as mudanças dessas palavras.
+- v0.25: o tag-team lê os botões dos objetos de controle do jogo (6 palavras em +0x5bc de
+  game+0x1059080 / game+0x1059768) a cada 30 ms; registra toda mudança (até 600 linhas) para calibrar;
+  botão de troca configurável no so4coop.ini: take_word=<0-5>, take_mask=<hex>. XInput continua como
+  alternativa. Teste local: ini lido (word 2, mask 0x40); fora do jogo os objetos não existem e são ignorados.
