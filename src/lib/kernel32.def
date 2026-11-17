@@ -30,3 +30,4 @@ SetThreadContext
 GetCurrentProcessId
 MoveFileW
 GetLocalTime
+VirtualProtect

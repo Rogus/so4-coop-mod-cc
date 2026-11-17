@@ -361,3 +361,17 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   AppSetupTask (preparação), PadTask@Peripheral::vf12 (atualização por quadro = quem **preenche**) e o
   construtor do PadTask (game+0x75bf90). Nenhum objeto capturado guarda ponteiro para essa área.
   O consumidor (movimento do líder) não aparece na estática.
+- v0.22: F5 = rastreio por página-guarda (2 s) da página game+0x1059000: cada acesso cai no VEH, que
+  registra (instrução, deslocamento, leitura/escrita), deixa a instrução rodar com TF e rearma a guarda
+  no passo seguinte; depois restaura a proteção. Sem suspender threads, sem ptrace, sem gravar dados.
+  Autoteste no Wine local (página da própria sonda, 400 leituras): 400 acessos, 2 instruções -> funciona.
+
+### Execução 23 (v0.22) - notes/run23_v0.22 — **página-guarda derrubou o jogo**
+- F5 ligou a guarda na página game+0x1059000 (proteção 0x8); o log para em "GUARD TRACE ON" (sem OFF,
+  sem relatório, sem heartbeat) e o jogo terminou às 04:01:27: morreu dentro da janela de 2 s.
+- Causa provável: código fora do tratamento de exceções do Windows (o lado nativo do Steam Input /
+  lsteamclient escrevendo nos registros de controle) tocou a página guardada. **Não usar F5 da v0.22.**
+- Busca estática por deslocamentos 0x3f4/0x3f6/0x3f8 (campo do analógico a partir de game+0x1059080):
+  ruído demais (offsets comuns e instruções mal decodificadas no código ofuscado).
+- Objeto do líder (CPlayerEdge, 256 KB) na execução 22: nenhum float ~0 no neutro e diferente em
+  direita/baixo/esquerda -> a intenção de movimento não fica nos primeiros 256 KB do personagem.

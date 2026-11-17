@@ -530,9 +530,14 @@ static uint32_t marks;
 static void write_test(void);
 static void autocap_toggle(void);
 static void stick_capture(void);
+static void guard_trace(void);
+static int f5_was;
 
 static void poll_hotkeys(void)
 {
+    int f5 = (GetAsyncKeyState(0x74 /* VK_F5 */) & 0x8000) != 0;
+    if (f5 && !f5_was) guard_trace();
+    f5_was = f5;
     int f6 = (GetAsyncKeyState(0x75 /* VK_F6 */) & 0x8000) != 0;
     if (f6 && !f6_was) stick_capture();
     f6_was = f6;
