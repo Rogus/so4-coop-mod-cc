@@ -64,7 +64,7 @@ static uint32_t hits_logged;
 #define MAXEV 512
 typedef struct { volatile long ready; uint32_t w; DWORD tid; uintptr_t rip; uint64_t oldv, newv, t; } ev_t;
 static ev_t evs[MAXEV];
-static volatile long nev, ev_dropped;
+static volatile long nev, ev_dropped, w_evn[NW];
 static uint32_t ev_logged;
 static volatile long unknown_hits, dr6_empty;
 static long unknown_mark;
@@ -122,6 +122,7 @@ static long WINAPI watch_veh(EXC_PTRS *ep)
         w_last[i] = v;
         if (w < 0) w = i;
         if (w == i) wrote = 1;
+        if (__sync_fetch_and_add(&w_evn[i], 1) >= MAXEV / NW - 8) { __sync_fetch_and_add(&ev_dropped, 1); continue; }   /* per-watch cap */
         long e = __sync_fetch_and_add(&nev, 1);
         if (e < MAXEV) {
             evs[e].w = (uint32_t)i; evs[e].tid = GetCurrentThreadId(); evs[e].rip = rip;
@@ -210,6 +211,7 @@ static void reset_tables(void)
     memset(hits, 0, sizeof hits);
     memset(evs, 0, sizeof evs);
     nhits = hits_dropped = nev = ev_dropped = unknown_hits = dr6_empty = 0;
+    for (int i = 0; i < NW; i++) w_evn[i] = 0;
     hits_logged = ev_logged = 0;
 }
 
@@ -393,12 +395,49 @@ static void watch_arm(ref_t **c, uint32_t n)
     logs("  watch: now switch characters a few times (R1/L1), move and attack for ~20 s, then F11 and close the game\r\n");
 }
 
+/* v0.9: fixed targets, armed once at the first F9 that finds the controlled character.
+ * Run 7: the only globals that match the controlled character (3 Edge scans vs 1 Sarah scan)
+ * are game+0xf77ed2/ed3 (Edge 2/1, Sarah 3/2) and game+0xf77f00 (Edge 2, Sarah 3).
+ * CBtlPad+0x1180 changes all the time: control that game threads do trigger watchpoints.
+ * CBtlPad+0x28 holds the stick values (0 -> 32767.0 in run 5): whoever writes it is the input path. */
+#define G_SEL_A 0x00f77ed0
+#define G_SEL_B 0x00f77f00
+static ref_t fixed[NW];
+static const char C_GLOBAL_A[] = "global game+0x00f77ed0 (ed2/ed3 = controlled member?)";
+static const char C_GLOBAL_B[] = "global game+0x00f77f00 (= controlled member?)";
+
+static void watch_arm_fixed(void)
+{
+    char b[300];
+    uintptr_t pad = 0;
+    for (uint32_t i = 0; i < nobj; i++) if (objs[i].cls == K_BTLPAD) { pad = objs[i].addr; break; }
+    uint32_t n = 0;
+    ref_t *c[NW];
+    uintptr_t ga = game_base + G_SEL_A, gb = game_base + G_SEL_B;
+    if (mem_readable(ga, 8) && mem_readable(gb, 8)) {
+        const BYTE *p = (const BYTE *)ga, *q = (const BYTE *)gb;
+        wsprintfA(b, "  watch: globals now ed0: %02x %02x %02x %02x %02x %02x %02x %02x | f00: %02x %02x %02x %02x %02x %02x %02x %02x\r\n",
+                  p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7]);
+        logs(b);
+        fixed[n].slot = ga; fixed[n].base = ga; fixed[n].cls = C_GLOBAL_A; c[n] = &fixed[n]; n++;
+        fixed[n].slot = gb; fixed[n].base = gb; fixed[n].cls = C_GLOBAL_B; c[n] = &fixed[n]; n++;
+    } else logs("  watch: globals not readable (different game build?)\r\n");
+    if (pad && mem_readable(pad + 0x1180, 8)) {
+        fixed[n].slot = pad + 0x1180; fixed[n].base = pad; fixed[n].cls = "CBtlPad@Battle@@ (control: changes constantly)"; c[n] = &fixed[n]; n++;
+        fixed[n].slot = pad + 0x28;   fixed[n].base = pad; fixed[n].cls = "CBtlPad@Battle@@ (stick values)"; c[n] = &fixed[n]; n++;
+    } else logs("  watch: no CBtlPad in this scan\r\n");
+    watch_arm(c, n);
+}
+
 static void watch_after_scan(void)
 {
     char b[300];
-    if (!controlled_cur)
-        logs("  watch: no controlled character in this scan (press F9 during a battle)\r\n");
-    else if (!controlled_prev)
+    if (controlled_cur && !w_any) watch_arm_fixed();
+    if (!controlled_cur) {
+        logs("  watch: no controlled character in this scan (press F9 during a battle, not mid-switch)\r\n");
+        return;                                         /* keep the previous reference set (run 7 bug) */
+    }
+    if (!controlled_prev)
         logs("  watch: references saved; switch character (R1/L1) and press F9 again to arm the watchpoints\r\n");
     else if (controlled_prev == controlled_cur)
         logs("  watch: same controlled character as the previous F9; switch character (R1/L1) and press F9 again\r\n");
@@ -423,8 +462,7 @@ static void watch_after_scan(void)
             wsprintfA(b, "    %s%s\r\n", d, w_any || i < NW ? "" : "  (not watched: only 4 debug registers)");
             logs(b);
         }
-        if (w_any) logs("  watch: already armed, keeping the current watchpoints (F11 = report and reset)\r\n");
-        else watch_arm(cand, nc < NW ? nc : NW);
+        (void)cand_prio;                                /* v0.9: listed for the notes only, not armed */
     }
     memcpy(refs_prev, refs_cur, nref_cur * sizeof(ref_t));
     nref_prev = nref_cur;
@@ -532,6 +570,7 @@ static void watch_report(void)
     }
     wsprintfA(b, "  write events %ld (dropped %ld), unknown hits %ld, DR6 empty %ld\r\n", nev, ev_dropped, unknown_hits, dr6_empty);
     logs(b);
-    watch_disarm();
-    logs("  watchpoints removed\r\n");
+    /* v0.9: no disarm here. Removing the watchpoints suspends every game thread again, and the
+     * game froze right after the F11 of run 7; they go away when the game closes anyway. */
+    logs("  watchpoints stay armed until the game closes\r\n");
 }

@@ -101,3 +101,16 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   (quem escreve neles na troca deve ser a rotina de troca de personagem), não rearma nos F9
   seguintes, limita leituras não atribuídas, e salva as variáveis globais do jogo a cada F9
   (procurar um índice do grupo: Edge 0, Sarah 1, Arumat 2...).
+
+### Execução 7 (v0.8) - notes/run7_v0.8
+- Pilha da sonda = 0xB30000-0xC30000: **confirmado** que os campos 0xC2xxxx eram a própria sonda.
+- Capturas: #1 Edge, #2 no meio da troca (sem controlado), #3 Sarah, #4 Edge, F11, #5 Edge.
+  Bug da v0.8: a #2 sem controlado apagou a referência anterior (corrigido na v0.9).
+- Watchpoints em CCameraManager+0x360 e CCameraAngleLock+0x190: 0 acessos (sem troca depois de armar).
+- F11 (remover watchpoints = suspender as 61 threads de novo) -> o jogo travou; a sonda continuou viva.
+- **Globais (.arch, 7,4 MB)**: só um bloco é igual nas 3 capturas do Edge e diferente na da Sarah:
+  - `game+0xf77ed2` Edge 2 / Sarah 3; `game+0xf77ed3` Edge 1 / Sarah 2; `game+0xf77f00` Edge 2 / Sarah 3
+  - a captura #2 (no meio da troca) já tem os valores da Sarah: muda antes da câmera.
+  - Forte candidato a "índice do membro controlado". Falta um 3º personagem para ver a numeração.
+- v0.9: arma uma vez, no 1º F9 em batalha, watchpoints fixos: os dois globais, CBtlPad+0x1180
+  (controle: muda sempre) e CBtlPad+0x28 (valores do analógico); F11 só relata, não desarma.
