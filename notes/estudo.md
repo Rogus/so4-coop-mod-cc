@@ -659,3 +659,16 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   2x 2048x4096 em BC3 (DXT5). Nada criado entre 45 s e ~60 s (tela de título antes do gancho).
 - v0.41: salva os TYPELESS (arquivo marcado como UNORM) e lista também as texturas criadas sem dados.
   Autoteste com RGBA8 e BC3 TYPELESS: os dois salvos e lidos pelo Pillow.
+- Rodada 41 (v0.41): 513 .dds salvos (394 MB). O usuário tem o pacote "PlayStation Button Prompts.zip" (2017,
+  para o Special K): CEGUI do SK + uma textura, SK_Res/inject/textures/61a1af48.dds = 4096x4096 BC7 (98), 1 mip:
+  a folha principal da interface (L1/R1/L2/R2, OPTIONS, teclas do teclado, retratos). Ela NÃO estava entre as
+  salvas (carregada na tela de título, antes do gancho dos 45 s). Outra folha 4096x4096 BC7 do jogo (defd...)
+  já tem ○ ✕ △ □ e OPTIONS ao lado de A/B/X/Y (sobras da versão PS4).
+- v0.42: compatível com pacotes do Special K sem o Special K: nome = CRC-32C do nível 0 (como o crc32_tex do
+  SK: linhas de blocos, altura/4 + altura%4 no caminho rápido), instrução SSE4.2; se o jogo cria uma textura
+  cujo CRC tem arquivo em SK_Res\inject\textures\<crc>.dds, a textura é criada do arquivo (formato do jogo
+  mantido quando o bloco é igual; mips do arquivo). Gancho instalado na carga da DLL (thread que espera o
+  d3d11.dll; só kernel32 + d3d11), tex_hook=0 desliga. textures.txt ganhou a coluna special_k_name.
+- Autoteste (Wine do sistema): CRC-32C("123456789") = e3069283; 64x64 RGBA e 4096x4096 BC7 TYPELESS (2 mips) com
+  o arquivo REAL do pacote renomeado para o CRC dela -> INJECTED (4096x4096 fmt 97 mips 1). CRCs iguais aos de
+  uma implementação independente em Python.

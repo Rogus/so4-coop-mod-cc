@@ -34,3 +34,8 @@ VirtualProtect
 ReadFile
 VirtualAlloc
 FlushInstructionCache
+FindFirstFileW
+FindNextFileW
+FindClose
+VirtualFree
+GetFileSizeEx
