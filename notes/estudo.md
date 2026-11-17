@@ -514,3 +514,9 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   mapeada pelos steamN_position; fora de batalha, ou se o líder não tem controle mapeado, nada é filtrado.
   tt_find_main também usa esse caminho rápido antes da varredura.
 - Autoteste (objeto falso): líder passa, outro controle zerado (botão e analógico), consulta da sonda não filtrada.
+
+### Execução 31 (v0.31, leader_only_input=1) - notes/run31_v0.31
+- Até a batalha (~45 s) handle do líder = 0 (sem filtro). Em batalha: Edge líder -> handle do DualSense; após R3 no
+  controle 1 -> handle 1 (Arumat); R3 no 2 -> Sarah; R3 no DualSense -> Edge; controle 1 -> Arumat.
+- ~6300 consultas neutralizadas por segundo = 2/3 do total (os dois controles que não são do líder). Sem travar.
+- **Usuário confirmou: funcionou** (só o controle do líder move o líder; R3 troca; menus ok).
