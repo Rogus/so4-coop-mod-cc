@@ -160,3 +160,17 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   ponteiro -> o controlado deve estar guardado como **índice**.
 - Próximo: v0.12 com o mapa RTTI de todas as classes Battle:: (não só 24), dump de todas as
   instâncias por F9 e diff de campos inteiros que sigam a sequência Edge, Sarah, Arumat, Edge, Sarah.
+
+### Execução 11 (v0.12) - notes/run11_v0.12
+- 542 classes Battle::, ~1210 instâncias por F9 (4,8 MB, < 1 s). Capturas: Edge, Arumat, Edge.
+- diff_battle.py (mín. 2 personagens): 4458 campos candidatos; com valores pequenos (0-7) e o
+  mesmo mapeamento em objetos independentes, sobram dois:
+  - `CBattleMainTask+0x3c4` Edge 1 / Arumat 3 (logo após +0x3c0 = 3 constante)
+  - `CStatusBoardWindow+0x1f0` Edge 1 / Arumat 3, seguido da posição do destaque no painel:
+    x = 353 (Edge) / 919 (Arumat), y = 544 -> 283 px por posição: **posição no grupo, base 1**
+    (Edge 1, Sarah 2, Arumat 3, Myuria 4). Previsão: Sarah 2 / x 636, Myuria 4 / x 1202.
+- Ponteiros globais para o CBattleMainTask: game+0xf76940 e game+0x1051840 (sem acesso
+  RIP-relativo direto no código).
+- O único acesso com deslocamento 0x3c4 (game+0x3704a30) grava a constante 2 num objeto passado
+  como argumento (outra classe?). Partes do código têm lixo anti-disassembly depois de saltos
+  incondicionais: é preciso seguir os saltos, não ler em sequência.
