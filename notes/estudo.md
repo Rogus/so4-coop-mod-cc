@@ -638,3 +638,18 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   não confirmada; se voltar, coop_display_sites= permite desligar partes).
 - Release 1.3: correção de exibição ligada (máscara bf), coop_display_fix/coop_display_pos/coop_display_sites
   documentados no README/LEIA-ME e no so4coop.ini; pacote build/release/so4coop-coop-1.3.zip.
+
+## Fase 7 - ícones de botão do PlayStation (sem Special K)
+- Dados do jogo: 0000.bin (12,9 GB, cifrado) e 0001.bin (36,7 GB, pacotes "KCAP" com compressão SLZ da
+  tri-Ace, sem nomes legíveis). Trocar texturas no disco = engenharia reversa dos dois + regravar 36 GB.
+- O exe não importa d3d11/dxgi/xinput (carrega por LoadLibrary/GetProcAddress no código protegido); as
+  strings "PlayStation 4" etc. são uma lista de plataformas do áudio, não opção de ícones. Nenhum pacote do
+  Special K no disco.
+- Caminho escolhido: troca em tempo de execução dentro do nosso xinput1_3.dll, como o Special K faz: o jogo
+  desenha com D3D11 (DXVK no Proton) e todos os dispositivos da mesma implementação dividem a vtable; um
+  dispositivo descartável nosso dá a vtable e o CreateTexture2D (slot 5) é redirecionado.
+- v0.40 (src/texhook.c, só na versão de pesquisa): aos 45 s instala o gancho; toda textura criada com dados
+  vai para so4coop_textures/textures.txt (hash FNV-1a 64 do nível 0, tamanho, formato DXGI, flags) e cada
+  textura nova em formato de interface (RGBA/BGRA 8 bits, BC1/2/3/7) é salva uma vez como .dds (até 6000
+  arquivos / 3 GB). Só observa. Autoteste: gancho + textura 64x64 por um 2º dispositivo -> salva, o Pillow lê.
+- Próximo: achar a folha com os ícones do Xbox (cores A/B/X/Y), desenhar os ícones do PlayStation e trocar.
