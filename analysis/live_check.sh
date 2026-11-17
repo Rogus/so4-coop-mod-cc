@@ -11,6 +11,7 @@ gamepid() {
 }
 end=$(( $(date +%s) + 2400 ))
 OLD=$(gamepid)
+[ "$ATTACH" = 1 ] && OLD=""                 # ATTACH=1: monitor the game that is already running
 [ -n "$OLD" ] && log "waiting for the running game (pid $OLD) to close first"
 while [ -n "$OLD" ] && [ -d /proc/$OLD ] && [ "$(date +%s)" -lt "$end" ]; do sleep 3; done
 while [ -z "$(gamepid)" ] && [ "$(date +%s)" -lt "$end" ]; do sleep 3; done

@@ -1,0 +1,19 @@
+labels: #1=neutral, #2=up, #3=right, #4=down, #5=left, #6=neutral, #7=up
+1221 objects/files present in all 7 labelled scans
+6 fields in 5 objects
+
+== BattleArticulatedDynamicsManager@Battle@@@00000001D7D7F220
+   +0x0e28 s16 X axis   n=3840 u=-6066 r=-8512 d=5409 l=30071 n=-3814 u=-3814
+
+== BattleArticulatedDynamicsManager@Battle@@@00000001D7D7F600
+   +0x0a48 s16 X axis   n=3840 u=-6066 r=-8512 d=5409 l=30071 n=-3814 u=-3814
+
+== CEftFirearmDelayAttack@Battle@@@00000001DBB1FCA0
+   +0x0adc s16 X axis   n=0 u=0 r=8192 d=0 l=-16384 n=0 u=0
+
+== CHitControlNotify@Battle@@@00000001DBB1FF48
+   +0x0834 s16 X axis   n=0 u=0 r=8192 d=0 l=-16384 n=0 u=0
+
+== BattleArticulatedDynamicsManager@Battle@@@00000001DAEE7750
+   +0x0d14 f32 X axis   n=0.08 u=0.14 r=0.34 d=0.22 l=-0.53 n=-0.14 u=-0.16
+   +0x0e10 f32 X axis   n=0.08 u=0.14 r=0.34 d=0.22 l=-0.53 n=-0.14 u=-0.16

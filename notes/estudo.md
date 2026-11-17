@@ -344,3 +344,20 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   Battle::, as 24 classes (personagens 256 KB, WindowsPad), globais de entrada game+0x1059000..0x105b000
   e o líder achado pela fórmula do jogo. analysis/diff_stick.py procura eixos X/Y e campos discretos
   (testado com dados sintéticos).
+
+### Execução 22 (v0.21) - notes/run22_v0.21 — **analógico encontrado nos globais**
+- 7 de 10 capturas (neutro, cima, direita, baixo, esquerda, neutro, cima); líder Edge; sem travar.
+  Houve antes um início curto (03:42, ~30 s) e o jogo fechou ~30 s após a 7ª captura.
+- diff_stick.py (critério rígido) não achou eixo no personagem, nos WindowsPad, no PadTask, no CBtlPad:
+  os 2 WindowsPad praticamente não mudam. O "cima" saiu torto (1º muito à direita, 2º já solto).
+- Nos globais de entrada (game+0x1059000+):
+  - `+0x476` (s16) = **X do analógico esquerdo**, `+0x478` (s16) = **Y** (bruto −32768..32767):
+    direita 32732/−1499, baixo 644/−32760, esquerda −32362/5126, neutro 0/0.
+  - cópia em `+0x64a/+0x64c` = **registro do controle 0** (game+0x1059634) **+0x14/+0x18** ->
+    cada registro tem o seu analógico; o controle 2 deve estar em game+0x1059d30 (registro 1 + 0x14).
+  - `+0x474` = game+0x1059080 + 0x3f4: estado **mesclado** que o jogo usa.
+  - bits de direção em +0x6d0..+0x6d8 (direita 8, baixo 2, esquerda 4) e contadores em +0x690..+0x698.
+- Quem lê: nenhuma referência direta a esses endereços; game+0x1059080 só é usado por SozApp,
+  AppSetupTask (preparação), PadTask@Peripheral::vf12 (atualização por quadro = quem **preenche**) e o
+  construtor do PadTask (game+0x75bf90). Nenhum objeto capturado guarda ponteiro para essa área.
+  O consumidor (movimento do líder) não aparece na estática.
