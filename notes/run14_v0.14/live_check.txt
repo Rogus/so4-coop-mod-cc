@@ -1,0 +1,14 @@
+game pid 96516 started 02:17:48
+===== 02:18:18  default sink: alsa_output.pci-0000_03_00.1.hdmi-stereo-extra1
+threads:       1 R      69 S       2 swapchain 
+  stream #4179 Sink: 56 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=-2.6 dBFS rms=-14.8 dBFS
+  default sink state: RUNNING
+===== 02:18:36  default sink: alsa_output.pci-0000_03_00.1.hdmi-stereo-extra1
+threads:       1 R      69 S       2 swapchain 
+  stream #4179 Sink: 56 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=-2.9 dBFS rms=-15.9 dBFS
+  default sink state: RUNNING
+===== 02:18:55  default sink: alsa_output.pci-0000_03_00.1.hdmi-stereo-extra1
+threads:       2 R      72 S       2 swapchain 
+  stream #4179 Sink: 56 Corked: no Mute: no Volume: front-left: 65536 / 100% / 0,00 dB,   front-right: 65536 / 100% / 0,00 dB media.name = "audio stream #1" | samples=98304 peak=-0.0 dBFS rms=-13.7 dBFS
+  default sink state: RUNNING
+game exited 02:19:13

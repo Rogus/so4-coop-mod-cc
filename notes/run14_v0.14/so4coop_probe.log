@@ -1,0 +1,70 @@
+===== session 20261117_021425 =====
+so4coop probe v0.14 loaded (F7 = auto-capture on/off, F9 = scan + dump Battle:: objects, F10 = mark; F8 write test disabled)
+game module base=0000000140000000 size=0x0585d000 sections=10
+  .data1   rva=0x00001000 vsize=0x0090b000 flags=0x60000020
+  .xdata   rva=0x0090c000 vsize=0x00320800 flags=0x40000040
+  .arch    rva=0x00c2d000 vsize=0x0070ed68 flags=0xc0000020
+  .pdata   rva=0x0133c000 vsize=0x00065e00 flags=0x40000040
+  .xpdata  rva=0x013a2000 vsize=0x04487932 flags=0xe0000020
+  .text    rva=0x0582a000 vsize=0x00002d3b flags=0x60000020
+  .link    rva=0x0582d000 vsize=0x00000b1b flags=0x60000020
+  .srdata  rva=0x0582e000 vsize=0x000015da flags=0x40000040
+  .xtext   rva=0x05830000 vsize=0x000014b0 flags=0x40000040
+  .bind    rva=0x05832000 vsize=0x0002acd0 flags=0x60000000
+watch: code game+0x013a2000-0x05829932, 34735 function entries
+watch: hardware watchpoints disabled (v0.10)
+[alive t=0s] GetState calls so far: 0
+first call: XInputGetCapabilities from game+0x01f15bc0
+real XInput: system32\xinput1_3.dll
+first call: XInputSetState from game+0x003786cd
+new caller: game+0x003786cd
+
+===== session 20261117_021748 =====
+so4coop probe v0.14 loaded (F7 = auto-capture on/off, F9 = scan + dump Battle:: objects, F10 = mark; F8 write test disabled)
+game module base=0000000140000000 size=0x0585d000 sections=10
+  .data1   rva=0x00001000 vsize=0x0090b000 flags=0x60000020
+  .xdata   rva=0x0090c000 vsize=0x00320800 flags=0x40000040
+  .arch    rva=0x00c2d000 vsize=0x0070ed68 flags=0xc0000020
+  .pdata   rva=0x0133c000 vsize=0x00065e00 flags=0x40000040
+  .xpdata  rva=0x013a2000 vsize=0x04487932 flags=0xe0000020
+  .text    rva=0x0582a000 vsize=0x00002d3b flags=0x60000020
+  .link    rva=0x0582d000 vsize=0x00000b1b flags=0x60000020
+  .srdata  rva=0x0582e000 vsize=0x000015da flags=0x40000040
+  .xtext   rva=0x05830000 vsize=0x000014b0 flags=0x40000040
+  .bind    rva=0x05832000 vsize=0x0002acd0 flags=0x60000000
+watch: code game+0x013a2000-0x05829932, 34735 function entries
+watch: hardware watchpoints disabled (v0.10)
+[alive t=0s] GetState calls so far: 0
+first call: XInputGetCapabilities from game+0x01f15bc0
+real XInput: system32\xinput1_3.dll
+first call: XInputSetState from game+0x003786cd
+new caller: game+0x003786cd
+[alive t=30s] GetState calls so far: 0
+[alive t=60s] GetState calls so far: 0
+RTTI map built in 234 ms, 24 vtables:
+  CPlayerEdge@Battle       TD=+0x00f0c380 vtable=game+0x009f48b8
+  CPlayerReimi@Battle      TD=+0x00f0c508 vtable=game+0x009f59a8
+  CPlayerFaiz@Battle       TD=+0x00f0c6a8 vtable=game+0x009f6b78
+  CPlayerLymle@Battle      TD=+0x00f0d080 vtable=game+0x009fcf58
+  CPlayerBackus@Battle     TD=+0x00f0c830 vtable=game+0x009f7bf8
+  CPlayerArumat@Battle     TD=+0x00f0cf00 vtable=game+0x009fbe98
+  CPlayerMelicle@Battle    TD=+0x00f0c9b0 vtable=game+0x009f8dd8
+  CPlayerMuria@Battle      TD=+0x00f0ccf8 vtable=game+0x009fae98
+  CPlayerSarah@Battle      TD=+0x00f0cb38 vtable=game+0x009f9e88
+  CPlayerChr@Battle        TD=+0x00efeda0 vtable=game+0x009e01d8
+  CPlayerThinkChr@Battle   TD=+0x00efed70 vtable=game+0x009dcc78
+  CEnemyThinkChr@Battle    TD=+0x00f0c1c8 vtable=game+0x009f3a28
+  CBtlPad@Battle           TD=+0x00efb5f0 vtable=game+0x009d6c78
+  Pad@Aska                 TD=+0x00c30df8 vtable=game+0x00913418
+  PadXe@Aska               TD=+0x00c30e40 vtable=game+0x009134b8
+  WindowsPad@Aska          TD=+0x00c30e68 vtable=game+0x00913558
+  BasePad@Aska             TD=+0x00c30e18 (no vtable found)
+  PadTask@Peripheral       TD=+0x00f39740 vtable=game+0x00a8e538
+  CTacticsMode@Battle      TD=+0x00f15d50 vtable=game+0x00a3f548
+  CReplaceMember@Battle    TD=+0x00f16340 vtable=game+0x00a400f8
+  CMemberBoard@Battle      TD=+0x00f224f8 vtable=game+0x00a577c8
+  CBattleMainTask@Battle   TD=+0x00efb078 vtable=game+0x009d5af8
+  CBattleCampMember@Battle TD=+0x00f22528 vtable=game+0x00a579f8
+  CTacticsChoice@Battle    TD=+0x00f22298 vtable=game+0x00a57018
+  CSelectTarget@Battle     TD=+0x00f22748 vtable=game+0x00a57c68
+=== AUTO-CAPTURE ON (F7): 4 party characters; switch with R1 every few seconds ===

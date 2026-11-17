@@ -199,3 +199,14 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   +0x1f0..+0x1fc (último = 0) e não tem chamadas diretas (virtual); não bate com o layout do painel.
 - Próximo: captura automática (a sonda detecta a troca pela câmera e captura sozinha depois de 1,5 s
   estável) para ter 4 personagens sem depender do tempo do F9.
+
+### Execução 14 (v0.14) - notes/run14_v0.14
+- 1ª sessão fechada pelo usuário (23 s). 2ª: F7 ligou a captura automática, mas **nenhuma captura**.
+- Causa: o bloco +0x129a0 **não é o personagem controlado**, é o foco da câmera, que passeia entre os
+  membros sozinho. Nos dumps feitos ~3 s depois de cada linha "CONTROLLED" do log ele já estava em
+  outro membro ou em nenhum (exec. 11: log Edge/Arumat/Edge, dumps Sarah/Myuria/Sarah; exec. 12:
+  log Edge/Sarah/-, dumps -/Arumat/Edge; exec. 13: log Edge/Edge/Arumat/Edge, dumps Edge/-/Myuria/Edge).
+  Os rótulos "controlado" das execuções 3-13 vinham dele e não são confiáveis.
+- O que segue o R1 de forma direta é o painel (CStatusBoardWindow+0x1f0, x = 70 + 283 × posição).
+- v0.15: a captura automática dispara e rotula pela posição do painel (estável 1,5 s); o foco da
+  câmera fica só como referência; diff_battle.py usa as linhas "POSITION: p".

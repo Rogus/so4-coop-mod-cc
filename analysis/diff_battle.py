@@ -20,8 +20,12 @@ def controlled_by_scan(log):
         if m:
             cur = int(m.group(1))
             continue
-        m = re.search(r"CONTROLLED: CPlayer(\w+)@Battle", ln)
+        m = re.search(r"POSITION: (\d+)", ln)                 # v0.15 auto-capture label (status board)
         if m and cur is not None:
+            res[cur] = f"pos{m.group(1)}"
+            continue
+        m = re.search(r"CONTROLLED: CPlayer(\w+)@Battle", ln)  # camera focus (unreliable, see run 14)
+        if m and cur is not None and cur not in res:
             res[cur] = m.group(1)
     return res
 
