@@ -19,6 +19,27 @@ static int cs_loaded, cs_thread_started;
 static volatile int cs_on;
 static uint64_t cs_t0, cs_report;
 static volatile long cs_slices, cs_skips, cs_per[SC_MAXCTL];
+/* v0.34: the "this is your character" popup (CThisIs) restarts at every leader change: state 3 =
+ * pop up, 4 = animate, 5 = hold, 6 = fade out (+0x4c opacity -> 0, then hidden), 2 = idle.
+ * With coop_quiet_marker=1 the popup is sent straight to a finished fade-out after each slice. */
+static uint32_t cs_quiet = 1;
+static volatile uintptr_t cs_thisis;
+static volatile int cs_need_find = 1;
+static volatile long cs_quieted;
+
+static void cs_quiet_marker(void)
+{
+    uintptr_t o = cs_thisis;
+    if (!cs_quiet || !o || !mem_readable(o + 0x30, 0x20)) return;
+    const char *cn = class_of(o);
+    if (!cn || !str_eq(cn, "CThisIs@Battle@@")) { cs_thisis = 0; cs_need_find = 1; return; }
+    int st = *(volatile int *)(o + 0x30);
+    if (st >= 3 && st <= 5) {
+        *(volatile float *)(o + 0x4c) = 0.0f;
+        *(volatile int *)(o + 0x30) = 6;
+        __sync_fetch_and_add(&cs_quieted, 1);
+    }
+}
 
 static void cs_load(void)
 {
@@ -40,9 +61,10 @@ static void cs_load(void)
         if (sc_find_dec(buf, r, "coop_idle_ms=", &v) && v >= 100 && v <= 60000) cs_idle = v;
         if (tt_find_value(buf, r, "coop_auto=", &v)) cs_auto = v ? 1 : 0;
         if (tt_find_value(buf, r, "coop_active_only=", &v)) cs_active_only = v ? 1 : 0;
+        if (tt_find_value(buf, r, "coop_quiet_marker=", &v)) cs_quiet = v ? 1 : 0;
     }
-    wsprintfA(b, "  co-op: auto %lu (F2 toggles in the research build), slice %lu ms, active players only %lu (idle after %lu ms)\r\n", (unsigned long)cs_auto,
-              (unsigned long)cs_ms, (unsigned long)cs_active_only, (unsigned long)cs_idle);
+    wsprintfA(b, "  co-op: auto %lu (F2 toggles in the research build), slice %lu ms, active players only %lu (idle after %lu ms), quiet marker %lu\r\n", (unsigned long)cs_auto,
+              (unsigned long)cs_ms, (unsigned long)cs_active_only, (unsigned long)cs_idle, (unsigned long)cs_quiet);
     logs(b);
 }
 
@@ -92,18 +114,20 @@ static DWORD WINAPI cs_thread(LPVOID u)
             uint32_t p;
             if (!tt_leader_pos(&p)) {                      /* battle over */
                 cs_on = 0;
+                cs_thisis = 0; cs_need_find = 1;
                 wsprintfA(b, "=== CO-OP %s: battle ended (%ld slices) ===\r\n", cs_auto ? "paused" : "OFF", cs_slices);
                 logs(b);
             }
             continue;
         }
         sh_leader_h = sc_handles[k];                       /* only this player's controller reaches the game */
+        cs_quiet_marker();
         __sync_fetch_and_add(&cs_slices, 1);
         __sync_fetch_and_add(&cs_per[k], 1);
         if (now - cs_report >= 10000) {
             cs_report = now;
-            wsprintfA(b, "  [co-op t=%lus] %ld slices (%ld skipped); per Steam controller: 1=%ld 2=%ld 3=%ld 4=%ld; active now: %d\r\n",
-                      (unsigned long)((now - cs_t0) / 1000), cs_slices, cs_skips, cs_per[0], cs_per[1], cs_per[2], cs_per[3], np);
+            wsprintfA(b, "  [co-op t=%lus] %ld slices (%ld skipped); per Steam controller: 1=%ld 2=%ld 3=%ld 4=%ld; active now: %d; popup quieted %ld\r\n",
+                      (unsigned long)((now - cs_t0) / 1000), cs_slices, cs_skips, cs_per[0], cs_per[1], cs_per[2], cs_per[3], np, cs_quieted);
             logs(b);
         }
     }
@@ -139,7 +163,15 @@ static void coop_toggle(void)
 /* hotkey thread: load the settings once; start the scheduler thread when coop_auto=1 */
 static void coop_slice_poll(void)
 {
+    char b[160];
     if (!cs_loaded && sc_tried) { cs_load(); if (cs_auto) cs_start_thread(); }
+    if (cs_on && cs_quiet && cs_need_find) {            /* once per battle, on this (main probe) thread */
+        cs_need_find = 0;
+        battle_pass();
+        cs_thisis = battle_find("CThisIs@Battle@@");
+        wsprintfA(b, "  co-op: popup (CThisIs) %p\r\n", (void *)cs_thisis);
+        logs(b);
+    }
 }
 
 /* test hook (not used by the game): toggle co-op; outside a battle it must refuse */

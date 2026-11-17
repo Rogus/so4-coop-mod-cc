@@ -1,0 +1,220 @@
+
+[0] +0x0 -> game+0x2fb2900  (20 insns shown; this-fields []; calls ['0x140501f10', '0x140006c20', '0x140003b30'])
+     game+0x2fb2900: mov    QWORD PTR [rsp+0x8],rbx
+     game+0x2fb2905: push   rdi
+     game+0x2fb2906: sub    rsp,0x20
+     game+0x2fb290a: mov    rdi,rcx
+     game+0x2fb290d: lea    rax,[rip+0xfffffffffda24774]        # 0x1409d7088
+     game+0x2fb2914: add    rcx,0x28
+     game+0x2fb2918: mov    QWORD PTR [rcx],rax
+     game+0x2fb291b: mov    ebx,edx
+     game+0x2fb291d: call   0x140501f10
+     game+0x2fb2922: mov    rcx,rdi
+     game+0x2fb2925: call   0x140006c20
+     game+0x2fb292a: test   bl,0x1
+     game+0x2fb292d: je     0x142fb2937
+     game+0x2fb292f: mov    rcx,rdi
+     game+0x2fb2932: call   0x140003b30
+     game+0x2fb2937: mov    rax,rdi
+     game+0x2fb293a: mov    rbx,QWORD PTR [rsp+0x30]
+     game+0x2fb293f: add    rsp,0x20
+     game+0x2fb2943: pop    rdi
+     game+0x2fb2944: ret
+
+[1] +0x8 -> game+0x13ab610  (8 insns shown; this-fields []; calls [])
+     game+0x13ab610: test   edx,edx
+     game+0x13ab612: je     0x1413ab68e
+     game+0x13ab614: lea    ecx,[rdx-0x1]
+     game+0x13ab61a: mov    eax,0xf000f001
+     game+0x13ab61f: mov    edx,0xf000
+     game+0x13ab624: test   ecx,ecx
+     game+0x13ab626: cmovne eax,edx
+     game+0x13ab629: ret
+
+[2] +0x10 -> game+0x6ca0  (13 insns shown; this-fields []; calls ['0x140006b50'])
+     game+0x6ca0: mov    QWORD PTR [rsp+0x8],rbx
+     game+0x6ca5: push   rdi
+     game+0x6ca6: sub    rsp,0x20
+     game+0x6caa: mov    rbx,rdx
+     game+0x6cad: mov    rdi,rcx
+     game+0x6cb0: call   0x140006b50
+     game+0x6cb5: test   al,al
+     game+0x6cb7: jne    0x140006cc6
+     game+0x6cb9: xor    al,al
+     game+0x6cbb: mov    rbx,QWORD PTR [rsp+0x30]
+     game+0x6cc0: add    rsp,0x20
+     game+0x6cc4: pop    rdi
+     game+0x6cc5: ret
+
+[3] +0x18 -> game+0x13cb4c0  (28 insns shown; this-fields []; calls ['0x140003940', '0x14090cf18'])
+     game+0x13cb4c0: mov    QWORD PTR [rsp+0x8],rbx
+     game+0x13cb4c5: push   rdi
+     game+0x13cb4c6: sub    rsp,0x20
+     game+0x13cb4ca: mov    ecx,0x28
+     game+0x13cb4cf: mov    rdi,rdx
+     game+0x13cb4d2: call   0x140003940
+     game+0x13cb4d7: mov    rbx,rax
+     game+0x13cb4da: test   rax,rax
+     game+0x13cb4dd: je     0x1413cb594
+     game+0x13cb4e3: xor    ecx,ecx
+     game+0x13cb4e5: mov    rdx,rdi
+     game+0x13cb4e8: mov    DWORD PTR [rbx+0x20],0x40
+     game+0x13cb4ef: mov    QWORD PTR [rax+0x8],rcx
+     game+0x13cb4f3: mov    QWORD PTR [rax+0x10],rcx
+     game+0x13cb4f7: lea    rax,[rip+0xffffffffff541a0a]        # 0x14090cf08
+     game+0x13cb4fe: mov    QWORD PTR [rbx+0x18],rcx
+     game+0x13cb502: mov    WORD PTR [rbx+0x24],cx
+     game+0x13cb506: mov    BYTE PTR [rbx+0x26],cl
+     game+0x13cb509: mov    rcx,rbx
+     game+0x13cb50c: mov    QWORD PTR [rbx],rax
+     game+0x13cb50f: call   QWORD PTR [rip+0xffffffffff541a03]        # 0x14090cf18
+     game+0x13cb515: test   al,al
+     game+0x13cb517: je     0x1413cb587
+     game+0x13cb519: mov    rax,rbx
+     game+0x13cb51c: mov    rbx,QWORD PTR [rsp+0x30]
+     game+0x13cb521: add    rsp,0x20
+     game+0x13cb525: pop    rdi
+     game+0x13cb526: ret
+
+[4] +0x20 -> game+0x4dc2a0  (2 insns shown; this-fields []; calls [])
+     game+0x4dc2a0: xor    al,al
+     game+0x4dc2a2: ret
+
+[5] +0x28 -> game+0x4dc2a0  (2 insns shown; this-fields []; calls [])
+     game+0x4dc2a0: xor    al,al
+     game+0x4dc2a2: ret
+
+[6] +0x30 -> game+0x6d70  (19 insns shown; this-fields []; calls ['0x140007080'])
+     game+0x6d70: sub    rsp,0x38
+     game+0x6d74: mov    rax,rdx
+     game+0x6d77: test   rdx,rdx
+     game+0x6d7a: jne    0x140006d93
+     game+0x6d7c: lea    rax,[rip+0xf6fd3d]        # 0x140f76ac0
+     game+0x6d83: test   rax,rax
+     game+0x6d86: jne    0x140006d93
+     game+0x6d88: mov    rax,QWORD PTR [rcx]
+     game+0x6d8b: add    rsp,0x38
+     game+0x6d8f: rex.W jmp QWORD PTR [rax+0x48]
+     game+0x6d93: mov    rdx,rcx
+     game+0x6d96: xor    r9d,r9d
+     game+0x6d99: mov    r8b,0x3
+     game+0x6d9c: mov    rcx,rax
+     game+0x6d9f: mov    QWORD PTR [rsp+0x20],0x0
+     game+0x6da6: 
+     game+0x6da8: call   0x140007080
+     game+0x6dad: add    rsp,0x38
+     game+0x6db1: ret
+
+[7] +0x38 -> game+0x6e10  (19 insns shown; this-fields []; calls ['0x140007080'])
+     game+0x6e10: sub    rsp,0x38
+     game+0x6e14: mov    rax,rdx
+     game+0x6e17: test   rdx,rdx
+     game+0x6e1a: jne    0x140006e33
+     game+0x6e1c: lea    rax,[rip+0xf6fc9d]        # 0x140f76ac0
+     game+0x6e23: test   rax,rax
+     game+0x6e26: jne    0x140006e33
+     game+0x6e28: mov    rax,QWORD PTR [rcx]
+     game+0x6e2b: add    rsp,0x38
+     game+0x6e2f: rex.W jmp QWORD PTR [rax+0x48]
+     game+0x6e33: mov    rdx,rcx
+     game+0x6e36: mov    r9b,0x1
+     game+0x6e39: mov    r8b,0x3
+     game+0x6e3c: mov    rcx,rax
+     game+0x6e3f: mov    QWORD PTR [rsp+0x20],0x0
+     game+0x6e46: 
+     game+0x6e48: call   0x140007080
+     game+0x6e4d: add    rsp,0x38
+     game+0x6e51: ret
+
+[8] +0x40 -> game+0x6dc0  (19 insns shown; this-fields []; calls ['0x140007080'])
+     game+0x6dc0: sub    rsp,0x38
+     game+0x6dc4: mov    rax,rdx
+     game+0x6dc7: test   rdx,rdx
+     game+0x6dca: jne    0x140006de3
+     game+0x6dcc: lea    rax,[rip+0xf6fced]        # 0x140f76ac0
+     game+0x6dd3: test   rax,rax
+     game+0x6dd6: jne    0x140006de3
+     game+0x6dd8: mov    rax,QWORD PTR [rcx]
+     game+0x6ddb: add    rsp,0x38
+     game+0x6ddf: rex.W jmp QWORD PTR [rax+0x48]
+     game+0x6de3: mov    rdx,rcx
+     game+0x6de6: mov    r9b,0x2
+     game+0x6de9: mov    r8b,0x3
+     game+0x6dec: mov    rcx,rax
+     game+0x6def: mov    QWORD PTR [rsp+0x20],0x0
+     game+0x6df6: 
+     game+0x6df8: call   0x140007080
+     game+0x6dfd: add    rsp,0x38
+     game+0x6e01: ret
+
+[9] +0x48 -> game+0x838990  (7 insns shown; this-fields []; calls [])
+     game+0x838990: test   rcx,rcx
+     game+0x838993: je     0x1408389a0
+     game+0x838995: mov    rax,QWORD PTR [rcx]
+     game+0x838998: mov    edx,0x1
+     game+0x83899d: rex.W jmp QWORD PTR [rax]
+     game+0x8389a0: repz ret
+     game+0x8389a2: int3
+
+[10] +0x50 -> game+0x79f1d0  (2 insns shown; this-fields []; calls [])
+     game+0x79f1d0: mov    eax,0x40
+     game+0x79f1d5: ret
+
+[11] +0x58 -> game+0x59770  (2 insns shown; this-fields []; calls [])
+     game+0x59770: xor    eax,eax
+     game+0x59772: ret
+
+[12] +0x60 -> game+0x60cd40  (21 insns shown; this-fields []; calls ['0x140758990'])
+     game+0x60cd40: rex push rbx
+     game+0x60cd42: sub    rsp,0x40
+     game+0x60cd46: mov    rbx,rcx
+     game+0x60cd49: movaps XMMWORD PTR [rsp+0x30],xmm6
+     game+0x60cd4e: movss  xmm6,DWORD PTR [rip+0xa4c2e6]        # 0x14105903c
+     game+0x60cd55: 
+     game+0x60cd56: xor    ecx,ecx
+     game+0x60cd58: movaps XMMWORD PTR [rsp+0x20],xmm7
+     game+0x60cd5d: call   0x140758990
+     game+0x60cd62: xorps  xmm7,xmm7
+     game+0x60cd65: test   al,al
+     game+0x60cd67: je     0x14060cd6c
+     game+0x60cd69: movaps xmm6,xmm7
+     game+0x60cd6c: movsxd rax,DWORD PTR [rbx+0x30]
+     game+0x60cd70: cmp    eax,0x6
+     game+0x60cd73: ja     0x14060cf50
+     game+0x60cd79: lea    rdx,[rip+0xffffffffff9f3280]        # 0x140000000
+     game+0x60cd80: mov    QWORD PTR [rsp+0x50],rdi
+     game+0x60cd85: mov    ecx,DWORD PTR [rdx+rax*4+0x60cf60]
+     game+0x60cd8c: add    rcx,rdx
+     game+0x60cd8f: jmp    rcx
+
+[13] +0x68 -> game+0x4dc2a0  (2 insns shown; this-fields []; calls [])
+     game+0x4dc2a0: xor    al,al
+     game+0x4dc2a2: ret
+
+[14] +0x70 -> game+0x4e8230  (1 insns shown; this-fields []; calls [])
+     game+0x4e8230: ret    0x0
+
+[15] +0x78 -> game+0x4e8230  (1 insns shown; this-fields []; calls [])
+     game+0x4e8230: ret    0x0
+
+[16] +0x80 -> game+0x4e8230  (1 insns shown; this-fields []; calls [])
+     game+0x4e8230: ret    0x0
+
+[17] +0x88 -> game+0x4e8230  (1 insns shown; this-fields []; calls [])
+     game+0x4e8230: ret    0x0
+
+[18] +0x90 -> game+0x3b8e9e0  (14 insns shown; this-fields ['0x60']; calls ['[rax]'])
+     game+0x3b8e9e0: push   rbx
+     game+0x3b8e9e1: sub    rsp,0x20
+     game+0x3b8e9e5: mov    rbx,rcx
+     game+0x3b8e9e8: mov    rcx,QWORD PTR [rcx+0x60]
+     game+0x3b8e9ec: test   rcx,rcx
+     game+0x3b8e9ef: je     0x143b8ea03
+     game+0x3b8e9f1: mov    rax,QWORD PTR [rcx]
+     game+0x3b8e9f4: mov    edx,0x1
+     game+0x3b8e9f9: call   QWORD PTR [rax]
+     game+0x3b8e9fb: mov    QWORD PTR [rbx+0x60],0x0
+     game+0x3b8ea02: 
+     game+0x3b8ea03: add    rsp,0x20
+     game+0x3b8ea07: pop    rbx
+     game+0x3b8ea08: ret

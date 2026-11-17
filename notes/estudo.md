@@ -569,3 +569,21 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   cursores do minimapa piscando com 3+ jogadores), instalação, como achar o número de cada controle no log,
   opções. Pacote build/release/so4coop-coop-1.2.zip; testado no Wine local (versão, ini, recusa fora de
   batalha, autotestes do filtro).
+
+## Fase 6 - reduzir o pisca-pisca do co-op
+- Release 1.2 instalada no jogo (2c2afc44…), so4coop.ini do usuário mantido.
+- vtables (RTTI offline): CThisIs game+0xa3cd98 (19 métodos), CMinimapPlayerMarkerElement game+0xa3c288 (53),
+  CMinimap game+0xa3c478, CTargetSign game+0xa3cb88, CArrowCursorManager game+0xa51910.
+- **CThisIs = popup "este é o seu personagem"**: vf12 (game+0x60cd40) lê o tempo do quadro (float em
+  game+0x105903c, por isso tanta classe de interface lê esse global) e roda uma máquina de estados em this+0x30
+  (tabela em game+0x60cf60): 0 cria recursos, 1 avança, 2 ocioso, 3 aparece (posição +0x44/+0x48, opacidade
+  +0x4c, chama "mostrar" pela vtable +0x178), 4 anima, 5 segura (tempo em +0x40), 6 some (opacidade até 0).
+  Reinicia em 3 a cada troca de líder -> no co-op (~25 trocas/s) pisca o tempo todo.
+- Quem chama GetLeader na interface: CMinimapPlayerMarkerElement vf41/vf42, CMinimapCharacterMarkerElement
+  vf41/vf42, CSightInCursor vf32, CTargetBoard vf29/vf32 -> cursores do minimapa piscam porque desenham o líder
+  do instante.
+- Correção 1 (v0.34, coop_quiet_marker=1): achar o CThisIs uma vez por batalha (varredura dos objetos de batalha
+  na thread principal da sonda) e, depois de cada fatia, se estiver em 3-5, pôr opacidade 0 e estado 6 (o próprio
+  jogo termina o sumiço). Só dados, sem mexer em código.
+- Correção 2 (proposta, pedir autorização): remendar o GetLeader do jogo na memória para que as funções de
+  interface acima vejam um "líder de exibição" estável (primeira alteração de código do jogo).
