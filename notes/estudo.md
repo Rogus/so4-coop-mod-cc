@@ -219,3 +219,19 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   linhas) e captura quando uma posição ocupa >= 80% das últimas 15 amostras.
 - Observação do usuário na execução 15: o personagem realmente controlado **muda junto com o destaque
   do painel** ao apertar R1. O painel é um bom indicador do membro controlado.
+
+### Execução 16 (v0.16) - notes/run16_v0.16 — **primeiro resultado firme**
+- Captura automática funcionou: 8 capturas, duas voltas, posições 1,2,3,0,1,2,3,0. O painel mudou
+  exatamente uma vez por R1 (não fica mudando sozinho).
+- diff_battle.py (4 posições, cada uma 2 vezes): 158 campos, com estrutura clara:
+  - **`CBattleMainTask+0x3a4` = posição do membro controlado (0-3)**, `+0x3a0` = maior posição (3).
+    O bloco +0x3a0..+0x3ac (16 bytes) é copiado por um getter em game+0x3c7adb0.
+    (O +0x3c4 das execuções 11-12 era um bloco irmão 0x20 adiante: coincidência.)
+  - **Ponteiro para o personagem controlado** em `CThisIs+0x38`, `CTargetSign+0x298`,
+    `CHitCounter+0x528`, `CCameraManager+0x390`, `CCameraAngleLock+0x190`.
+  - Posição -> personagem nesta batalha: 0 Edge, 1 Sarah, 2 Arumat, 3 Myuria (ordem do grupo).
+  - Vários elementos de interface copiam a posição e o x do destaque (70/353/636/919).
+- Estático: só 3 funções usam o deslocamento 0x3a4 e 2 usam 0x3a0; o setter do bloco do
+  CBattleMainTask não aparece por deslocamento direto (escreve por ponteiro ou cópia embutida).
+- Próximo: teste de escrita em +0x3a4 com checagem cruzada (painel e CThisIs) para ver se só
+  esse campo troca o controle; depois achar como a entrada do controle chega ao personagem.
