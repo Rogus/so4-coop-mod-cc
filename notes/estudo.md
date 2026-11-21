@@ -672,3 +672,14 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
 - Autoteste (Wine do sistema): CRC-32C("123456789") = e3069283; 64x64 RGBA e 4096x4096 BC7 TYPELESS (2 mips) com
   o arquivo REAL do pacote renomeado para o CRC dela -> INJECTED (4096x4096 fmt 97 mips 1). CRCs iguais aos de
   uma implementação independente em Python.
+- Rodada 42 (v0.42; log em notes/run42_probe.log): o jogo TRAVOU antes da tela de título. Gancho instalado aos
+  5,8 s (dispositivo nosso criado ~270 ms depois de o jogo carregar o d3d11.dll), e depois 0 texturas, 0 chamadas
+  do Steam em 80 s (na rodada 41 eram ~600 RunFrame/s já aos 10 s) -> o laço principal nunca começou. Causa: criar
+  um dispositivo D3D11 nosso enquanto o jogo inicializa o dele.
+- v0.43: nenhum dispositivo nosso na partida. A thread carrega o d3d11.dll (só carrega) e põe um salto de 14 bytes
+  (jmp [rip]) no início de D3D11CreateDevice e D3D11CreateDeviceAndSwapChain (segue thunks E9/EB/FF25; no DXVK do
+  Proton 10 as duas começam com prólogo normal, 0x50 bytes uma da outra). A 1ª chamada do jogo devolve os bytes
+  originais, roda a função real e engancha a vtable do dispositivo devolvido, antes de qualquer textura. Se nada
+  for pego em 60 s: desarma e usa o jeito da v0.41 (dispositivo próprio, quando o do jogo já existe).
+- Autoteste (Wine do sistema): criação pega pelo export armado (hook aos 131 ms), 2 injeções (64x64 RGBA e
+  4096x4096 BC7 2 mips) -> funciona.

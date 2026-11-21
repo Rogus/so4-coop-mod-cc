@@ -410,12 +410,12 @@ BOOL WINAPI DllMain(HMODULE self, DWORD reason, LPVOID unused)
 #ifdef SO4COOP_RELEASE
         logs("so4coop co-op 1.3 loaded (battle co-op for up to 4 players: each controller drives its own character; steady mini-map / target board / sight cursor; R3 = tag-team; F3/F4 = keyboard; settings in so4coop.ini)\r\n");
 #else
-        logs("so4coop probe v0.42 loaded (BUTTON PROMPTS: Special K texture packs from SK_Res\\inject\\textures without Special K, hook at startup; textures listed and saved in so4coop_textures; CO-OP: up to 4 players, time-sliced leader for active players, steady UI leader for map + target board + sight cursor; F5 = UI fix on/off, F6 = slice 40/80/150 ms; F2 toggles, coop_auto=1 starts with battles; TAG-TEAM: R3 = Steam action 10 per controller; hook_steam=1 + leader_only_input=1: only the leader's controller drives; R3 via XInput, F3/F4 = player 1/2; F3/F4 = player 1/2; hotkeys after 45 s; F5/F6 as above; F7 = auto-capture, F8 = WRITE TEST on the leader block at *(CBattleMainTask+0x68) (3 checks), F9 = scan + dump, F10 = mark)\r\n");
+        logs("so4coop probe v0.43 loaded (BUTTON PROMPTS: Special K texture packs from SK_Res\\inject\\textures without Special K, hook on the game's own device (no device of ours at startup); textures listed and saved in so4coop_textures; CO-OP: up to 4 players, time-sliced leader for active players, steady UI leader for map + target board + sight cursor; F5 = UI fix on/off, F6 = slice 40/80/150 ms; F2 toggles, coop_auto=1 starts with battles; TAG-TEAM: R3 = Steam action 10 per controller; hook_steam=1 + leader_only_input=1: only the leader's controller drives; R3 via XInput, F3/F4 = player 1/2; F3/F4 = player 1/2; hotkeys after 45 s; F5/F6 as above; F7 = auto-capture, F8 = WRITE TEST on the leader block at *(CBattleMainTask+0x68) (3 checks), F9 = scan + dump, F10 = mark)\r\n");
 #endif
         describe_game_module();   /* the real XInput is loaded on the first call, not under the loader lock */
         CreateThread(0, 0, hotkey_thread, 0, 0, 0);
 #ifndef SO4COOP_RELEASE
-        CreateThread(0, 0, tx_early_thread, 0, 0, 0);   /* v0.42: texture hook before the title screen */
+        CreateThread(0, 0, tx_early_thread, 0, 0, 0);   /* v0.43: arm D3D11CreateDevice(AndSwapChain) before the game uses them */
 #endif
     }
     return 1;

@@ -6,12 +6,13 @@
  * runtime: the game renders with Direct3D 11 (DXVK under Proton), and every device of a D3D11 implementation shares
  * one vtable. A short-lived device of our own gives that vtable; its CreateTexture2D slot (5) is redirected, so every
  * texture the game creates passes through tx_create().
+ * v0.43: no device of our own at startup (it froze the game in round 42); the game's own D3D11CreateDevice /
+ * D3D11CreateDeviceAndSwapChain call is caught instead (tx_arm), with the v0.41 own-device way as a 60 s fallback.
  * v0.42: Special K names a replacement after the CRC-32C of the original texture's top mip level
  * (SK_Res/inject/textures/<crc>.dds). tx_create() computes the same CRC and, when the game folder has that file,
  * creates the texture from the file instead (the game's format is kept when the block size matches). The PlayStation
  * Button Prompts pack (2017) is one 4096x4096 BC7 file, 61a1af48.dds, for the main UI sheet; that sheet is loaded at
- * the title screen, so the hook is now installed as soon as the game has loaded d3d11.dll (tx_early_thread), not after
- * 45 s. tex_hook=0 in so4coop.ini turns all of this off.
+ * the title screen, so the hook must be in place before the title screen. tex_hook=0 in so4coop.ini turns all of this off.
  */
 
 static void wcopy(uint16_t *d, const uint16_t *s);
@@ -306,8 +307,21 @@ static long tx_create(void *self, const TX_DESC *desc, const TX_INIT *init, void
     return hr;
 }
 
-/* create a throw-away device, redirect CreateTexture2D in the shared vtable */
-static int tx_install(char *why)
+/* redirect CreateTexture2D (slot 5) in the vtable of a device the game (or the self-test) created */
+static int tx_hook_device(void *dev, char *why)
+{
+    void **vt = *(void ***)dev;
+    DWORD old, tmp;
+    if (!VirtualProtect(&vt[5], 8, 0x04 /* rw */, &old)) { wsprintfA(why, "device vtable %p: VirtualProtect FAILED", (void *)vt); return 0; }
+    if (vt[5] != (void *)tx_create) { tx_orig = (tx_create_fn)vt[5]; vt[5] = (void *)tx_create; }
+    VirtualProtect(&vt[5], 8, old, &tmp);
+    tx_vtable = vt;
+    wsprintfA(why, "device vtable %p, CreateTexture2D %p -> hook", (void *)vt, (void *)tx_orig);
+    return 1;
+}
+
+/* fallback (v0.41 way): a throw-away device of our own; only used late, when the game's device already exists */
+static int tx_install_own(char *why)
 {
     HMODULE d3d = LoadLibraryW((LPCWSTR)L"d3d11.dll");
     if (!d3d) { wsprintfA(why, "d3d11.dll not loadable"); return 0; }
@@ -317,20 +331,135 @@ static int tx_install(char *why)
     int lvl = 0;
     long hr = mk(0, 1 /* hardware */, 0, 0, 0, 0, 7, &dev, &lvl, &ctx);
     if (hr < 0 || !dev) { wsprintfA(why, "D3D11CreateDevice failed %lx", (unsigned long)hr); return 0; }
-    void **vt = *(void ***)dev;
-    DWORD old, tmp;
-    int ok = 0;
-    if (VirtualProtect(&vt[5], 8, 0x04 /* rw */, &old)) {
-        if (vt[5] != (void *)tx_create) { tx_orig = (tx_create_fn)vt[5]; vt[5] = (void *)tx_create; }
-        VirtualProtect(&vt[5], 8, old, &tmp);
-        tx_vtable = vt;
-        ok = 1;
-    }
+    int ok = tx_hook_device(dev, why);
     typedef unsigned long (*rel_fn)(void *);
     if (ctx) ((rel_fn)(*(void ***)ctx)[2])(ctx);
-    ((rel_fn)vt[2])(dev);
-    wsprintfA(why, "d3d11 %p, device vtable %p, CreateTexture2D %p -> hook%s", (void *)d3d, (void *)vt, (void *)tx_orig, ok ? "" : " FAILED (VirtualProtect)");
+    ((rel_fn)(*(void ***)dev)[2])(dev);
     return ok;
+}
+
+/*
+ * v0.43: v0.42 created its own device right after the game loaded d3d11.dll (5.5 s) and the game froze before the
+ * title screen (round 42: no texture, no Steam call in 80 s). Now no device of ours is made at startup: our thread
+ * loads d3d11.dll itself (load only) and puts a 14-byte jump on the first bytes of D3D11CreateDevice and
+ * D3D11CreateDeviceAndSwapChain. The first call by the game puts the original bytes back, runs the real function
+ * and hooks the returned device's vtable, before the game can create any texture with it.
+ */
+typedef long (*tx_cdsc_fn)(void *adapter, int driver, HMODULE sw, uint32_t flags, const int *levels, uint32_t nlevels,
+                           uint32_t sdk, const void *scdesc, void **swap, void **dev, int *level, void **ctx);
+#define TX_NPATCH 2
+static BYTE *tx_pt_at[TX_NPATCH];
+static BYTE tx_pt_orig[TX_NPATCH][14];
+static volatile int tx_patched;
+static volatile long tx_pt_lock;
+static char tx_caught_by[48];
+
+static void tx_write_code(BYTE *at, const BYTE *src)
+{
+    DWORD old, tmp;
+    if (!VirtualProtect(at, 14, 0x40 /* rwx */, &old)) return;
+    for (int i = 0; i < 14; i++) at[i] = src[i];
+    VirtualProtect(at, 14, old, &tmp);
+    FlushInstructionCache((HANDLE)-1, at, 14);
+}
+
+static void tx_unpatch(void)
+{
+    if (!tx_patched) return;
+    for (int i = 0; i < TX_NPATCH; i++) if (tx_pt_at[i]) tx_write_code(tx_pt_at[i], tx_pt_orig[i]);
+    tx_patched = 0;
+}
+
+static long tx_hk_cd(void *, int, HMODULE, uint32_t, const int *, uint32_t, uint32_t, void **, int *, void **);
+static long tx_hk_cdsc(void *, int, HMODULE, uint32_t, const int *, uint32_t, uint32_t, const void *, void **, void **, int *, void **);
+
+static int tx_patch(void)
+{
+    void *to[TX_NPATCH] = { (void *)tx_hk_cd, (void *)tx_hk_cdsc };
+    int n = 0;
+    for (int i = 0; i < TX_NPATCH; i++) {
+        if (!tx_pt_at[i]) continue;
+        BYTE j[14] = { 0xff, 0x25, 0, 0, 0, 0 };          /* jmp [rip+0] ; dq target */
+        uint64_t t = (uint64_t)to[i];
+        for (int k = 0; k < 8; k++) j[6 + k] = (BYTE)(t >> (8 * k));
+        tx_write_code(tx_pt_at[i], j);
+        n++;
+    }
+    tx_patched = n > 0;
+    return n;
+}
+
+static void tx_caught(void *dev, const char *by)
+{
+    char b[300], why[200];
+    if (tx_installed || !dev) return;
+    tx_installed = tx_hook_device(dev, why);
+    tx_ms_installed = (uint32_t)(GetTickCount64() - tx_load_t);
+    tx_t0 = tx_report_t = GetTickCount64();
+    int i = 0;
+    for (; by[i] && i < 47; i++) tx_caught_by[i] = by[i];
+    tx_caught_by[i] = 0;
+    wsprintfA(b, "  textures: %s at %lu ms after load: the game's own device from %s (%s)\r\n",
+              tx_installed ? "hook ON" : "hook NOT installed", (unsigned long)tx_ms_installed, by, why);
+    logs(b);
+}
+
+static long tx_hk_cd(void *ad, int drv, HMODULE sw, uint32_t fl, const int *lv, uint32_t nl, uint32_t sdk, void **dev, int *lvl, void **ctx)
+{
+    while (__sync_lock_test_and_set(&tx_pt_lock, 1)) Sleep(0);
+    tx_unpatch();
+    __sync_lock_release(&tx_pt_lock);
+    long hr = ((tx_d3d11createdevice_fn)tx_pt_at[0])(ad, drv, sw, fl, lv, nl, sdk, dev, lvl, ctx);
+    if (hr >= 0 && dev && *dev) tx_caught(*dev, "D3D11CreateDevice");
+    if (!tx_installed) {                                   /* e.g. a feature-level query without a device: arm again */
+        while (__sync_lock_test_and_set(&tx_pt_lock, 1)) Sleep(0);
+        if (!tx_installed && !tx_patched) tx_patch();
+        __sync_lock_release(&tx_pt_lock);
+    }
+    return hr;
+}
+
+static long tx_hk_cdsc(void *ad, int drv, HMODULE sw, uint32_t fl, const int *lv, uint32_t nl, uint32_t sdk, const void *sd, void **swap,
+                       void **dev, int *lvl, void **ctx)
+{
+    while (__sync_lock_test_and_set(&tx_pt_lock, 1)) Sleep(0);
+    tx_unpatch();
+    __sync_lock_release(&tx_pt_lock);
+    long hr = ((tx_cdsc_fn)tx_pt_at[1])(ad, drv, sw, fl, lv, nl, sdk, sd, swap, dev, lvl, ctx);
+    if (hr >= 0 && dev && *dev) tx_caught(*dev, "D3D11CreateDeviceAndSwapChain");
+    if (!tx_installed) {
+        while (__sync_lock_test_and_set(&tx_pt_lock, 1)) Sleep(0);
+        if (!tx_installed && !tx_patched) tx_patch();
+        __sync_lock_release(&tx_pt_lock);
+    }
+    return hr;
+}
+
+/* load d3d11.dll (no device) and arm the two exports; 0 = could not */
+static int tx_arm(char *why)
+{
+    HMODULE d3d = LoadLibraryW((LPCWSTR)L"d3d11.dll");
+    if (!d3d) { wsprintfA(why, "d3d11.dll not loadable"); return 0; }
+    static const char *nm[TX_NPATCH] = { "D3D11CreateDevice", "D3D11CreateDeviceAndSwapChain" };
+    for (int i = 0; i < TX_NPATCH; i++) {
+        BYTE *p = (BYTE *)GetProcAddress(d3d, nm[i]);
+        for (int hop = 0; p && hop < 4; hop++) {           /* follow jump thunks to the real function */
+            if (p[0] == 0xe9) p = p + 5 + *(int32_t *)(p + 1);
+            else if (p[0] == 0xeb) p = p + 2 + (int8_t)p[1];
+            else if (p[0] == 0xff && p[1] == 0x25) p = *(BYTE **)(p + 6 + *(int32_t *)(p + 2));
+            else break;
+        }
+        if (p && (p[0] == 0xe9 || p[0] == 0xeb || p[0] == 0xc3 || (p[0] == 0xff && p[1] == 0x25))) p = 0;
+        if (i && p == tx_pt_at[0]) p = 0;                  /* same body: patched once */
+        tx_pt_at[i] = p;
+        if (p) for (int k = 0; k < 14; k++) tx_pt_orig[i][k] = p[k];
+    }
+    while (__sync_lock_test_and_set(&tx_pt_lock, 1)) Sleep(0);
+    int n = tx_patch();
+    __sync_lock_release(&tx_pt_lock);
+    wsprintfA(why, "d3d11 %p, D3D11CreateDevice %p, D3D11CreateDeviceAndSwapChain %p, %d armed", (void *)d3d, (void *)tx_pt_at[0],
+              (void *)tx_pt_at[1], n);
+    return n;
 }
 
 typedef struct { DWORD attr, t[6], size_hi, size_lo, r0, r1; uint16_t name[260], alt[14]; } TX_FIND;
@@ -389,10 +518,10 @@ static int tx_enabled(void)
     return tt_find_value(buf, r, "tex_hook=", &v) ? v != 0 : 1;
 }
 
-/* started from DllMain: wait until the game has loaded d3d11.dll, then hook (only kernel32 + d3d11 calls) */
+/* started from DllMain: arm the device-creation exports, wait for the game's device (only kernel32 + d3d11 calls) */
 static DWORD WINAPI tx_early_thread(LPVOID u)
 {
-    char b[300], why[200];
+    char b[400], why[200];
     (void)u;
     if (__sync_lock_test_and_set(&tx_tried, 1)) return 0;   /* once */
     tx_load_t = GetTickCount64();
@@ -400,17 +529,23 @@ static DWORD WINAPI tx_early_thread(LPVOID u)
     if (!tx_enabled()) { logs("  textures: off (tex_hook=0)\r\n"); return 0; }
     tx_scan_injectables();
     int pre = GetModuleHandleW((LPCWSTR)L"d3d11.dll") != 0;
-    while (!GetModuleHandleW((LPCWSTR)L"d3d11.dll")) {
-        if (GetTickCount64() - tx_load_t > 180000) { logs("  textures: d3d11.dll not loaded after 180 s, no hook\r\n"); return 0; }
-        Sleep(1);
-    }
+    int armed = tx_arm(why);
     tx_ms_seen = (uint32_t)(GetTickCount64() - tx_load_t);
-    tx_t0 = tx_report_t = GetTickCount64();
-    tx_installed = tx_install(why);
+    wsprintfA(b, "  textures: %s at %lu ms after load (d3d11.dll %s; %s); %lu Special K replacement(s) in SK_Res\\inject\\textures\r\n",
+              armed ? "waiting for the game's device" : "could NOT arm", (unsigned long)tx_ms_seen, pre ? "already loaded by the game" : "loaded by the mod",
+              why, (unsigned long)tx_ninj);
+    logs(b);
+    while (!tx_installed && GetTickCount64() - tx_load_t < 60000) Sleep(50);
+    if (tx_installed) return 0;
+    while (__sync_lock_test_and_set(&tx_pt_lock, 1)) Sleep(0);
+    tx_unpatch();
+    __sync_lock_release(&tx_pt_lock);
+    if (tx_installed) return 0;                           /* caught while we were taking the lock */
+    tx_installed = tx_install_own(why);                   /* the game's device exists by now (v0.41 worked at 45 s) */
     tx_ms_installed = (uint32_t)(GetTickCount64() - tx_load_t);
-    wsprintfA(b, "  textures: %s at %lu ms after load (d3d11.dll %s, seen at %lu ms; %s); %lu Special K replacement(s) in SK_Res\\inject\\textures\r\n",
-              tx_installed ? "hook ON" : "hook NOT installed", (unsigned long)tx_ms_installed, pre ? "already loaded" : "loaded later",
-              (unsigned long)tx_ms_seen, why, (unsigned long)tx_ninj);
+    tx_t0 = tx_report_t = GetTickCount64();
+    wsprintfA(b, "  textures: the game's device was NOT caught in 60 s -> fallback %s at %lu ms (own device; %s)\r\n",
+              tx_installed ? "hook ON" : "hook NOT installed", (unsigned long)tx_ms_installed, why);
     logs(b);
     return 0;
 }
@@ -437,14 +572,17 @@ __declspec(dllexport) void WINAPI so4coop_textest(void)
     uint32_t c = tx_crc32c(0, (const BYTE *)v, 9);
     wsprintfA(b, "texture self-test: CRC-32C(\"123456789\") = %08lx (expect e3069283) -> %s\r\n", (unsigned long)c, c == 0xe3069283u ? "WORKS" : "FAILED");
     logs(b);
-    LoadLibraryW((LPCWSTR)L"d3d11.dll");
-    tx_early_thread(0);                                   /* returns at once if DllMain's thread already runs it */
-    for (int i = 0; i < 1000 && !tx_installed; i++) Sleep(10);
-    if (!tx_installed) { logs("texture self-test: hook not installed -> FAILED\r\n"); return; }
+    CreateThread(0, 0, tx_early_thread, 0, 0, 0);         /* no-op if DllMain's thread already runs it */
+    for (int i = 0; i < 1000 && !tx_patched && !tx_installed; i++) Sleep(10);
+    if (!tx_patched && !tx_installed) { logs("texture self-test: exports not armed -> FAILED\r\n"); return; }
     tx_d3d11createdevice_fn mk = (tx_d3d11createdevice_fn)GetProcAddress(GetModuleHandleW((LPCWSTR)L"d3d11.dll"), "D3D11CreateDevice");
     void *dev = 0, *ctx = 0, *tex = 0;
     int lvl = 0;
-    if (mk(0, 1, 0, 0, 0, 0, 7, &dev, &lvl, &ctx) < 0 || !dev) { logs("texture self-test: second device failed\r\n"); return; }
+    if (mk(0, 1, 0, 0, 0, 0, 7, &dev, &lvl, &ctx) < 0 || !dev) { logs("texture self-test: device failed\r\n"); return; }
+    wsprintfA(b, "texture self-test: device creation caught through the armed export: %s (by %s)\r\n", tx_installed ? "WORKS" : "FAILED",
+              tx_caught_by[0] ? tx_caught_by : "-");
+    logs(b);
+    if (!tx_installed) return;
     static uint32_t px[64 * 64];
     for (int i = 0; i < 64 * 64; i++) px[i] = 0xff000000u | (uint32_t)(i * 2654435761u >> 8);
     TX_DESC d = { 64, 64, 1, 1, 28, 1, 0, 0, 8 /* shader resource */, 0, 0 };
