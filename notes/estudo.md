@@ -696,3 +696,20 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   tex_hook=1 no so4coop.ini. Autoteste (Wine do sistema, caminho absoluto da DLL + WINEDLLOVERRIDES, senão o
   rundll32 carrega o xinput1_3 embutido): com os 2 arquivos de teste -> 2 injeções, 0 salvos, nenhuma pasta
   so4coop_textures; sem pacote -> "button prompts: off", nada armado. Versão de pesquisa: autoteste continua WORKS.
+- Rodada 44 (1.4 de lançamento na cópia; log em notes/run44_so4coop.log): ícones do PS e co-op funcionaram, mas o
+  usuário viu **aperto duplo de habilidade**: o L2/LT do GameSir (controle 1, Arumat) soltou Dragon Roar e a Sarah
+  (controle 2) soltou Solar Flare ao mesmo tempo. Observado no log: os dois controles são aparelhos distintos (a
+  maioria dos apertos aparece num só; o GameSir não aparece duas vezes). Nenhum evento das ações 13/14 nesta sessão,
+  então não dá para ver no log qual ação é o L2 do GameSir (unknown).
+  Deduzido (não confirmado): (1) cs_thread gravava o novo líder ANTES de trocar sh_leader_h, então por um instante o
+  controle do jogador anterior chegava ao novo líder; (2) o jogo lê o controle e age no quadro seguinte para quem é
+  líder naquele momento; uma troca nesse meio entrega o aperto ao próximo jogador.
+- v0.44 / 1.4.1: (a) durante a troca sh_leader_h = SH_NOBODY (nenhum controle passa) e só depois o do novo líder;
+  (b) sh_dig marca a hora de cada aperto novo no controle do líder (botão segurado não conta; líder novo = estado
+  zerado, porque para o jogo é um aperto novo); a vez não troca até coop_press_guard_ms (50) depois de um aperto,
+  com no máximo +120 ms de vez. Relatório [co-op] ganhou "held for a press". Autoteste (so4coop_hooktest, pesquisa
+  e lançamento): aperto visto, segurado não é aperto novo, durante a troca líder 0 e outro 0 -> WORKS.
+- Rodada 45 (1.4.1 na cópia; log em notes/run45_so4coop.log): **sem aperto duplo** (usuário). Controle 1 (GameSir,
+  Arumat) apertou as ações 13/14 (L2/R2, provável) 33 vezes; nenhum aperto pareado entre os controles; a proteção
+  segurou a troca em 127 de 159 vezes (vez média ~63 ms em vez de 40 com os dois jogadores ativos); o usuário não
+  relatou lentidão.

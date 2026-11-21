@@ -1,5 +1,5 @@
-so4coop co-op 1.4 - STAR OCEAN - THE LAST HOPE - 4K & Full HD Remaster (Steam)
-=================================================================================
+so4coop co-op 1.4.1 - STAR OCEAN - THE LAST HOPE - 4K & Full HD Remaster (Steam)
+================================================================================
 
 What it does
 ------------
@@ -61,6 +61,9 @@ coop_auto=1          co-op starts with every battle (0 = off; R3 then works as t
 coop_slice_ms=40     length of each player's turn (smaller = smoother).
 coop_idle_ms=1500    after this long without input a player stops getting turns.
 coop_active_only=1   0 = every mapped player gets turns even when idle.
+coop_press_guard_ms=50  (1.4.1) the turn does not change until this long after a button press, so
+                     one press (e.g. an L2/R2 skill) can't also reach the next player's character.
+                     0 = off (as in 1.4).
 coop_display_fix=1   steady mini-map / sight cursor / target board during co-op (0 = off: they
                      follow the current turn and flicker).
 coop_display_pos=P   which party position they follow during co-op (default: the lowest

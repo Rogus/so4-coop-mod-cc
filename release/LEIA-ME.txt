@@ -1,5 +1,5 @@
-so4coop co-op 1.4 - STAR OCEAN - THE LAST HOPE - 4K & Full HD Remaster (Steam)
-=================================================================================
+so4coop co-op 1.4.1 - STAR OCEAN - THE LAST HOPE - 4K & Full HD Remaster (Steam)
+================================================================================
 
 O que faz
 ---------
@@ -62,6 +62,9 @@ coop_auto=1          o co-op liga em toda batalha (0 = desligado; o R3 vira tag-
 coop_slice_ms=40     duração da vez de cada jogador (menor = mais fluido).
 coop_idle_ms=1500    depois desse tempo sem tocar no controle o jogador deixa de ter vez.
 coop_active_only=1   0 = todo jogador mapeado tem vez, mesmo parado.
+coop_press_guard_ms=50  (1.4.1) a vez não troca até esse tempo depois de um aperto, para que um
+                     aperto (ex.: habilidade do L2/R2) não chegue também ao personagem do próximo
+                     jogador. 0 = desligado (como na 1.4).
 coop_display_fix=1   minimapa / cursor de mira / quadro de alvo estáveis no co-op (0 = desligado:
                      seguem a vez de cada um e piscam).
 coop_display_pos=P   qual posição do grupo eles seguem no co-op (padrão: a menor steamN_position).

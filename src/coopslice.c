@@ -15,6 +15,8 @@
  */
 
 static uint32_t cs_ms = 40, cs_idle = 1500, cs_auto, cs_active_only = 1;
+static uint32_t cs_guard = 50, cs_guard_max = 120;   /* v0.44: coop_press_guard_ms, extra slice time at most */
+static volatile long cs_held;
 static int cs_loaded, cs_thread_started;
 static DWORD cs_tid;
 static volatile int cs_on;
@@ -63,9 +65,10 @@ static void cs_load(void)
         if (tt_find_value(buf, r, "coop_auto=", &v)) cs_auto = v ? 1 : 0;
         if (tt_find_value(buf, r, "coop_active_only=", &v)) cs_active_only = v ? 1 : 0;
         if (tt_find_value(buf, r, "coop_quiet_marker=", &v)) cs_quiet = v ? 1 : 0;
+        if (sc_find_dec(buf, r, "coop_press_guard_ms=", &v) && v <= 500) cs_guard = v;
     }
-    wsprintfA(b, "  co-op: auto %lu (F2 toggles in the research build), slice %lu ms, active players only %lu (idle after %lu ms), quiet marker %lu\r\n", (unsigned long)cs_auto,
-              (unsigned long)cs_ms, (unsigned long)cs_active_only, (unsigned long)cs_idle, (unsigned long)cs_quiet);
+    wsprintfA(b, "  co-op: auto %lu (F2 toggles in the research build), slice %lu ms, active players only %lu (idle after %lu ms), quiet marker %lu, press guard %lu ms\r\n", (unsigned long)cs_auto,
+              (unsigned long)cs_ms, (unsigned long)cs_active_only, (unsigned long)cs_idle, (unsigned long)cs_quiet, (unsigned long)cs_guard);
     logs(b);
 }
 
@@ -88,7 +91,7 @@ static DWORD WINAPI cs_thread(LPVOID u)
 {
     char b[300];
     (void)u;
-    int turn = 0;
+    int turn = 0, held_once = 0;
     uint64_t last = 0;
     for (;;) {
         Sleep(1);
@@ -102,7 +105,13 @@ static DWORD WINAPI cs_thread(LPVOID u)
         }
         uint64_t now = GetTickCount64();
         if (now - last < cs_ms) continue;
+        /* v0.44: a button just went down for the current leader: let the game act on it before switching */
+        if (cs_guard && sh_leader_h && now - sh_edge_t < cs_guard && now - last < cs_ms + cs_guard_max) {
+            if (!held_once) { held_once = 1; __sync_fetch_and_add(&cs_held, 1); }
+            continue;
+        }
         last = now;
+        held_once = 0;
         /* participants: connected controllers with a position, active recently (or all) */
         int idx[SC_MAXCTL], np = 0;
         for (int k = 0; k < sc_nctl && k < SC_MAXCTL; k++)
@@ -110,7 +119,10 @@ static DWORD WINAPI cs_thread(LPVOID u)
         if (!np) continue;                                 /* nobody active: leave the leader as it is */
         turn = (turn + 1) % np;
         int k = idx[turn];
+        uint64_t prev_h = sh_leader_h;
+        sh_leader_h = SH_NOBODY;                           /* v0.44: no controller reaches the game during the switch */
         if (!cs_write(sc_pos[k])) {
+            sh_leader_h = prev_h;
             __sync_fetch_and_add(&cs_skips, 1);
             uint32_t p;
             if (!tt_leader_pos(&p)) {                      /* battle over */
@@ -127,8 +139,8 @@ static DWORD WINAPI cs_thread(LPVOID u)
         __sync_fetch_and_add(&cs_per[k], 1);
         if (now - cs_report >= 10000) {
             cs_report = now;
-            wsprintfA(b, "  [co-op t=%lus] %ld slices of %lu ms (%ld skipped); per Steam controller: 1=%ld 2=%ld 3=%ld 4=%ld; active now: %d; popup quieted %ld\r\n",
-                      (unsigned long)((now - cs_t0) / 1000), cs_slices, (unsigned long)cs_ms, cs_skips, cs_per[0], cs_per[1], cs_per[2], cs_per[3], np, cs_quieted);
+            wsprintfA(b, "  [co-op t=%lus] %ld slices of %lu ms (%ld skipped, %ld held for a press); per Steam controller: 1=%ld 2=%ld 3=%ld 4=%ld; active now: %d; popup quieted %ld\r\n",
+                      (unsigned long)((now - cs_t0) / 1000), cs_slices, (unsigned long)cs_ms, cs_skips, cs_held, cs_per[0], cs_per[1], cs_per[2], cs_per[3], np, cs_quieted);
             logs(b);
         }
     }

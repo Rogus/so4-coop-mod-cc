@@ -88,12 +88,25 @@ static int sh_block(uint64_t h)
     uint64_t l = sh_leader_h;
     return sh_filter && l && h != l && h != SH_ALL;
 }
+/* v0.44 (1.4.1): last time the game saw a button go down on the leader's controller. The game reads the pad,
+ * then acts on it a frame later for whoever leads THEN; switching the leader in between handed the press to the
+ * next player too (round 44: Arumat's L2 skill and Sarah's at the same time). coopslice.c waits until such a press
+ * has been taken before it switches. SH_NOBODY blocks every controller while the leader is being changed. */
+#define SH_NOBODY 1ull
+static volatile uint64_t sh_edge_t;
+static uint64_t sh_edge_h, sh_edge_bits;
 static void *sh_dig(void *self, void *ret, uint64_t h, uint64_t act)
 {
     int game = !sh_mine();
     if (game) sh_note(SH_DIG, h, act, (uintptr_t)__builtin_return_address(0));
     void *r = ((pDataM)sh_orig[9])(self, ret, h, act);
     if (game && r && sh_block(h)) { ((uint8_t *)r)[0] = 0; __sync_fetch_and_add(&sh_neutral, 1); }
+    else if (game && r && sh_filter && h == sh_leader_h && act < 64) {
+        if (h != sh_edge_h) { sh_edge_h = h; sh_edge_bits = 0; }   /* new leader: a held button is a new press for the game */
+        uint64_t bit = 1ull << act;
+        if (((uint8_t *)r)[0]) { if (!(sh_edge_bits & bit)) { sh_edge_bits |= bit; sh_edge_t = GetTickCount64(); } }
+        else sh_edge_bits &= ~bit;
+    }
     return r;
 }
 static void *sh_ana(void *self, void *ret, uint64_t h, uint64_t act)
@@ -232,6 +245,26 @@ __declspec(dllexport) void WINAPI so4coop_hooktest(void)
         ft_own = d2[0];
     }
     wsprintfA(b, "steam hook filter self-test: own (mod) query on a non-leader controller %u (expect 1)\r\n", (unsigned)ft_own);
+    logs(b);
+    /* v0.44: a press on the leader's controller is time-stamped; SH_NOBODY blocks every controller */
+    sh_edge_t = 0; sh_edge_h = 0;
+    h = CreateThread(0, 0, fake_filter_thread, 0, 0, 0);   /* leader 9 reports 'pressed' -> new press */
+    Sleep(300);
+    if (h) CloseHandle(h);
+    int edge_ok = sh_edge_t != 0 && GetTickCount64() - sh_edge_t < 2000;
+    uint64_t e1 = sh_edge_t;
+    Sleep(20);
+    h = CreateThread(0, 0, fake_filter_thread, 0, 0, 0);   /* still held: not a new press */
+    Sleep(300);
+    if (h) CloseHandle(h);
+    int held_ok = sh_edge_t == e1;
+    sh_leader_h = SH_NOBODY;
+    h = CreateThread(0, 0, fake_filter_thread, 0, 0, 0);
+    Sleep(300);
+    if (h) CloseHandle(h);
+    wsprintfA(b, "steam hook press-guard self-test: press seen %s, held button not a new press %s, during a switch leader %u other %u (expect 0 0): %s\r\n",
+              edge_ok ? "OK" : "WRONG", held_ok ? "OK" : "WRONG", (unsigned)ft_lead, (unsigned)ft_other,
+              edge_ok && held_ok && !ft_lead && !ft_other ? "WORKS" : "FAILED");
     logs(b);
     sh_filter = 0; sh_leader_h = 0;
     sh_report();
