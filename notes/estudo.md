@@ -683,3 +683,16 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   for pego em 60 s: desarma e usa o jeito da v0.41 (dispositivo próprio, quando o do jogo já existe).
 - Autoteste (Wine do sistema): criação pega pelo export armado (hook aos 131 ms), 2 injeções (64x64 RGBA e
   4096x4096 BC7 2 mips) -> funciona.
+- Rodada 43 (v0.43, na CÓPIA DE TESTE /mnt/STEAM/so4coop-test via launch.sh, junto com o SO4Fix do Lyall
+  (winmm.dll + SO4Fix.asi); log em notes/run43_probe.log): **funcionou**. Gancho armado aos 4 ms, dispositivo do
+  próprio jogo pego aos 2766 ms (D3D11CreateDeviceAndSwapChain), 61a1af48.dds INJETADA (jogo 4096x4096 BC7 2 mips
+  -> arquivo 1 mip), 0 falhas; tela de título normal (o travamento da rodada 42 sumiu). Usuário confirmou os ícones
+  do PlayStation na tela. Co-op na mesma sessão: 1 batalha, 364 fatias de 40 ms entre os controles 1 e 2, correção
+  de exibição 5852 de 5852 estáveis. so4coop e SO4Fix convivem (xinput1_3 + winmm, WINEDLLOVERRIDES com ";").
+- Próximo: levar o gancho de texturas para a versão de lançamento (só injeção; sem salvar .dds nem textures.txt,
+  que gastaram 606 MB) -> release 1.4.
+- Release 1.4 (código): texhook.c entra na versão de lançamento só com a troca (sem textures.txt, sem .dds, sem hash
+  FNV; o CRC só é calculado quando há pacote) e sem gancho nenhum se SK_Res\inject\textures não tiver .dds;
+  tex_hook=1 no so4coop.ini. Autoteste (Wine do sistema, caminho absoluto da DLL + WINEDLLOVERRIDES, senão o
+  rundll32 carrega o xinput1_3 embutido): com os 2 arquivos de teste -> 2 injeções, 0 salvos, nenhuma pasta
+  so4coop_textures; sem pacote -> "button prompts: off", nada armado. Versão de pesquisa: autoteste continua WORKS.

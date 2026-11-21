@@ -13,6 +13,8 @@
  * creates the texture from the file instead (the game's format is kept when the block size matches). The PlayStation
  * Button Prompts pack (2017) is one 4096x4096 BC7 file, 61a1af48.dds, for the main UI sheet; that sheet is loaded at
  * the title screen, so the hook must be in place before the title screen. tex_hook=0 in so4coop.ini turns all of this off.
+ * Release 1.4 (SO4COOP_RELEASE): replacement only. No texture list, no .dds saved, no hashing; nothing is hooked when
+ * SK_Res\inject\textures has no <crc>.dds file.
  */
 
 static void wcopy(uint16_t *d, const uint16_t *s);
@@ -241,11 +243,18 @@ fail:
 
 static long tx_create(void *self, const TX_DESC *desc, const TX_INIT *init, void **out)
 {
+#ifdef SO4COOP_RELEASE
+    uint32_t skcrc = (tx_ninj && desc && init && init->pSysMem) ? tx_skcrc(desc, init) : 0;
+#else
     uint32_t skcrc = (desc && init && init->pSysMem) ? tx_skcrc(desc, init) : 0;
+#endif
     int injected = 0;
     long hr;
     if (skcrc && tx_ninj && tx_is_injectable(skcrc)) hr = tx_inject(self, desc, skcrc, out, &injected);
     if (!injected) hr = tx_orig(self, desc, init, out);
+#ifdef SO4COOP_RELEASE
+    return hr;                                            /* release: replacement only, nothing listed or saved */
+#endif
     if (hr < 0 || !desc) return hr;
     if (!init || !init->pSysMem) {                        /* v0.41: listed too (data arrives later) */
         __sync_fetch_and_add(&tx_n_nodata, 1);
@@ -491,6 +500,9 @@ static void tx_open_files(void)
     DWORD n = GetModuleFileNameW(self_module, tx_game, 512);
     while (n && tx_game[n - 1] != '\\' && tx_game[n - 1] != '/') n--;
     tx_game[n] = 0;
+#ifdef SO4COOP_RELEASE
+    return;                                               /* release: no so4coop_textures folder */
+#endif
     wcopy(tx_dir, tx_game);
     wcat(tx_dir, "so4coop_textures");
     CreateDirectoryW(tx_dir, 0);
@@ -528,6 +540,9 @@ static DWORD WINAPI tx_early_thread(LPVOID u)
     tx_open_files();
     if (!tx_enabled()) { logs("  textures: off (tex_hook=0)\r\n"); return 0; }
     tx_scan_injectables();
+#ifdef SO4COOP_RELEASE
+    if (!tx_ninj) { logs("  button prompts: off (no .dds in SK_Res\\inject\\textures)\r\n"); return 0; }
+#endif
     int pre = GetModuleHandleW((LPCWSTR)L"d3d11.dll") != 0;
     int armed = tx_arm(why);
     tx_ms_seen = (uint32_t)(GetTickCount64() - tx_load_t);
@@ -551,6 +566,7 @@ static DWORD WINAPI tx_early_thread(LPVOID u)
 }
 
 /* hotkey thread (research build): a summary every 30 s */
+#ifndef SO4COOP_RELEASE
 static void tex_poll(void)
 {
     char b[300];
@@ -563,6 +579,7 @@ static void tex_poll(void)
         logs(b);
     }
 }
+#endif
 
 /* ---- self-test: hook, then create a 64x64 RGBA texture with data through a second device ---- */
 __declspec(dllexport) void WINAPI so4coop_textest(void)
@@ -614,7 +631,11 @@ __declspec(dllexport) void WINAPI so4coop_textest(void)
     (void)inj_before;
     if (ctx) ((rel_fn)(*(void ***)ctx)[2])(ctx);
     ((rel_fn)(*(void ***)dev)[2])(dev);
-    wsprintfA(b, "texture self-test: CreateTexture2D hr %lx, saved %ld -> %ld (expect +3), injected %ld (expect 2 when SK_Res\\inject\\textures has the test files): %s\r\n",
+    wsprintfA(b, "texture self-test: CreateTexture2D hr %lx, saved %ld -> %ld (expect +3; release: +0), injected %ld (expect 2 when SK_Res\\inject\\textures has the test files): %s\r\n",
+#ifdef SO4COOP_RELEASE
+              (unsigned long)hr, before, tx_n_saved, tx_n_injected, hr >= 0 && tx_n_saved == before ? "WORKS" : "FAILED");   /* release: nothing saved */
+#else
               (unsigned long)hr, before, tx_n_saved, tx_n_injected, hr >= 0 && tx_n_saved == before + 3 ? "WORKS" : "FAILED");
+#endif
     logs(b);
 }

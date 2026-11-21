@@ -1,4 +1,4 @@
-so4coop co-op 1.3 - STAR OCEAN - THE LAST HOPE - 4K & Full HD Remaster (Steam)
+so4coop co-op 1.4 - STAR OCEAN - THE LAST HOPE - 4K & Full HD Remaster (Steam)
 =================================================================================
 
 O que faz
@@ -12,6 +12,12 @@ o líder entre os jogadores ativos muitas vezes por segundo (a cada 40 ms por pa
 cada um, só deixa o controle daquele jogador chegar ao jogo. Um jogador conta como ativo enquanto
 usa o controle (analógico ou qualquer botão nos últimos 1,5 s); o personagem de quem está parado
 fica com a IA, e um só jogador ativo joga como no single-player.
+
+Novo na 1.4: ícones de botão do PlayStation sem o Special K (opcional). Se a pasta do jogo tiver um
+pacote de texturas do Special K (SK_Res\inject\textures\<nome>.dds), o mod troca essas texturas
+quando o jogo as cria, como o Special K faria, mas sem o Special K. Feito para o pacote
+"PlayStation Button Prompts" (2017), cuja única textura é 61a1af48.dds (a folha principal da
+interface). O pacote não vem junto; baixe por conta própria. Sem pacote, nada muda.
 
 Novo na 1.3: acabou o pisca-pisca. Durante o co-op, o minimapa da batalha, o cursor de mira e o
 quadro de alvo mostram um personagem fixo em vez de trocar entre os jogadores várias vezes por
@@ -31,6 +37,13 @@ Instalação
        WINEDLLOVERRIDES="xinput1_3=n,b" %command%
    Windows: nada mais.
 3. Deixe o Steam Input LIGADO para o jogo (desligado, o jogo não recebe o controle).
+4. Opcional, botões do PlayStation: copie a pasta SK_Res do pacote para a pasta do jogo, ficando
+       <pasta do jogo>\SK_Res\inject\textures\61a1af48.dds
+   O Special K em si não é necessário (não instale os dois).
+
+Com o SO4Fix do Lyall (winmm.dll) no Proton, coloque as duas DLLs em UMA variável, separadas por ";":
+       WINEDLLOVERRIDES="xinput1_3=n,b;winmm=n,b" %command%
+(Testados juntos no Linux/Proton 10: co-op, ícones e SO4Fix funcionaram.)
 
 Configuração: qual controle é qual (so4coop.ini)
 ------------------------------------------------
@@ -54,13 +67,16 @@ coop_display_fix=1   minimapa / cursor de mira / quadro de alvo estáveis no co-
 coop_display_pos=P   qual posição do grupo eles seguem no co-op (padrão: a menor steamN_position).
 coop_display_sites=bf  avançado: 0f = só minimapa, 8f = + quadro de alvo, 3f = + cursor de mira.
 hook_steam=1, leader_only_input=1   necessários: cada controle só chega ao próprio personagem.
+tex_hook=1           0 = nunca carrega pacotes de textura (ícones desligados mesmo com SK_Res).
 
 Desinstalar
 -----------
-Apague xinput1_3.dll, so4coop.ini e so4coop.log da pasta do jogo (e a opção de inicialização).
+Apague xinput1_3.dll, so4coop.ini e so4coop.log da pasta do jogo (e a opção de inicialização),
+e a pasta SK_Res se você a colocou.
 
 O mod grava a posição do líder na memória do jogo (o valor que L1/R1 mudam), depois de verificar
 que há uma batalha, filtra o que cada controle manda para o jogo e (coop_display_fix) redireciona
 8 chamadas do código de exibição do jogo na memória - minimapa, cursor de mira, quadro de alvo -
-depois de conferir cada uma; o código da jogabilidade não muda. Nada muda no disco e nunca mexe
+depois de conferir cada uma; o código da jogabilidade não muda. Com um pacote de texturas, também
+cria essas texturas a partir dos arquivos do pacote em vez das do jogo (na memória). Nada muda no disco e nunca mexe
 nos saves.

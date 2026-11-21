@@ -1,4 +1,4 @@
-so4coop co-op 1.3 - STAR OCEAN - THE LAST HOPE - 4K & Full HD Remaster (Steam)
+so4coop co-op 1.4 - STAR OCEAN - THE LAST HOPE - 4K & Full HD Remaster (Steam)
 =================================================================================
 
 What it does
@@ -11,6 +11,12 @@ The mod switches the leader between the active players many times per second (ev
 default) and, during each turn, lets only that player's controller reach the game. A player
 counts as active while they use their controller (stick or any button in the last 1.5 s); idle
 players' characters are left to the AI, and a single active player plays like single-player.
+
+New in 1.4: PlayStation button prompts without Special K (optional). If the game folder has a
+Special K texture pack (SK_Res\inject\textures\<name>.dds), the mod replaces those textures as
+the game creates them, just as Special K would, but without Special K. Made for the
+"PlayStation Button Prompts" pack (2017), whose only texture is 61a1af48.dds (the main UI sheet).
+The pack is not included; get it yourself. Without a pack, nothing changes.
 
 New in 1.3: no more flicker. While co-op runs, the battle mini-map, the sight cursor and the
 target board show one steady character instead of switching between the players many times per
@@ -30,6 +36,13 @@ Install
        WINEDLLOVERRIDES="xinput1_3=n,b" %command%
    Windows: nothing else to do.
 3. Keep Steam Input ENABLED for the game (with it disabled the game gets no controller input).
+4. Optional, PlayStation buttons: copy the pack's SK_Res folder into the game folder, so you have
+       <game folder>\SK_Res\inject\textures\61a1af48.dds
+   Special K itself is not needed (don't install it as well).
+
+With Lyall's SO4Fix (winmm.dll) on Proton, put both DLLs in ONE variable, separated by ";":
+       WINEDLLOVERRIDES="xinput1_3=n,b;winmm=n,b" %command%
+(Tested together on Linux/Proton 10: co-op, button prompts and SO4Fix all worked.)
 
 Setup: which controller is which (so4coop.ini)
 -----------------------------------------------
@@ -54,13 +67,16 @@ coop_display_pos=P   which party position they follow during co-op (default: the
                      steamN_position).
 coop_display_sites=bf  advanced: 0f = mini-map only, 8f = + target board, 3f = + sight cursor.
 hook_steam=1, leader_only_input=1   needed: each controller only reaches its own character.
+tex_hook=1           0 = never load texture packs (button prompts off even with SK_Res present).
 
 Uninstall
 ---------
-Delete xinput1_3.dll, so4coop.ini and so4coop.log from the game folder (and the launch option).
+Delete xinput1_3.dll, so4coop.ini and so4coop.log from the game folder (and the launch option),
+and the SK_Res folder if you added it.
 
 The mod writes the leader position in game memory (the value L1/R1 change), after checking
 that a battle is running, filters what each controller sends to the game, and (coop_display_fix)
 redirects 8 calls in the game's display code in memory - mini-map, sight cursor, target board -
-after checking each one; gameplay code is not changed. Nothing is changed on disk and it never
+after checking each one; gameplay code is not changed. With a texture pack it also creates those
+textures from the pack files instead of the game's (in memory). Nothing is changed on disk and it never
 touches save files.
