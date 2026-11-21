@@ -6,3 +6,5 @@ backups/
 # game code dumps: never commit (copyrighted game code)
 code_*.bin
 *.bin
+# logs locais do lancador (so4play.log, log do Proton)
+tools/*.log

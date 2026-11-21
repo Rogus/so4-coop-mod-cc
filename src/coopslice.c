@@ -89,7 +89,7 @@ static int cs_write(uint32_t target)
 
 static DWORD WINAPI cs_thread(LPVOID u)
 {
-    char b[300];
+    char b[420];
     (void)u;
     int turn = 0, held_once = 0;
     uint64_t last = 0;
@@ -139,8 +139,9 @@ static DWORD WINAPI cs_thread(LPVOID u)
         __sync_fetch_and_add(&cs_per[k], 1);
         if (now - cs_report >= 10000) {
             cs_report = now;
-            wsprintfA(b, "  [co-op t=%lus] %ld slices of %lu ms (%ld skipped, %ld held for a press); per Steam controller: 1=%ld 2=%ld 3=%ld 4=%ld; active now: %d; popup quieted %ld\r\n",
-                      (unsigned long)((now - cs_t0) / 1000), cs_slices, (unsigned long)cs_ms, cs_skips, cs_held, cs_per[0], cs_per[1], cs_per[2], cs_per[3], np, cs_quieted);
+            wsprintfA(b, "  [co-op t=%lus] %ld slices of %lu ms (%ld skipped, %ld held for a press); per Steam controller: 1=%ld 2=%ld 3=%ld 4=%ld 5=%ld 6=%ld 7=%ld 8=%ld; active now: %d; popup quieted %ld\r\n",
+                      (unsigned long)((now - cs_t0) / 1000), cs_slices, (unsigned long)cs_ms, cs_skips, cs_held, cs_per[0], cs_per[1], cs_per[2], cs_per[3],
+                      cs_per[4], cs_per[5], cs_per[6], cs_per[7], np, cs_quieted);
             logs(b);
         }
     }

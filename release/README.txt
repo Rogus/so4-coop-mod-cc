@@ -1,4 +1,4 @@
-so4coop co-op 1.4.1 - STAR OCEAN - THE LAST HOPE - 4K & Full HD Remaster (Steam)
+so4coop co-op 1.5 - STAR OCEAN - THE LAST HOPE - 4K & Full HD Remaster (Steam)
 ================================================================================
 
 What it does
@@ -11,6 +11,18 @@ The mod switches the leader between the active players many times per second (ev
 default) and, during each turn, lets only that player's controller reach the game. A player
 counts as active while they use their controller (stick or any button in the last 1.5 s); idle
 players' characters are left to the AI, and a single active player plays like single-player.
+
+New in 1.5: join mode (coop_join=1), for playing with friends over the internet through Steam
+Remote Play Together or Sunshine/Moonlight (for example BigLinux's Big Remote Play). Guests'
+controllers reach the game as more Steam controllers, in an order that changes, so nothing is fixed:
+in a battle each controller takes the first free character at its first button press, and R3 moves
+it to the next free one. A player who leaves frees their character. Up to 8 connected controllers
+(a battle has 4 characters).
+
+New in 1.4.2: xbox_position=P. Steam numbers controllers in its own order, which can change between
+sessions. With xbox_position, the Xbox controller (e.g. a keyboard turned into a virtual Xbox 360
+pad on Linux) always plays position P, and steamN_position counts only the other controllers. The
+mod tells which one is the Xbox controller from the button origins Steam reports for each one.
 
 New in 1.4: PlayStation button prompts without Special K (optional). If the game folder has a
 Special K texture pack (SK_Res\inject\textures\<name>.dds), the mod replaces those textures as
@@ -40,9 +52,13 @@ Install
        <game folder>\SK_Res\inject\textures\61a1af48.dds
    Special K itself is not needed (don't install it as well).
 
-With Lyall's SO4Fix (winmm.dll) on Proton, put both DLLs in ONE variable, separated by ";":
-       WINEDLLOVERRIDES="xinput1_3=n,b;winmm=n,b" %command%
-(Tested together on Linux/Proton 10: co-op, button prompts and SO4Fix all worked.)
+With Lyall's SO4Fix on Proton: as winmm.dll, Proton loads its builtin winmm and SO4Fix never runs
+(1.4.1 said they were tested together; that was wrong). Rename SO4Fix's winmm.dll to wininet.dll.
+SO4Fix (2024) also needs the C++ runtime 14.40 or newer; the game's prefix usually has 14.0 and the
+game closes right after starting. Put a newer (14.40+) msvcp140.dll, vcruntime140.dll and
+vcruntime140_1.dll in the game folder, or install Visual C++ 2015-2022 in the prefix. Then:
+       WINEDLLOVERRIDES="xinput1_3=n,b;wininet=n,b;msvcp140=n,b;vcruntime140=n,b;vcruntime140_1=n,b" %command%
+(Tested together on Linux/Proton 10 on 2026-11-21: SO4Fix.log shows every fix applied.)
 
 Setup: which controller is which (so4coop.ini)
 -----------------------------------------------
@@ -54,8 +70,27 @@ Example (3 players): the DualSense is controller 3 and should play the first mem
     steam3_position=0, steam2_position=1, steam1_position=2
 The numbering can change if you reconnect controllers; check the log again if characters swap.
 
+xbox_position=P     (1.4.2) the Xbox controller plays position P; steamN_position then counts the
+                    other controllers only (steam1 = the first non-Xbox one, and so on). The log
+                    shows the result as "controller map: Steam controller N ..." lines.
+                    Without this line nothing changes from 1.4.1.
+
+Playing over the internet (Remote Play Together / Big Remote Play)
+-----------------------------------------------------------------
+In so4coop.ini: coop_join=1. steamN_position and xbox_position are then not used.
+- Remote Play Together: the host invites from the Steam friends list with the game running. Guests
+  play with a controller (a guest's keyboard reaches the game as a plain keyboard and moves whoever
+  has the turn, so use a controller).
+- Big Remote Play (BigLinux) / Sunshine + Moonlight: the host shares the screen or the game window;
+  Sunshine creates a virtual controller for each guest and Steam sees it as one more controller.
+  The game's Steam launch option still applies (Big Remote Play starts the game through Steam).
+  Same advice: guests with controllers, not keyboards.
+- In a battle each player presses a button to join and R3 to change character. so4coop.log shows
+  "=== JOIN: Steam controller N ... joins as position P (name) ===".
+
 Other settings
 --------------
+coop_join=1          (1.5) join with a button press; R3 = next free character (see above).
 coop_auto=1          co-op starts with every battle (0 = off; R3 then works as tag-team:
                      your character becomes the leader).
 coop_slice_ms=40     length of each player's turn (smaller = smoother).

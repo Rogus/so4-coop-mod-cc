@@ -713,3 +713,55 @@ Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move 
   Arumat) apertou as ações 13/14 (L2/R2, provável) 33 vezes; nenhum aperto pareado entre os controles; a proteção
   segurou a troca em 127 de 159 vezes (vez média ~63 ms em vez de 40 com os dois jogadores ativos); o usuário não
   relatou lentidão.
+
+## 2026-11-21 (noite): SO4Fix nunca carregou; 4 jogadores com teclado
+- Achado: com o jogo aberto (instalação real), o winmm.dll mapeado era o interno do Proton, não o Ultimate ASI Loader
+  do Lyall; nenhum SO4Fix.log em lugar nenhum (nem na cópia de teste). O exe não importa winmm (importa advapi32,
+  gdi32, kernel32, msvcp110, msvcr110, ole32, shell32, shlwapi, steam_api64, user32, wininet); quem puxa o winmm são
+  DLLs internas do Wine -> vem a interna. A nota da rodada 43 ("so4coop e SO4Fix convivem") estava errada: só o
+  so4coop rodava. Sintoma: print da Steam 1914x1048 (janela com bordas, faixas pretas), alt+tab ruim.
+- Correção: winmm.dll -> wininet.dll (nome aceito pelo Ultimate ASI Loader, importado direto pelo exe) na real e na
+  cópia; WINEDLLOVERRIDES="xinput1_3=n,b;wininet=n,b". launch.sh da cópia atualizado. A confirmar: SO4Fix.log aparece.
+- 4o jogador sem 4o controle: tools/kbpad.py (python-evdev) cria um controle virtual de Xbox 360 (uinput, 045e:028e)
+  guiado pelo teclado, que fica agarrado (grab); teclas sem função passam por um teclado virtual; Scroll Lock/Pause
+  liga/desliga. A Steam o vê como mais um controle -> steam4_position=3, sem mudar o mod. tools/so4play.sh (opção de
+  inicialização) liga o kbpad 1 s antes do jogo e o desliga ao fechar; log em tools/so4play.log. Ler o teclado
+  precisa da regra udev tools/70-so4kbpad.rules (uaccess só para o teclado Telink 248a:16ab).
+- so4coop.ini da instalação real era o antigo de 17/11; agora é o da 1.4.1 com steam1=2, steam2=1, steam3=0, steam4=3
+  (antigo em real-install-backup-20261121/so4coop.ini.before-4p).
+- Rodada 46 (instalação real, 1.4.1 + SO4Fix + kbpad): o SO4Fix travava o jogo ~3 s depois de abrir (log do Proton:
+  page fault em msvcp140+0x18c34 chamado de SO4Fix.asi+0x165a0). O prefixo 609150 tem msvcp140 14.0.24215; o
+  SO4Fix (VS 2022 17.10+) precisa de 14.40+ (mudança do std::mutex). Correção: msvcp140/vcruntime140/vcruntime140_1
+  14.44 (do prefixo do app 595520) na pasta do jogo (real e cópia) + overrides n,b no so4play.sh. SO4Fix.log:
+  v0.9.0 carregado, todas as correções aplicadas (1920x1080 sem bordas, intro, HUD, FOV, sombras).
+  Co-op: a Steam listou 3 controles e o virtual do teclado veio como controle 1 (não 4): handles 000D9089..(kbpad),
+  00011C66..6D5EC4E5 (GameSir), 00245E28..E869A2DE (DualSense). Teclado foi para o Arumat (steam1=2) e a Myuria
+  (steam4) ficou parada. A Steam não numera pela ordem de conexão.
+- v0.45 / 1.4.2: xbox_position=P. A cada 1 s, até conhecer todos os controles, SteamAPI_ISteamController_
+  GetDigitalActionOrigins(handle, action set atual, ações 1..16) -> origem 114-191 (Xbox One/360) = Xbox, outra = outro.
+  Com todos conhecidos: o 1o Xbox fica com P, os outros recebem steam1.., steam2.. na ordem da Steam (sc_remap;
+  configurado em sc_cfg, em vigor em sc_pos). Handle novo num índice -> reclassifica. Sem xbox_position nada muda.
+  Autoteste so4coop_maptest (lançamento e pesquisa): tipos por origem OK, 5 casos (inclusive o da rodada 46) -> WORKS;
+  hooktest continua WORKS. Na cópia: 1.4.2 + ini steam1=1 (GameSir), steam2=0 (DualSense), steam3=2, xbox=3;
+  launch.sh agora passa pelo tools/so4play.sh (kbpad + SO4Fix). A confirmar: valores reais de origem no log.
+- Rodada 47 (1.4.2 na cópia; log em notes/run47_so4coop.log): detecção ERRADA. Origens: controle 1 (handle
+  ..5F4DC78F, só existe desde o kbpad = teclado) 246; controle 2 (..6D5EC4E5, GameSir) 40; controle 3 (..E869A2DE,
+  DualSense) 120 -> o DualSense foi classificado como Xbox e foi para a Myuria, o teclado para a Sarah. As faixas do
+  enum (PS4 50-113, Xbox 114-191) não valem para o que esta Steam devolve pela interface 005.
+- v0.46 (1.4.2 de novo): tipo pelo NOME do ícone da origem (GetGlyphForActionOrigin, reserva GetStringForActionOrigin):
+  contém "xbox" -> Xbox, outro nome -> outro, vazio -> desconhecido (fica a numeração do ini). Log: "controller kind"
+  com ação, origem, ícone e nome, e a lista ação:origem de cada controle. Autoteste maptest + hooktest -> WORKS.
+- v0.47 / 1.5: modo entrar (coop_join=1) para Remote Play Together e Sunshine/big-remote-play (BigLinux; Sunshine +
+  Moonlight, até 4 dispositivos convidados, controles virtuais do Sunshine via libvirtualhid, DualSense escolhido pelo
+  tipo do cliente). Os convidados chegam como mais controles da Steam, em ordem variável, e podem ser Xbox -> nem
+  steamN nem xbox_position servem. Agora: 1o aperto numa batalha pega a 1a posição livre, R3 (take_action) passa
+  para a próxima livre; posse guardada por handle (sc_jh/sc_jp, 16) a sessão toda; posição de controle desconectado
+  fica livre. SC_MAXCTL 4 -> 8 (steam5..8_position, relatório do co-op com 8). displayfix: sem posições -> 0.
+  Autoteste so4coop_jointest (5 controles, saída, ordem trocada, grupo cheio) WORKS; maptest/hooktest WORKS.
+  Na cópia: 1.5 + coop_join=1. Lado Linux: keyd passa a pegar só o teclado físico (ids 248a:16ab) — com '*' ele
+  agarrava também o teclado virtual dos convidados do Sunshine e o repasse do kbpad. Teclado de convidado chega ao
+  jogo como teclado comum (fora do filtro) -> convidados devem usar controle.
+- Rodada 48 (1.5 na cópia, coop_join=1; log em notes/run48_so4coop.log): **funcionou**. 3 controles; cada um entrou
+  no 1o aperto, na ordem dos apertos: controle 3 (DualSense) -> Edge, controle 1 (teclado/kbpad) -> Sarah, controle 2
+  (GameSir) -> Arumat. Os três receberam vezes (294 / 93 / 223 fatias). R3 para trocar não foi usado. Sem convidados
+  remotos ainda (Remote Play Together / big-remote-play a testar).

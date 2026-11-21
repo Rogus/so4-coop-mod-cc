@@ -20,3 +20,5 @@ so4coop_hooktest
 so4coop_cooptest
 so4coop_patchtest
 so4coop_textest
+so4coop_maptest
+so4coop_jointest

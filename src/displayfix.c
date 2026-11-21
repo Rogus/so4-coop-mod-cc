@@ -169,6 +169,7 @@ static void gl_load(void)
     }
     if (gl_pos == 0xffffffff)                             /* default: lowest mapped position */
         for (int k = 0; k < SC_MAXCTL; k++) if (sc_pos[k] < gl_pos) gl_pos = sc_pos[k];
+    if (gl_pos == 0xffffffff) gl_pos = 0;                 /* v0.47: join mode (no fixed positions): the first member */
 }
 
 /* F5 (research build), v0.39: ON (map + target board + sight cursor) <-> OFF.

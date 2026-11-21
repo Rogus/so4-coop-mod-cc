@@ -1,4 +1,4 @@
-so4coop co-op 1.4.1 - STAR OCEAN - THE LAST HOPE - 4K & Full HD Remaster (Steam)
+so4coop co-op 1.5 - STAR OCEAN - THE LAST HOPE - 4K & Full HD Remaster (Steam)
 ================================================================================
 
 O que faz
@@ -12,6 +12,19 @@ o líder entre os jogadores ativos muitas vezes por segundo (a cada 40 ms por pa
 cada um, só deixa o controle daquele jogador chegar ao jogo. Um jogador conta como ativo enquanto
 usa o controle (analógico ou qualquer botão nos últimos 1,5 s); o personagem de quem está parado
 fica com a IA, e um só jogador ativo joga como no single-player.
+
+Novo na 1.5: modo "entrar no jogo" (coop_join=1), para jogar com amigos pela internet com o
+Remote Play Together da Steam ou com o Sunshine/Moonlight (por exemplo pelo Big Remote Play do
+BigLinux). Os controles dos convidados chegam ao jogo como mais controles da Steam, numa ordem que
+muda; por isso nada fica fixo: numa batalha, cada controle pega o primeiro personagem livre no
+primeiro botão que apertar, e o R3 passa para o próximo personagem livre. Quem sai libera o
+personagem. Até 8 controles conectados (a batalha tem 4 personagens).
+
+Novo na 1.4.2: xbox_position=P. O Steam numera os controles na ordem dele, que pode mudar de uma
+sessão para outra. Com xbox_position, o controle de Xbox (por exemplo um teclado transformado em
+controle virtual de Xbox 360 no Linux) joga sempre com a posição P, e os steamN_position passam a
+contar só os outros controles. O mod descobre qual é o de Xbox pelos ícones de botão que o Steam
+informa para cada controle.
 
 Novo na 1.4: ícones de botão do PlayStation sem o Special K (opcional). Se a pasta do jogo tiver um
 pacote de texturas do Special K (SK_Res\inject\textures\<nome>.dds), o mod troca essas texturas
@@ -41,9 +54,13 @@ Instalação
        <pasta do jogo>\SK_Res\inject\textures\61a1af48.dds
    O Special K em si não é necessário (não instale os dois).
 
-Com o SO4Fix do Lyall (winmm.dll) no Proton, coloque as duas DLLs em UMA variável, separadas por ";":
-       WINEDLLOVERRIDES="xinput1_3=n,b;winmm=n,b" %command%
-(Testados juntos no Linux/Proton 10: co-op, ícones e SO4Fix funcionaram.)
+Com o SO4Fix do Lyall no Proton: como winmm.dll o Proton carrega o winmm interno e o SO4Fix nunca
+roda (a 1.4.1 dizia que tinham sido testados juntos; não era verdade). Renomeie o winmm.dll do
+SO4Fix para wininet.dll. O SO4Fix (2024) também precisa do runtime C++ 14.40 ou mais novo; o prefixo
+do jogo costuma ter o 14.0 e o jogo fecha logo ao abrir. Coloque msvcp140.dll, vcruntime140.dll e
+vcruntime140_1.dll novos (14.40+) na pasta do jogo, ou instale o Visual C++ 2015-2022 no prefixo. Então:
+       WINEDLLOVERRIDES="xinput1_3=n,b;wininet=n,b;msvcp140=n,b;vcruntime140=n,b;vcruntime140_1=n,b" %command%
+(Testados juntos no Linux/Proton 10 em 21/11/2026: o SO4Fix.log mostra todas as correções aplicadas.)
 
 Configuração: qual controle é qual (so4coop.ini)
 ------------------------------------------------
@@ -55,8 +72,27 @@ Exemplo (3 jogadores): o DualSense é o controle 3 e deve jogar com o primeiro m
     steam3_position=0, steam2_position=1, steam1_position=2
 A numeração pode mudar se você reconectar os controles; confira o log de novo se trocar.
 
+xbox_position=P     (1.4.2) o controle de Xbox joga com a posição P; os steamN_position contam só
+                    os outros controles (steam1 = o primeiro que não é de Xbox, e assim por diante).
+                    O log mostra o resultado em linhas "controller map: Steam controller N ...".
+                    Sem essa linha, nada muda em relação à 1.4.1.
+
+Jogar pela internet (Remote Play Together / Big Remote Play)
+-------------------------------------------------------------
+No so4coop.ini: coop_join=1. Os steamN_position e o xbox_position deixam de valer.
+- Remote Play Together: o anfitrião convida pela lista de amigos da Steam, com o jogo aberto. Os
+  convidados jogam com controle (o teclado de um convidado chega ao jogo como teclado comum e
+  mexe em quem estiver com a vez, então use controle).
+- Big Remote Play (BigLinux) / Sunshine + Moonlight: o anfitrião compartilha a tela ou a janela do
+  jogo; o Sunshine cria um controle virtual para cada convidado e a Steam o vê como mais um
+  controle. A opção de inicialização do jogo na Steam continua valendo (o Big Remote Play abre o
+  jogo pela Steam). Mesmo cuidado: convidados com controle, não com teclado.
+- Numa batalha, cada jogador aperta um botão para entrar e o R3 para trocar de personagem. O
+  so4coop.log mostra "=== JOIN: Steam controller N ... joins as position P (nome) ===".
+
 Outras opções
 -------------
+coop_join=1          (1.5) entrar apertando um botão; R3 = próximo personagem livre (veja acima).
 coop_auto=1          o co-op liga em toda batalha (0 = desligado; o R3 vira tag-team: o seu
                      personagem vira o líder).
 coop_slice_ms=40     duração da vez de cada jogador (menor = mais fluido).

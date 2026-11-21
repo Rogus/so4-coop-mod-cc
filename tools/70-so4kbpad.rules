@@ -1,0 +1,5 @@
+# so4coop kbpad: deixa o usuario logado ler o teclado para usar como 4o controle.
+# Com o keyd rodando, as teclas saem pelo "keyd virtual keyboard" (o keyd agarra o teclado fisico Telink 248a:16ab).
+# Instalar: sudo install -m644 70-so4kbpad.rules /etc/udev/rules.d/ && sudo udevadm control --reload && sudo udevadm trigger --action=add --subsystem-match=input
+SUBSYSTEM=="input", KERNEL=="event*", ENV{ID_INPUT_KEYBOARD}=="1", ENV{ID_VENDOR_ID}=="248a", ENV{ID_MODEL_ID}=="16ab", TAG+="uaccess"
+SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="keyd virtual keyboard", TAG+="uaccess"
