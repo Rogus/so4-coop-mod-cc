@@ -7,7 +7,7 @@ fights at the same time.
 The mod is a single `xinput1_3.dll` proxy written in freestanding C (no CRT), plus a settings file.
 It contains no game files.
 
-**Current release: 1.5**
+**Current release: [1.5](https://github.com/Rogus/so4-coop-mod-cc/releases/tag/v1.5)**
 
 | Tested with | |
 | --- | --- |
@@ -60,9 +60,9 @@ controller mapping, join mode, and the press guard. There is no automated in-gam
   Guests need a controller, because a guest's keyboard moves whoever has the current turn.
 
 ## Install
-There is no prebuilt download on GitHub yet, so [build the DLL](#build) first.
-
-1. Copy `build/release/xinput1_3.dll` and `release/so4coop.ini` into the game folder, next to
+1. Download `so4coop-coop-1.5.zip` from the
+   [releases page](https://github.com/Rogus/so4-coop-mod-cc/releases) (or [build it](#build)
+   yourself) and extract `xinput1_3.dll` and `so4coop.ini` into the game folder, next to
    `StarOceanTheLastHope.exe`.
 2. On Linux or Steam Deck, set the game's launch option in Steam (skip this on Windows):
 
