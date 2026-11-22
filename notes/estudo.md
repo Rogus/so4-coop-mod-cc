@@ -1,767 +1,767 @@
-# Estudo de viabilidade: co-op local no STAR OCEAN 4 - THE LAST HOPE 4K & Full HD Remaster (Steam)
+# Feasibility study: local co-op in STAR OCEAN 4 - THE LAST HOPE 4K & Full HD Remaster (Steam)
 
-## Fase 1 - reconhecimento estático (concluída)
-- `StarOceanTheLastHope.exe`: x64 nativo (motor "Aska" da tri-Ace), DirectX 11, MSVC 2012 (msvcr110).
-- Protegido: SteamStub (seção `.bind` com o ponto de entrada) + código cifrado em `.xpdata` (~68 MB),
-  decifrado só em execução. Não removemos nem contornamos o DRM: o mod trabalha em tempo de
-  execução, como o SO4Fix (que já altera código do jogo em execução sem problemas).
-- Entrada: `XINPUT1_3.dll` carregado dinamicamente (LoadLibraryA) -> um `xinput1_3.dll` na pasta do
-  jogo é carregado no lugar (no Proton: `WINEDLLOVERRIDES="xinput1_3=n,b" %command%`).
-  Também há a API antiga `SteamController005`.
-- RTTI legível (5815 tipos, 545 de batalha). Classes-chave:
+## Phase 1 - static reconnaissance (done)
+- `StarOceanTheLastHope.exe`: native x64 (tri-Ace's "Aska" engine), DirectX 11, MSVC 2012 (msvcr110).
+- Protected: SteamStub (`.bind` section with the entry point) + encrypted code in `.xpdata` (~68 MB),
+  decrypted only at run time. We neither remove nor bypass the DRM: the mod works at run time,
+  like SO4Fix (which already changes game code at run time without problems).
+- Input: `XINPUT1_3.dll` loaded dynamically (LoadLibraryA) -> an `xinput1_3.dll` in the game
+  folder is loaded instead (on Proton: `WINEDLLOVERRIDES="xinput1_3=n,b" %command%`).
+  There is also the old `SteamController005` API.
+- Readable RTTI (5815 types, 545 of them battle). Key classes:
   - `Battle::CPlayerEdge/Reimi/Faiz/Lymle/Backus/Arumat/Melicle/Muria/Sarah`
-    -> herdam de `CPlayerThinkChr` -> `CPlayerChr` -> ... (a IA é uma camada do próprio personagem;
-       o jogo já permite trocar o personagem controlado, então cada um tem código de jogador e de IA)
-  - `Battle::CBtlPad` (Task do controle na batalha), `Aska::Pad/PadXe/WindowsPad` (controle; "Xe" = Xbox 360)
+    -> inherit from `CPlayerThinkChr` -> `CPlayerChr` -> ... (the AI is a layer of the character itself;
+       the game already lets you switch the controlled character, so each one has player code and AI code)
+  - `Battle::CBtlPad` (controller Task in battle), `Aska::Pad/PadXe/WindowsPad` (controller; "Xe" = Xbox 360)
   - `Battle::CTacticsMode`, `CReplaceMember`, `CMemberBoard`, `CBattleMainTask`
-- Vtables ficam em `.xdata` (não cifrada): o mapa tipo -> vtable funciona (validado em recon/rtti_static.py).
+- Vtables are in `.xdata` (not encrypted): the type -> vtable map works (validated in recon/rtti_static.py).
 
-## Fase 2 - sonda em execução (em andamento)
-`build/xinput1_3.dll` (src/probe.c + src/scan.c), só leitura:
-- repassa o XInput ao do sistema e registra quais slots (0-3) o jogo lê e de onde no código;
-- F9: acha na memória os personagens, CBtlPad, Pad e gerenciadores de batalha, registra os
-  ponteiros entre eles e salva a memória de cada um em so4coop_dumps/ para comparar;
-- F10: marca no log.
+## Phase 2 - runtime probe (in progress)
+`build/xinput1_3.dll` (src/probe.c + src/scan.c), read-only:
+- passes XInput through to the system's and records which slots (0-3) the game reads and from where in the code;
+- F9: finds the characters, CBtlPad, Pad and battle managers in memory, records the
+  pointers between them and saves each one's memory in so4coop_dumps/ for comparison;
+- F10: marks the log.
 
-Objetivo: achar (1) a variável "personagem controlado" (comparando F9 com Edge e F9 após trocar
-de personagem), (2) se o Aska::Pad lê mais de um controle, (3) como o CBtlPad entrega comandos.
+Goal: find (1) the "controlled character" variable (comparing F9 with Edge and F9 after switching
+characters), (2) whether Aska::Pad reads more than one controller, (3) how CBtlPad delivers commands.
 
-## Critério de viabilidade
-Protótipo: o controle 2 move um aliado numa batalha enquanto o controle 1 move o líder.
+## Feasibility criterion
+Prototype: controller 2 moves an ally in a battle while controller 1 moves the leader.
 
-### Execução 1 (sonda v0.2) - notes/run1_v0.2.log
-- A sonda carregou pelo override no registro do prefixo (AppDefaults\StarOceanTheLastHope.exe).
-- O código real do jogo fica na seção `.data1` (flags RX); `.text` é minúscula.
-- O jogo fez UMA chamada de XInput (game+0x3786cd) e não leu controles por XInput depois:
-  com o Steam aberto, ele deve ler pela API SteamController005 (Steam Input).
-- Erro da sonda: F9/F10 só eram lidos durante chamadas de XInputGetState -> nada foi capturado.
-  Corrigido na v0.3 (thread própria para as teclas + registro da 1ª chamada de cada função).
+### Run 1 (probe v0.2) - notes/run1_v0.2.log
+- The probe loaded through the override in the prefix registry (AppDefaults\StarOceanTheLastHope.exe).
+- The game's real code is in the `.data1` section (RX flags); `.text` is tiny.
+- The game made ONE XInput call (game+0x3786cd) and did not read controllers through XInput after that:
+  with Steam open, it must read through the SteamController005 API (Steam Input).
+- Probe bug: F9/F10 were only read during XInputGetState calls -> nothing was captured.
+  Fixed in v0.3 (own thread for the keys + logging of the 1st call to each function).
 
-### Execução 2 (v0.3) e 3 (v0.4)
-- O jogo não lê controle por XInput com o Steam aberto (nenhum XInputGetState): usa
-  `Aska::WindowsPad` (2 instâncias) alimentado pelo Steam Input.
-- Grupo: lista ligada de personagens (`+0x8` anterior, `+0x10` próximo).
-- `CBattleMainTask` (gerente da batalha): `+0x90` -> `CBtlPad`; `+0x410` -> objeto **X**.
-  (O `+0x420` visto na execução 2 era a seleção do menu tático, não o controle.)
-- **Personagem controlado** (execução 3: tática "Don't do anything" em todos, troca por L1/R1,
-  sequência Edge,Edge,Edge,Sarah,Arumat,Myuria,Edge - batida exata):
-  bloco no próprio personagem, zerado nos não controlados:
-  - `+0x129a0` e `+0x12a20` -> X (o mesmo apontado por CBattleMainTask+0x410)
-  - `+0x129c0` -> objeto **Y**;  `+0x129d8` = 120.0f
-  - X e Y são recriados a cada troca (endereços mudam).
-- Hipótese para o co-op: X é o "operador do jogador" ligado ao controle; o co-op precisaria de
-  um X por jogador, cada um ligado a um controle diferente.
-- v0.5: identifica a classe (RTTI) de X, Y e dos objetos para onde apontam, e os copia.
+### Runs 2 (v0.3) and 3 (v0.4)
+- The game does not read controllers through XInput with Steam open (no XInputGetState): it uses
+  `Aska::WindowsPad` (2 instances) fed by Steam Input.
+- Party: linked list of characters (`+0x8` previous, `+0x10` next).
+- `CBattleMainTask` (battle manager): `+0x90` -> `CBtlPad`; `+0x410` -> object **X**.
+  (The `+0x420` seen in run 2 was the tactics menu selection, not control.)
+- **Controlled character** (run 3: "Don't do anything" tactic on everyone, switching with L1/R1,
+  sequence Edge,Edge,Edge,Sarah,Arumat,Myuria,Edge - exact match):
+  block in the character itself, zeroed in those not controlled:
+  - `+0x129a0` and `+0x12a20` -> X (the same one pointed to by CBattleMainTask+0x410)
+  - `+0x129c0` -> object **Y**;  `+0x129d8` = 120.0f
+  - X and Y are recreated on every switch (addresses change).
+- Co-op hypothesis: X is the "player operator" tied to the controller; co-op would need
+  one X per player, each tied to a different controller.
+- v0.5: identifies the class (RTTI) of X, Y and the objects they point to, and copies them.
 
-### Execução 4 (v0.5)
-- O objeto X do bloco do personagem controlado é `Battle::CCm146` (família de 60 câmeras CCmNNN):
-  o bloco +0x129a0 é a **câmera** presa ao personagem controlado (+ juntas do esqueleto
-  `JointObject`/`HierarchicalObject`). Bom indicador de "controlado", mas não é o caminho da entrada.
-- `CBattleMainTask+0x410` desta vez continha lixo: não é um ponteiro confiável.
-- Nenhum objeto já mapeado (gerente, CBtlPad, WindowsPad, táticas, alvo) aponta para o controlado.
-- v0.6: procura em toda a memória gravável (inclusive globais do executável) os ponteiros para cada
-  personagem do grupo e identifica a classe do objeto que os contém (s<NN>_refs.txt).
+### Run 4 (v0.5)
+- Object X in the controlled character's block is `Battle::CCm146` (family of 60 cameras CCmNNN):
+  the block at +0x129a0 is the **camera** attached to the controlled character (+ skeleton joints
+  `JointObject`/`HierarchicalObject`). A good indicator of "controlled", but not the input path.
+- `CBattleMainTask+0x410` contained garbage this time: not a reliable pointer.
+- No object mapped so far (manager, CBtlPad, WindowsPad, tactics, target) points to the controlled one.
+- v0.6: searches all writable memory (including the executable's globals) for pointers to each
+  party character and identifies the class of the object containing them (s<NN>_refs.txt).
 
-### Execução 5 (v0.6) - notes/run5_v0.6
-- Edge (F9 #1) -> R1 -> Sarah (F9 #2): a troca foi registrada. Câmera desta batalha: `CCm103`;
-  desta vez X (câmera) e Y **não** foram recriados na troca (mesmos endereços).
-- Busca de ponteiros (analysis/diff_refs.py): 573/591 referências; quase tudo é
-  `MessageDispatcherBlockForList+0x60` (pool de mensagens reciclado = ruído).
-  Só 6 campos pulam Edge -> Sarah:
-  - `CCameraManager+0x360`, `CCameraUserCtrl+0xc0` (câmera)
-  - `CFaceMorphManager+0x540` e um campo no heap ao lado dele (expressão facial)
-  - **`0x0000000000C2EC00` (heap baixo, sem RTTI)**: único candidato não explicado.
-- Nada da cadeia de entrada (CBtlPad, PadTask, WindowsPad, CBattleMainTask, CTacticsMode)
-  aponta para personagem. Os 8 KB de CBattleMainTask, CTacticsMode e CSelectTarget ficaram
-  **idênticos** entre Edge e Sarah; CBtlPad/WindowsPad/PadTask só mudaram estado de
-  botões/analógico e contadores.
-- Conclusão: a entrada provavelmente escolhe o personagem por **índice** do grupo ou por um
-  objeto fora dos já mapeados; busca por ponteiro não acha índice.
-- Próximo (v0.7): breakpoint de escrita (registradores de depuração) no campo 0xC2EC00 e em
-  CCameraUserCtrl+0xc0 para registrar a instrução que troca o personagem ao apertar R1 ->
-  essa função é a "troca de personagem controlado", a alavanca real para o co-op.
-- v0.7 (src/watch.c): após dois F9 com personagens diferentes, arma até 4 watchpoints de
-  hardware (leitura/escrita, 8 bytes) nos campos que pularam para o novo personagem; um VEH
-  registra cada instrução do jogo que lê/escreve neles e salva o código da função em
-  so4coop_dumps/code_<rva>.bin. F11 = relatório e remove os watchpoints. Autoteste no Wine 11.22
-  local: funciona (Dr7 lido de volta, DR6 preenchido). No Proton, o autoteste vai no início do log.
+### Run 5 (v0.6) - notes/run5_v0.6
+- Edge (F9 #1) -> R1 -> Sarah (F9 #2): the switch was recorded. Camera in this battle: `CCm103`;
+  this time X (camera) and Y were **not** recreated on the switch (same addresses).
+- Pointer search (analysis/diff_refs.py): 573/591 references; almost all are
+  `MessageDispatcherBlockForList+0x60` (recycled message pool = noise).
+  Only 6 fields jump Edge -> Sarah:
+  - `CCameraManager+0x360`, `CCameraUserCtrl+0xc0` (camera)
+  - `CFaceMorphManager+0x540` and a field on the heap next to it (facial expression)
+  - **`0x0000000000C2EC00` (low heap, no RTTI)**: the only unexplained candidate.
+- Nothing in the input chain (CBtlPad, PadTask, WindowsPad, CBattleMainTask, CTacticsMode)
+  points to a character. The 8 KB of CBattleMainTask, CTacticsMode and CSelectTarget were
+  **identical** between Edge and Sarah; CBtlPad/WindowsPad/PadTask only changed
+  button/stick state and counters.
+- Conclusion: input probably picks the character by party **index** or through an
+  object outside those mapped; a pointer search does not find an index.
+- Next (v0.7): write breakpoint (debug registers) on field 0xC2EC00 and on
+  CCameraUserCtrl+0xc0 to record the instruction that switches the character when R1 is pressed ->
+  that function is the "controlled character switch", the real lever for co-op.
+- v0.7 (src/watch.c): after two F9s with different characters, arms up to 4 hardware
+  watchpoints (read/write, 8 bytes) on the fields that jumped to the new character; a VEH
+  records each game instruction that reads/writes them and saves the function's code in
+  so4coop_dumps/code_<rva>.bin. F11 = report, and removes the watchpoints. Self-test on local
+  Wine 11.22: works (Dr7 read back, DR6 filled in). On Proton, the self-test goes at the start of the log.
 
-### Execução 6 (v0.7) - notes/run6_v0.7
-- Autoteste no Proton 11.0-100: watchpoints de hardware **funcionam**, mas o DR6 vem vazio
-  (atribuição só por mudança de valor; leituras ficam como "w?").
-- 4 watchpoints armados em 61 threads (Dr7 = 0xBBBB0055, correto), **0 acessos** em 4 min.
-- Causa: os "campos do heap sem classe" em 0xC2xxxx (inclusive o 0xC2EC00 da execução 5) são a
-  **pilha da própria sonda**: as variáveis locais do F9 guardam o personagem controlado; três
-  deles já tinham outro valor no momento de armar. Artefato da sonda, não do jogo.
-- Sem esse artefato, só seguem a troca objetos de câmera (CCameraManager+0x360,
-  CCameraUserCtrl+0xc0, CCameraAngleLock+0x190) e CFaceMorphManager+0x540.
-- find_controlled.py na execução 3 (7 capturas): os 46 candidatos estão todos no bloco da
-  câmera (+0x129a0..+0x12a24): o personagem **não** tem flag própria de "controlado".
-- v0.8: ignora a pilha da sonda (registra o intervalo no log), vigia os campos de câmera
-  (quem escreve neles na troca deve ser a rotina de troca de personagem), não rearma nos F9
-  seguintes, limita leituras não atribuídas, e salva as variáveis globais do jogo a cada F9
-  (procurar um índice do grupo: Edge 0, Sarah 1, Arumat 2...).
+### Run 6 (v0.7) - notes/run6_v0.7
+- Self-test on Proton 11.0-100: hardware watchpoints **work**, but DR6 comes back empty
+  (attribution only by value change; reads show as "w?").
+- 4 watchpoints armed in 61 threads (Dr7 = 0xBBBB0055, correct), **0 accesses** in 4 min.
+- Cause: the "heap fields without a class" at 0xC2xxxx (including 0xC2EC00 from run 5) are the
+  **probe's own stack**: F9's local variables hold the controlled character; three
+  of them already had another value by the time they were armed. A probe artifact, not the game's.
+- Without that artifact, only camera objects follow the switch (CCameraManager+0x360,
+  CCameraUserCtrl+0xc0, CCameraAngleLock+0x190) and CFaceMorphManager+0x540.
+- find_controlled.py on run 3 (7 captures): the 46 candidates are all in the camera
+  block (+0x129a0..+0x12a24): the character has **no** "controlled" flag of its own.
+- v0.8: ignores the probe's stack (logs the range), watches the camera fields
+  (whatever writes them on a switch must be the character switch routine), does not rearm on later
+  F9s, limits unattributed reads, and saves the game's global variables on every F9
+  (to look for a party index: Edge 0, Sarah 1, Arumat 2...).
 
-### Execução 7 (v0.8) - notes/run7_v0.8
-- Pilha da sonda = 0xB30000-0xC30000: **confirmado** que os campos 0xC2xxxx eram a própria sonda.
-- Capturas: #1 Edge, #2 no meio da troca (sem controlado), #3 Sarah, #4 Edge, F11, #5 Edge.
-  Bug da v0.8: a #2 sem controlado apagou a referência anterior (corrigido na v0.9).
-- Watchpoints em CCameraManager+0x360 e CCameraAngleLock+0x190: 0 acessos (sem troca depois de armar).
-- F11 (remover watchpoints = suspender as 61 threads de novo) -> o jogo travou; a sonda continuou viva.
-- **Globais (.arch, 7,4 MB)**: só um bloco é igual nas 3 capturas do Edge e diferente na da Sarah:
+### Run 7 (v0.8) - notes/run7_v0.8
+- Probe stack = 0xB30000-0xC30000: **confirmed** that the 0xC2xxxx fields were the probe itself.
+- Captures: #1 Edge, #2 mid-switch (none controlled), #3 Sarah, #4 Edge, F11, #5 Edge.
+  v0.8 bug: #2, with none controlled, erased the previous reference (fixed in v0.9).
+- Watchpoints on CCameraManager+0x360 and CCameraAngleLock+0x190: 0 accesses (no switch after arming).
+- F11 (removing watchpoints = suspending the 61 threads again) -> the game froze; the probe stayed alive.
+- **Globals (.arch, 7.4 MB)**: only one block is the same in Edge's 3 captures and different in Sarah's:
   - `game+0xf77ed2` Edge 2 / Sarah 3; `game+0xf77ed3` Edge 1 / Sarah 2; `game+0xf77f00` Edge 2 / Sarah 3
-  - a captura #2 (no meio da troca) já tem os valores da Sarah: muda antes da câmera.
-  - Forte candidato a "índice do membro controlado". Falta um 3º personagem para ver a numeração.
-- v0.9: arma uma vez, no 1º F9 em batalha, watchpoints fixos: os dois globais, CBtlPad+0x1180
-  (controle: muda sempre) e CBtlPad+0x28 (valores do analógico); F11 só relata, não desarma.
+  - capture #2 (mid-switch) already has Sarah's values: it changes before the camera.
+  - Strong candidate for "index of the controlled member". A 3rd character is needed to see the numbering.
+- v0.9: arms fixed watchpoints once, on the 1st F9 in battle: the two globals, CBtlPad+0x1180
+  (control: always changes) and CBtlPad+0x28 (stick values); F11 only reports, does not disarm.
 
-### Execução 8 (v0.9) - notes/run8_v0.9
-- O log da execução 8 foi **sobrescrito** pela inicialização seguinte (tela branca); só restaram os
-  dumps (2 capturas, 01:12:04 e 01:12:08) -> provável travamento logo após armar os watchpoints.
-- Nas duas capturas a Sarah é a controlada, mas o bloco global tem `02 01` (os valores do Edge na
-  execução 7): o número **não é o personagem**, parece a posição do controlado na ordem do grupo
-  desta batalha (líder = 1 em +0xed3). +0xf00 caiu para 0 na 2ª captura: é outra coisa.
-- Início com tela branca (01:15): a sonda carregou, autoteste dos watchpoints ok, chamadas XInput,
-  e o log para (nenhum heartbeat de 30 s).
-- Watchpoints de hardware no Proton = 2 (talvez 3) travamentos: **desligados na v0.10**.
-- v0.10: log em modo acréscimo com cabeçalho de sessão; so4coop_dumps anterior renomeado;
-  busca estática no código decifrado (deslocamentos RIP-relativos e endereços absolutos) de
-  todas as instruções que apontam para game+0xf77e80..0xf77f40, com dump das funções.
-- Som: PulseAudio e PipeWire/WirePlumber rodando juntos; o WirePlumber detém a reserva
-  (org.freedesktop.ReserveDevice1) das 4 placas, então as saídas do PulseAudio (que o Proton usa)
-  ficam suspensas. Não é problema do jogo nem da sonda.
+### Run 8 (v0.9) - notes/run8_v0.9
+- Run 8's log was **overwritten** by the next launch (white screen); only the dumps
+  remain (2 captures, 01:12:04 and 01:12:08) -> probable freeze right after arming the watchpoints.
+- In both captures Sarah is the controlled one, but the global block has `02 01` (Edge's values in
+  run 7): the number is **not the character**; it looks like the controlled one's position in this
+  battle's party order (leader = 1 at +0xed3). +0xf00 dropped to 0 in the 2nd capture: it is something else.
+- Launch with a white screen (01:15): the probe loaded, watchpoint self-test ok, XInput calls,
+  and the log stops (no 30 s heartbeat).
+- Hardware watchpoints on Proton = 2 (maybe 3) freezes: **turned off in v0.10**.
+- v0.10: log in append mode with a session header; previous so4coop_dumps renamed;
+  static search in the decrypted code (RIP-relative displacements and absolute addresses) for
+  every instruction that points to game+0xf77e80..0xf77f40, with a dump of the functions.
+- Sound: PulseAudio and PipeWire/WirePlumber running together; WirePlumber holds the reservation
+  (org.freedesktop.ReserveDevice1) of the 4 cards, so PulseAudio's outputs (which Proton uses)
+  stay suspended. Not a problem of the game or the probe.
 
-### Execução 9 (v0.10) - notes/run9_v0.10
-- Opções de inicialização: com `WINEDLLOVERRIDES=xinput1_3=n,b` o jogo parava antes do título
-  (tela cinza + 1280x720 preto, threads dormindo, sem diálogo). Com só `DXVK_FRAME_RATE=60 %command%`
-  iniciou normal. O override do registro do prefixo basta para carregar a sonda.
-- Som: resolvido trocando PulseAudio por pipewire-pulse (o WirePlumber detinha as placas).
-  analysis/live_check.sh mediu o áudio do jogo em HDMI 2: picos de -17 a -0,2 dBFS (som real).
-- Edge (#1) -> Arumat (#2): o bloco global ficou `02 01 / 02` nos dois -> **não** é o membro
-  controlado (a coincidência da execução 7 acompanhava outra coisa). Hipótese descartada.
-- 14 referências estáticas ao intervalo; 10 leem game+0xf77ea8 = ponteiro global para um alocador
-  (alinha endereço e chama métodos +0x58/+0x70 do objeto em +0x2a8). Sem relação com o controle.
-- Fato firme que resta: só o personagem controlado tem o bloco da câmera em +0x129a0.
-  v0.11: salva a seção de código inteira uma vez (68 MB, fica no disco, nunca no git) para buscar
-  offline quem escreve +0x129a0 e subir pelos chamadores até a rotina de troca de personagem.
+### Run 9 (v0.10) - notes/run9_v0.10
+- Launch options: with `WINEDLLOVERRIDES=xinput1_3=n,b` the game stopped before the title
+  (gray screen + 1280x720 black, sleeping threads, no dialog). With only `DXVK_FRAME_RATE=60 %command%`
+  it started normally. The override in the prefix registry is enough to load the probe.
+- Sound: solved by replacing PulseAudio with pipewire-pulse (WirePlumber was holding the cards).
+  analysis/live_check.sh measured the game's audio on HDMI 2: peaks from -17 to -0.2 dBFS (real sound).
+- Edge (#1) -> Arumat (#2): the global block was `02 01 / 02` in both -> it is **not** the controlled
+  member (run 7's coincidence was following something else). Hypothesis discarded.
+- 14 static references to the range; 10 read game+0xf77ea8 = global pointer to an allocator
+  (aligns an address and calls methods +0x58/+0x70 of the object at +0x2a8). Unrelated to control.
+- Solid fact that remains: only the controlled character has the camera block at +0x129a0.
+  v0.11: saves the whole code section once (68 MB, stays on disk, never in git) to search
+  offline for what writes +0x129a0 and climb the callers up to the character switch routine.
 
-### Execução 10 (v0.11) - notes/run10_v0.11
-- Seção de código salva: game+0x013a2000-0x05829932 (71,8 MB, 0 páginas ilegíveis), confere byte a
-  byte com a função salva na execução 9. Fica só no disco (code_full_013a2000.bin), nunca no git.
-- analysis/static_xref.py: busca offline de deslocamentos (disp) e de chamadas diretas (E8),
-  com limites de função pelo .pdata do exe (não cifrado) e disassembly pelo objdump.
-- **Nenhuma instrução usa 0x129a0/0x129c0/0x12a20** como deslocamento a partir do personagem; os
-  20 achados vizinhos (0x12984, 0x12998...) são falsos (bytes de saltos ou dados).
-- O bloco da câmera é um registro sem vtable em chr+0x12998 (1º campo = dono), logo antes de um
-  CFaceMorphManager embutido (vtable em chr+0x12a28). Só o sistema de câmera mexe nele, por ponteiro.
-  Sintoma da troca, não o mecanismo. Ele também some poucos segundos depois (dump do Arumat = 0).
-- Classes de interface que precisam saber quem é controlado: CArrowCursorManager,
-  CMinimapPlayerMarkerElement, CMemberBoardChangeArrowElement. Nenhuma aparece nas buscas de
-  ponteiro -> o controlado deve estar guardado como **índice**.
-- Próximo: v0.12 com o mapa RTTI de todas as classes Battle:: (não só 24), dump de todas as
-  instâncias por F9 e diff de campos inteiros que sigam a sequência Edge, Sarah, Arumat, Edge, Sarah.
+### Run 10 (v0.11) - notes/run10_v0.11
+- Code section saved: game+0x013a2000-0x05829932 (71.8 MB, 0 unreadable pages), matches byte for
+  byte the function saved in run 9. Stays on disk only (code_full_013a2000.bin), never in git.
+- analysis/static_xref.py: offline search for displacements (disp) and direct calls (E8),
+  with function boundaries from the exe's .pdata (not encrypted) and disassembly by objdump.
+- **No instruction uses 0x129a0/0x129c0/0x12a20** as a displacement from the character; the
+  20 nearby hits (0x12984, 0x12998...) are false (jump bytes or data).
+- The camera block is a record without a vtable at chr+0x12998 (1st field = owner), right before an
+  embedded CFaceMorphManager (vtable at chr+0x12a28). Only the camera system touches it, by pointer.
+  A symptom of the switch, not the mechanism. It also disappears a few seconds later (Arumat's dump = 0).
+- UI classes that need to know who is controlled: CArrowCursorManager,
+  CMinimapPlayerMarkerElement, CMemberBoardChangeArrowElement. None shows up in the pointer
+  searches -> the controlled one must be stored as an **index**.
+- Next: v0.12 with the RTTI map of all Battle:: classes (not just 24), a dump of all
+  instances per F9 and a diff of integer fields that follow the sequence Edge, Sarah, Arumat, Edge, Sarah.
 
-### Execução 11 (v0.12) - notes/run11_v0.12
-- 542 classes Battle::, ~1210 instâncias por F9 (4,8 MB, < 1 s). Capturas: Edge, Arumat, Edge.
-- diff_battle.py (mín. 2 personagens): 4458 campos candidatos; com valores pequenos (0-7) e o
-  mesmo mapeamento em objetos independentes, sobram dois:
-  - `CBattleMainTask+0x3c4` Edge 1 / Arumat 3 (logo após +0x3c0 = 3 constante)
-  - `CStatusBoardWindow+0x1f0` Edge 1 / Arumat 3, seguido da posição do destaque no painel:
-    x = 353 (Edge) / 919 (Arumat), y = 544 -> 283 px por posição: **posição no grupo, base 1**
-    (Edge 1, Sarah 2, Arumat 3, Myuria 4). Previsão: Sarah 2 / x 636, Myuria 4 / x 1202.
-- Ponteiros globais para o CBattleMainTask: game+0xf76940 e game+0x1051840 (sem acesso
-  RIP-relativo direto no código).
-- O único acesso com deslocamento 0x3c4 (game+0x3704a30) grava a constante 2 num objeto passado
-  como argumento (outra classe?). Partes do código têm lixo anti-disassembly depois de saltos
-  incondicionais: é preciso seguir os saltos, não ler em sequência.
+### Run 11 (v0.12) - notes/run11_v0.12
+- 542 Battle:: classes, ~1210 instances per F9 (4.8 MB, < 1 s). Captures: Edge, Arumat, Edge.
+- diff_battle.py (min. 2 characters): 4458 candidate fields; with small values (0-7) and the
+  same mapping in independent objects, two remain:
+  - `CBattleMainTask+0x3c4` Edge 1 / Arumat 3 (right after +0x3c0 = 3 constant)
+  - `CStatusBoardWindow+0x1f0` Edge 1 / Arumat 3, followed by the position of the highlight on the panel:
+    x = 353 (Edge) / 919 (Arumat), y = 544 -> 283 px per position: **party position, base 1**
+    (Edge 1, Sarah 2, Arumat 3, Myuria 4). Prediction: Sarah 2 / x 636, Myuria 4 / x 1202.
+- Global pointers to CBattleMainTask: game+0xf76940 and game+0x1051840 (no direct
+  RIP-relative access in the code).
+- The only access with displacement 0x3c4 (game+0x3704a30) writes the constant 2 to an object passed
+  as an argument (another class?). Parts of the code have anti-disassembly garbage after unconditional
+  jumps: the jumps must be followed, not read in sequence.
 
-### Execução 12 (v0.12) - notes/run12_v0.12
-- Capturas: Edge, Sarah, (meio da troca). **Previsão confirmada para a Sarah**: +0x3c4 = 2 e
-  destaque do painel em x = 636.
-- Ajuste: o Edge veio 0 (x = 70) nesta batalha e 1 (x = 353) na execução 11. Os 5 pontos seguem
-  x = 70 + 283 × posição. Logo `CBattleMainTask+0x3c4` = **posição do membro controlado na ordem
-  do grupo desta batalha, base 0 (0-3)**, não um número fixo por personagem; +0x3c0 = 3 = maior
-  posição. `CStatusBoardWindow+0x1f0` é a cópia que a interface usa.
-- A captura no meio da troca já tem o valor novo: o campo muda antes da câmera.
-- Próximo: (1) achar a lista de membros na ordem desta batalha (posição -> personagem);
-  (2) teste de escrita: a sonda grava +0x3c4 e vemos se o controle troca sem R1 (primeira
-  escrita na memória do jogo: só com autorização explícita).
+### Run 12 (v0.12) - notes/run12_v0.12
+- Captures: Edge, Sarah, (mid-switch). **Prediction confirmed for Sarah**: +0x3c4 = 2 and
+  panel highlight at x = 636.
+- Adjustment: Edge came out as 0 (x = 70) in this battle and 1 (x = 353) in run 11. The 5 points follow
+  x = 70 + 283 × position. So `CBattleMainTask+0x3c4` = **position of the controlled member in this
+  battle's party order, base 0 (0-3)**, not a fixed number per character; +0x3c0 = 3 = highest
+  position. `CStatusBoardWindow+0x1f0` is the copy the UI uses.
+- The mid-switch capture already has the new value: the field changes before the camera.
+- Next: (1) find the list of members in this battle's order (position -> character);
+  (2) write test: the probe writes +0x3c4 and we see whether control switches without R1 (first
+  write to the game's memory: only with explicit authorization).
 
-### Execução 13 (v0.13) - notes/run13_v0.13
-- Teste de escrita (F8): **recusou, nada foi gravado**. CBattleMainTask+0x3c0/+0x3c4 = 0 / 256 nesta
-  batalha e não acompanham a troca (capturas Edge, Edge, Arumat, Edge): a coincidência das
-  execuções 11-12 era outro estado. **Não usar o F8 da v0.13** (alvo errado; desligar na próxima versão).
-- CStatusBoardWindow+0x1f0 continua coerente (x = 70 + 283 × posição), mas na captura #2 já marcava
-  1 com a câmera ainda no Edge (igual à captura no meio da troca da execução 12): o painel muda **ao
-  apertar R1** e o personagem controlado só muda depois da animação. O painel mostra o membro
-  pedido/destino.
-- Estático: 6 funções usam +0x1f0 e +0x1f4; o "setter" game+0x3b7e460 grava 4 inteiros em
-  +0x1f0..+0x1fc (último = 0) e não tem chamadas diretas (virtual); não bate com o layout do painel.
-- Próximo: captura automática (a sonda detecta a troca pela câmera e captura sozinha depois de 1,5 s
-  estável) para ter 4 personagens sem depender do tempo do F9.
+### Run 13 (v0.13) - notes/run13_v0.13
+- Write test (F8): **refused, nothing was written**. CBattleMainTask+0x3c0/+0x3c4 = 0 / 256 in this
+  battle and they do not follow the switch (captures Edge, Edge, Arumat, Edge): the coincidence in
+  runs 11-12 was another state. **Do not use v0.13's F8** (wrong target; disable in the next version).
+- CStatusBoardWindow+0x1f0 is still consistent (x = 70 + 283 × position), but in capture #2 it already
+  showed 1 with the camera still on Edge (same as run 12's mid-switch capture): the panel changes **when
+  R1 is pressed** and the controlled character only changes after the animation. The panel shows the
+  requested/destination member.
+- Static: 6 functions use +0x1f0 and +0x1f4; the "setter" game+0x3b7e460 writes 4 integers to
+  +0x1f0..+0x1fc (last = 0) and has no direct calls (virtual); it does not match the panel's layout.
+- Next: automatic capture (the probe detects the switch by the camera and captures by itself after 1.5 s
+  stable) to get 4 characters without depending on F9 timing.
 
-### Execução 14 (v0.14) - notes/run14_v0.14
-- 1ª sessão fechada pelo usuário (23 s). 2ª: F7 ligou a captura automática, mas **nenhuma captura**.
-- Causa: o bloco +0x129a0 **não é o personagem controlado**, é o foco da câmera, que passeia entre os
-  membros sozinho. Nos dumps feitos ~3 s depois de cada linha "CONTROLLED" do log ele já estava em
-  outro membro ou em nenhum (exec. 11: log Edge/Arumat/Edge, dumps Sarah/Myuria/Sarah; exec. 12:
-  log Edge/Sarah/-, dumps -/Arumat/Edge; exec. 13: log Edge/Edge/Arumat/Edge, dumps Edge/-/Myuria/Edge).
-  Os rótulos "controlado" das execuções 3-13 vinham dele e não são confiáveis.
-- O que segue o R1 de forma direta é o painel (CStatusBoardWindow+0x1f0, x = 70 + 283 × posição).
-- v0.15: a captura automática dispara e rotula pela posição do painel (estável 1,5 s); o foco da
-  câmera fica só como referência; diff_battle.py usa as linhas "POSITION: p".
+### Run 14 (v0.14) - notes/run14_v0.14
+- 1st session closed by the user (23 s). 2nd: F7 turned on automatic capture, but **no captures**.
+- Cause: the block at +0x129a0 is **not the controlled character**; it is the camera focus, which wanders
+  among the members by itself. In the dumps made ~3 s after each "CONTROLLED" line in the log it was already on
+  another member or on none (run 11: log Edge/Arumat/Edge, dumps Sarah/Myuria/Sarah; run 12:
+  log Edge/Sarah/-, dumps -/Arumat/Edge; run 13: log Edge/Edge/Arumat/Edge, dumps Edge/-/Myuria/Edge).
+  The "controlled" labels in runs 3-13 came from it and are not reliable.
+- What directly follows R1 is the panel (CStatusBoardWindow+0x1f0, x = 70 + 283 × position).
+- v0.15: automatic capture triggers on and labels by the panel position (stable 1.5 s); the camera
+  focus is kept only as a reference; diff_battle.py uses the "POSITION: p" lines.
 
-### Execução 15 (v0.15) - notes/run15_v0.15
-- F7 ligado duas vezes (painel na posição 1, depois 0), **nenhuma captura**: com amostras a cada
-  250 ms a posição do painel nunca ficou igual por 1,5 s seguidos -> ela também muda sozinha
-  (anima ou percorre os membros), não só no R1.
-- v0.16: amostra a cada 100 ms, registra cada mudança com o tempo e o foco da câmera (até 400
-  linhas) e captura quando uma posição ocupa >= 80% das últimas 15 amostras.
-- Observação do usuário na execução 15: o personagem realmente controlado **muda junto com o destaque
-  do painel** ao apertar R1. O painel é um bom indicador do membro controlado.
+### Run 15 (v0.15) - notes/run15_v0.15
+- F7 turned on twice (panel at position 1, then 0), **no captures**: with samples every
+  250 ms the panel position never stayed the same for 1.5 s straight -> it also changes by itself
+  (animates or cycles through the members), not only on R1.
+- v0.16: samples every 100 ms, records each change with the time and the camera focus (up to 400
+  lines) and captures when one position takes up >= 80% of the last 15 samples.
+- User's observation in run 15: the character actually controlled **changes together with the panel
+  highlight** when R1 is pressed. The panel is a good indicator of the controlled member.
 
-### Execução 16 (v0.16) - notes/run16_v0.16 — **primeiro resultado firme**
-- Captura automática funcionou: 8 capturas, duas voltas, posições 1,2,3,0,1,2,3,0. O painel mudou
-  exatamente uma vez por R1 (não fica mudando sozinho).
-- diff_battle.py (4 posições, cada uma 2 vezes): 158 campos, com estrutura clara:
-  - **`CBattleMainTask+0x3a4` = posição do membro controlado (0-3)**, `+0x3a0` = maior posição (3).
-    O bloco +0x3a0..+0x3ac (16 bytes) é copiado por um getter em game+0x3c7adb0.
-    (O +0x3c4 das execuções 11-12 era um bloco irmão 0x20 adiante: coincidência.)
-  - **Ponteiro para o personagem controlado** em `CThisIs+0x38`, `CTargetSign+0x298`,
+### Run 16 (v0.16) - notes/run16_v0.16 — **first solid result**
+- Automatic capture worked: 8 captures, two rounds, positions 1,2,3,0,1,2,3,0. The panel changed
+  exactly once per R1 (it does not keep changing by itself).
+- diff_battle.py (4 positions, each one 2 times): 158 fields, with a clear structure:
+  - **`CBattleMainTask+0x3a4` = position of the controlled member (0-3)**, `+0x3a0` = highest position (3).
+    The block +0x3a0..+0x3ac (16 bytes) is copied by a getter at game+0x3c7adb0.
+    (The +0x3c4 in runs 11-12 was a sibling block 0x20 further on: coincidence.)
+  - **Pointer to the controlled character** at `CThisIs+0x38`, `CTargetSign+0x298`,
     `CHitCounter+0x528`, `CCameraManager+0x390`, `CCameraAngleLock+0x190`.
-  - Posição -> personagem nesta batalha: 0 Edge, 1 Sarah, 2 Arumat, 3 Myuria (ordem do grupo).
-  - Vários elementos de interface copiam a posição e o x do destaque (70/353/636/919).
-- Estático: só 3 funções usam o deslocamento 0x3a4 e 2 usam 0x3a0; o setter do bloco do
-  CBattleMainTask não aparece por deslocamento direto (escreve por ponteiro ou cópia embutida).
-- Próximo: teste de escrita em +0x3a4 com checagem cruzada (painel e CThisIs) para ver se só
-  esse campo troca o controle; depois achar como a entrada do controle chega ao personagem.
+  - Position -> character in this battle: 0 Edge, 1 Sarah, 2 Arumat, 3 Myuria (party order).
+  - Several UI elements copy the position and the highlight's x (70/353/636/919).
+- Static: only 3 functions use displacement 0x3a4 and 2 use 0x3a0; the setter of CBattleMainTask's
+  block does not show up by direct displacement (it writes by pointer or an embedded copy).
+- Next: write test on +0x3a4 with a cross-check (panel and CThisIs) to see whether that
+  field alone switches control; then find how controller input reaches the character.
 
-### Execução 17 (v0.17) - notes/run17_v0.17
-- F8: checagens 1 (+0x3a0 = 3, +0x3a4 = 0) e 2 (painel = 0) passaram; **checagem 3 falhou** (o primeiro
-  CThisIs encontrado não apontava para um personagem do grupo pela lista de 24 classes) -> **nada gravado**.
-  O usuário relatou "yes it does" (o destaque/câmera mudou?), mas não foi efeito da sonda.
-- v0.18: a checagem 3 percorre todas as instâncias de CThisIs e identifica o personagem pelo RTTI
-  (class_of), sem depender da lista limitada a 256 objetos; se falhar, registra cada instância e o alvo.
+### Run 17 (v0.17) - notes/run17_v0.17
+- F8: checks 1 (+0x3a0 = 3, +0x3a4 = 0) and 2 (panel = 0) passed; **check 3 failed** (the first
+  CThisIs found did not point to a party character according to the list of 24 classes) -> **nothing written**.
+  The user reported "yes it does" (the highlight/camera changed?), but it was not the probe's doing.
+- v0.18: check 3 goes through all CThisIs instances and identifies the character by RTTI
+  (class_of), without depending on the list limited to 256 objects; if it fails, it logs each instance and its target.
 
-### Execução 18 (v0.18) - travou antes do título
-- Tela cinza + 1280x720 preto de novo (02:42), **com só `DXVK_FRAME_RATE=60 %command%`**: a hipótese de
-  que o WINEDLLOVERRIDES causava isso estava errada. Terceiro travamento (01:15, 01:27, 02:42) em ~20
-  inícios, todos com a sonda. Sem processos restantes da sessão anterior; threads dormindo, áudio em
-  silêncio; o heartbeat da sonda continuou.
-- Suspeita: a thread da sonda chama GetAsyncKeyState a cada 30 ms desde 0,5 s após carregar, junto com
-  a criação da janela/dispositivo do jogo (possível corrida no Wine).
-- v0.19: nenhuma chamada de teclado nos primeiros 45 s ("hotkeys active" no log). Se travar de novo,
-  o próximo passo é iniciar sem a sonda (WINEDLLOVERRIDES=xinput1_3=b) para descartá-la.
+### Run 18 (v0.18) - froze before the title
+- Gray screen + 1280x720 black again (02:42), **with only `DXVK_FRAME_RATE=60 %command%`**: the hypothesis
+  that WINEDLLOVERRIDES caused this was wrong. Third freeze (01:15, 01:27, 02:42) in ~20
+  launches, all with the probe. No processes left over from the previous session; sleeping threads, silent
+  audio; the probe's heartbeat continued.
+- Suspicion: the probe's thread calls GetAsyncKeyState every 30 ms from 0.5 s after loading, at the same time as
+  the creation of the game's window/device (possible race in Wine).
+- v0.19: no keyboard calls in the first 45 s ("hotkeys active" in the log). If it freezes again,
+  the next step is to launch without the probe (WINEDLLOVERRIDES=xinput1_3=b) to rule it out.
 
-### Execução 19 (v0.19)
-- Iniciou normal (sem travar; teclado só depois de 45 s). Uma execução não prova que a causa era essa.
-- F8: **checagem 1 falhou**, nada gravado: CBattleMainTask+0x3a0 = 1083249128 (parece float ~4,5), +0x3a4 = 1.
-  Ou não estava em combate ativo no momento, ou o bloco muda de batalha para batalha. Próximo: F8 e
-  depois F9 em combate ativo, para ver o bloco inteiro nesse momento.
-- **Mecânica do jogo (relato do usuário):** em batalha só o **líder** é controlado; L1/R1 troca o
-  líder; a câmera e o foco seguem o líder; os outros membros são sempre IA. Logo +0x3a4 = posição do
-  **líder** no grupo. Para o co-op: o membro do jogador 2 precisa receber entrada do controle 2 no
-  lugar da IA, sem virar líder. Próximos alvos: onde a entrada do controle é aplicada ao líder e onde
-  a IA decide as ações dos outros membros.
+### Run 19 (v0.19)
+- Started normally (no freeze; keyboard only after 45 s). One run does not prove that was the cause.
+- F8: **check 1 failed**, nothing written: CBattleMainTask+0x3a0 = 1083249128 (looks like float ~4.5), +0x3a4 = 1.
+  Either it was not in active combat at that moment, or the block changes from battle to battle. Next: F8 and
+  then F9 in active combat, to see the whole block at that moment.
+- **Game mechanic (user's report):** in battle only the **leader** is controlled; L1/R1 switches the
+  leader; the camera and focus follow the leader; the other members are always AI. So +0x3a4 = position of the
+  **leader** in the party. For co-op: player 2's member must receive input from controller 2
+  instead of the AI, without becoming the leader. Next targets: where controller input is applied to the leader and
+  where the AI decides the other members' actions.
 
-### Execução 20 (v0.19) - notes/run20_v0.19 — **líder encontrado de forma estável**
-- F8 recusou (main+0x3a0 = 0 / +0x3a4 = 0); o F9 logo depois mostrou que a região main+0x380.. tinha
-  outro conteúdo: o CBattleMainTask termina antes de +0x3a0 e o dump de 4 KB lia o vizinho.
-- **`CBattleMainTask+0x68` aponta para o bloco do líder**: [0] = maior posição (3), [4] = posição do
-  líder; +0x60 = base comum (pilha de estados?). O bloco muda de lugar (main+0x3a0, +0x3c0, +0x3e0).
-- Validado em **19 capturas de 5 batalhas** (exec. 11, 12, 13, 16, 20): sempre max = 3 e líder = painel.
-  Explica tudo: o "+0x3c4" das exec. 11-12 era este bloco em +0x3c0; o "0/256" da 13, leitura fixa errada.
-- CThisIs/CTargetSign/CHitCounter não são estáveis (na exec. 20 apontam para o CThisIs ou para 0).
-- v0.20: F8 grava 1 byte em [bloco+4] só se: (1) bloco válido via +0x68 (até 0x200 após +0x60, max 1-3,
-  líder <= max); (2) painel = líder; (3) max + 1 = nº de personagens do grupo na memória (RTTI).
-  As 3 checagens passam nas 19 capturas.
-- Sessões curtas às 03:02 (30 s) e 03:02:53: inícios extras, sem dados.
+### Run 20 (v0.19) - notes/run20_v0.19 — **leader found reliably**
+- F8 refused (main+0x3a0 = 0 / +0x3a4 = 0); the F9 right after showed that the region main+0x380.. had
+  other content: CBattleMainTask ends before +0x3a0 and the 4 KB dump was reading its neighbor.
+- **`CBattleMainTask+0x68` points to the leader block**: [0] = highest position (3), [4] = leader's
+  position; +0x60 = common base (state stack?). The block moves around (main+0x3a0, +0x3c0, +0x3e0).
+- Validated in **19 captures from 5 battles** (runs 11, 12, 13, 16, 20): always max = 3 and leader = panel.
+  It explains everything: the "+0x3c4" of runs 11-12 was this block at +0x3c0; run 13's "0/256", a wrong fixed read.
+- CThisIs/CTargetSign/CHitCounter are not stable (in run 20 they point to CThisIs or to 0).
+- v0.20: F8 writes 1 byte at [block+4] only if: (1) the block is valid via +0x68 (up to 0x200 after +0x60, max 1-3,
+  leader <= max); (2) panel = leader; (3) max + 1 = no. of party characters in memory (RTTI).
+  The 3 checks pass in all 19 captures.
+- Short sessions at 03:02 (30 s) and 03:02:53: extra launches, no data.
 
-### Execução 21 (v0.20) - notes/run21_v0.20 — **primeira escrita, e o jogo seguiu**
-- As 3 checagens passaram; 5 escritas (4 na 1ª batalha: 0->1->2->3->0; 1 na 2ª: 0->1).
-- Depois de cada escrita: o valor **permaneceu** (3 s), o **destaque do painel deslizou** até a nova posição
-  (x 70 -> 295 -> 353 etc., a mesma animação do R1) e o **foco da câmera foi para o novo líder**
-  (Sarah, Arumat, Myuria, Edge). CThisIs não apontou para ninguém. Sem travar.
-- Na 2ª batalha o bloco estava em outra região (0x149B4D3A0, base +0x60 = 0x149B4D350): o ponteiro
-  +0x68 funciona entre batalhas.
-- Falta o relato do usuário: o analógico passou a controlar o novo líder?
-- **Relato do usuário:** depois de cada F8 o analógico passou a controlar o novo líder. Logo **1 byte
-  ([*(CBattleMainTask+0x68) + 4]) troca o líder por completo** (câmera, painel e controle), sem travar.
-  Como esperado, continua havendo só um personagem controlável: é o desenho do jogo (1 líder + 3 IA).
-- Co-op exige um 2º membro (não líder) dirigido pelo controle 2 no lugar da IA. Próximos alvos:
-  (1) como a entrada do controle chega ao líder (começar pelos métodos do CBtlPad, vtable game+0x9d6c78,
-  offline); (2) onde a IA decide as ações dos outros membros; (3) leitura do 2º controle (Steam Input,
-  2 objetos WindowsPad).
+### Run 21 (v0.20) - notes/run21_v0.20 — **first write, and the game went along**
+- The 3 checks passed; 5 writes (4 in the 1st battle: 0->1->2->3->0; 1 in the 2nd: 0->1).
+- After each write: the value **stayed** (3 s), the **panel highlight slid** to the new position
+  (x 70 -> 295 -> 353 etc., the same animation as R1) and the **camera focus went to the new leader**
+  (Sarah, Arumat, Myuria, Edge). CThisIs pointed to no one. No freeze.
+- In the 2nd battle the block was in another region (0x149B4D3A0, base +0x60 = 0x149B4D350): the pointer
+  at +0x68 works across battles.
+- User's report still needed: did the stick start controlling the new leader?
+- **User's report:** after each F8 the stick started controlling the new leader. So **1 byte
+  ([*(CBattleMainTask+0x68) + 4]) switches the leader completely** (camera, panel and control), without freezing.
+  As expected, there is still only one controllable character: that is the game's design (1 leader + 3 AI).
+- Co-op requires a 2nd member (not the leader) driven by controller 2 instead of the AI. Next targets:
+  (1) how controller input reaches the leader (start with CBtlPad's methods, vtable game+0x9d6c78,
+  offline); (2) where the AI decides the other members' actions; (3) reading the 2nd controller (Steam Input,
+  2 WindowsPad objects).
 
-## Fase 3 - entrada do controle (offline, código salvo na execução 10)
-- analysis/vtable.py: imagem = exe do disco + seção .xpdata salva; lista a vtable e desmonta o início
-  de cada método (para no ret/jmp por causa do lixo anti-disassembly). Saída em notes/cbtlpad_vtable.txt.
-- **CBtlPad** (vtable game+0x9d6c78): 19 métodos, a maioria stubs. O [12] (game+0x2f9bae0) percorre 2
-  registros de 0x14 bytes em this+0x28 (contador float + flag em +0x10) e, ao zerar, chama
-  game+0x75c840 -> **temporizador de vibração de 2 controles** (o 32767.0 visto na execução 5).
-- **Camada de entrada**: tabela global de **2 controles** em game+0x1059634 (registros de 0x6e8 bytes,
-  1º byte = id 0 e 1). game+0x75c660(id) procura o registro; se o id não existe, faz OR dos botões do
-  registro 1 no registro 0 e devolve um registro padrão -> o jogo lê os 2 controles **separados** e os
-  **junta** para um jogador só.
-- 43 chamadas diretas a game+0x75c660: a maioria pede o controle 0; 4 funções pedem 0 e 1
-  (game+0x7b1510, 0x7b2e60, 0x7b7090, 0x7d2870). Todas em .data1 (não cifrada no disco).
-- Próximo: descobrir qual chamada do controle 0 alimenta o líder em batalha; para o co-op, o 2º membro
-  precisaria receber os dados do controle 1 (exige alterar código em execução, como o SO4Fix faz).
-- analysis/callgraph.py: RTTI de todas as classes (5201 classes, 3235 vtables, 10091 funções
-  rotuladas) + índice de chamadas diretas (122743) -> rotula quem chama uma função, subindo até métodos
-  virtuais. Saídas: notes/getpad_callers.txt e notes/getleader_callers.txt.
-- Chamadores de game+0x75c660 (pegar controle): quase todos de menus (Camp), campo (Field), título e
-  salvar. Em batalha só três:
-  - game+0x4fd740 = **StartRumble(CBtlPad, controle, motor1, motor2, duração)**; chamado por
-    CPlayerChr::vf107 só quando o personagem é o líder (vibra o controle 0 a 0x7fff).
-  - game+0x5152c0 / 0x515690 (CKernel@Battle::vf12): percorrem os 2 controles e reiniciam estado do
-    dispositivo, depois consultam o líder (flag leader+0xd46, subsistema em *(main)+0xb0): parece
-    preparação/pausa, não o movimento por quadro.
-  - CBtlPad::vf12 (temporizador de vibração).
-- **Definição do líder no código** (confirma o que achamos em execução):
-  - game+0x4f7310(main) = `return *(main+0x68)` (bloco do líder)
-  - game+0x4f9990(grupo, i) = `return *(grupo + 0x5a0 + 8*i)`, grupo = *(CBattleMainTask+0x58)
-  - **game+0x5000d0 = GetLeader(sistema)** = grupo->membros[bloco[4]]; sistema = [game+0x1051838]
-    (1º campo = CBattleMainTask). 109 funções chamam.
-  - **game+0x53e390 = IsLeader(personagem)** = (GetLeader(sistema) == personagem): a pergunta "sou o
-    controlado pelo jogador?" usada por dezenas de métodos de CPlayerChr/CPlayerThinkChr.
-- Hipótese para o co-op: fazer IsLeader responder "sim" também para o personagem do jogador 2 e dar a
-  ele a entrada do controle 1 (o movimento do líder não parece vir de game+0x75c660; falta achar a
-  interface de entrada por quadro). Isso exige alterar código em execução: pedir autorização antes.
-- analysis/users.py: o que vem logo depois de cada chamada a uma função. Nos 31 usos de IsLeader o que
-  segue é comportamento (vibração, vozes, despachante de comandos game+0x500b40 com tabela de 10 casos,
-  dados de grupo/personagem), **não** a leitura do controle.
-- Referências a game+0x1059000..0x105a500 (625 em 337 funções, notes/input_globals_xref.txt): a área
-  game+0x1059e78..0x1059ea0 é um registro de eventos/ouvintes (bitmask por categoria + listas de ids,
-  game+0x762e40), não controle; o "vf142" marcado era falso positivo (bytes dentro de chamadas).
-- Conclusão: estática achou **quem é o líder** (GetLeader/IsLeader), mas não **por onde entra o
-  movimento** (deve passar por métodos virtuais dos objetos de controle). Próximo: captura dirigida
-  pelo analógico (neutro/cima/direita/baixo/esquerda, repetido) e diff, como foi feito com o líder.
-- Validação offline da fórmula do líder: party = *(CBattleMainTask+0x58) = **CChrManager@Battle**,
-  membros em +0x5a0 = [Edge, Sarah, Arumat, Myuria] (execução 16), líder = membros[bloco[4]] confere
-  em todas as capturas (exec. 16 e 20).
-- v0.21: F6 = captura rotulada pelo analógico (neutro, cima, direita, baixo, esquerda, ×2), com objetos
-  Battle::, as 24 classes (personagens 256 KB, WindowsPad), globais de entrada game+0x1059000..0x105b000
-  e o líder achado pela fórmula do jogo. analysis/diff_stick.py procura eixos X/Y e campos discretos
-  (testado com dados sintéticos).
+## Phase 3 - controller input (offline, code saved in run 10)
+- analysis/vtable.py: image = exe on disk + saved .xpdata section; lists the vtable and disassembles the start
+  of each method (stops at ret/jmp because of the anti-disassembly garbage). Output in notes/cbtlpad_vtable.txt.
+- **CBtlPad** (vtable game+0x9d6c78): 19 methods, most of them stubs. [12] (game+0x2f9bae0) goes through 2
+  records of 0x14 bytes at this+0x28 (float counter + flag at +0x10) and, on reaching zero, calls
+  game+0x75c840 -> **rumble timer for 2 controllers** (the 32767.0 seen in run 5).
+- **Input layer**: global table of **2 controllers** at game+0x1059634 (records of 0x6e8 bytes,
+  1st byte = id 0 and 1). game+0x75c660(id) looks up the record; if the id does not exist, it ORs the buttons of
+  record 1 into record 0 and returns a default record -> the game reads the 2 controllers **separately** and
+  **merges** them for a single player.
+- 43 direct calls to game+0x75c660: most ask for controller 0; 4 functions ask for 0 and 1
+  (game+0x7b1510, 0x7b2e60, 0x7b7090, 0x7d2870). All in .data1 (not encrypted on disk).
+- Next: find out which controller 0 call feeds the leader in battle; for co-op, the 2nd member
+  would need to receive controller 1's data (requires changing code at run time, as SO4Fix does).
+- analysis/callgraph.py: RTTI of all classes (5201 classes, 3235 vtables, 10091 labeled
+  functions) + index of direct calls (122743) -> labels who calls a function, climbing up to virtual
+  methods. Outputs: notes/getpad_callers.txt and notes/getleader_callers.txt.
+- Callers of game+0x75c660 (get controller): almost all from menus (Camp), field (Field), title and
+  saving. In battle only three:
+  - game+0x4fd740 = **StartRumble(CBtlPad, controller, motor1, motor2, duration)**; called by
+    CPlayerChr::vf107 only when the character is the leader (rumbles controller 0 at 0x7fff).
+  - game+0x5152c0 / 0x515690 (CKernel@Battle::vf12): go through the 2 controllers and reset device
+    state, then query the leader (flag leader+0xd46, subsystem at *(main)+0xb0): looks like
+    setup/pause, not per-frame movement.
+  - CBtlPad::vf12 (rumble timer).
+- **Definition of the leader in the code** (confirms what we found at run time):
+  - game+0x4f7310(main) = `return *(main+0x68)` (leader block)
+  - game+0x4f9990(party, i) = `return *(party + 0x5a0 + 8*i)`, party = *(CBattleMainTask+0x58)
+  - **game+0x5000d0 = GetLeader(system)** = party->members[block[4]]; system = [game+0x1051838]
+    (1st field = CBattleMainTask). 109 functions call it.
+  - **game+0x53e390 = IsLeader(character)** = (GetLeader(system) == character): the question "am I the
+    one controlled by the player?" used by dozens of methods of CPlayerChr/CPlayerThinkChr.
+- Co-op hypothesis: make IsLeader answer "yes" for player 2's character too and give
+  it controller 1's input (the leader's movement does not seem to come from game+0x75c660; the per-frame
+  input interface is still to be found). This requires changing code at run time: ask for authorization first.
+- analysis/users.py: what comes right after each call to a function. In the 31 uses of IsLeader what
+  follows is behavior (rumble, voices, command dispatcher game+0x500b40 with a 10-case table,
+  party/character data), **not** the controller read.
+- References to game+0x1059000..0x105a500 (625 in 337 functions, notes/input_globals_xref.txt): the area
+  game+0x1059e78..0x1059ea0 is an event/listener registry (bitmask per category + id lists,
+  game+0x762e40), not the controller; the "vf142" flagged was a false positive (bytes inside calls).
+- Conclusion: static analysis found **who the leader is** (GetLeader/IsLeader), but not **where movement
+  comes in** (it must go through virtual methods of the controller objects). Next: stick-driven
+  capture (neutral/up/right/down/left, repeated) and diff, as was done with the leader.
+- Offline validation of the leader formula: party = *(CBattleMainTask+0x58) = **CChrManager@Battle**,
+  members at +0x5a0 = [Edge, Sarah, Arumat, Myuria] (run 16), leader = members[block[4]] matches
+  in all captures (runs 16 and 20).
+- v0.21: F6 = capture labeled by stick (neutral, up, right, down, left, ×2), with Battle::
+  objects, the 24 classes (characters 256 KB, WindowsPad), input globals game+0x1059000..0x105b000
+  and the leader found by the game's formula. analysis/diff_stick.py looks for X/Y axes and discrete fields
+  (tested with synthetic data).
 
-### Execução 22 (v0.21) - notes/run22_v0.21 — **analógico encontrado nos globais**
-- 7 de 10 capturas (neutro, cima, direita, baixo, esquerda, neutro, cima); líder Edge; sem travar.
-  Houve antes um início curto (03:42, ~30 s) e o jogo fechou ~30 s após a 7ª captura.
-- diff_stick.py (critério rígido) não achou eixo no personagem, nos WindowsPad, no PadTask, no CBtlPad:
-  os 2 WindowsPad praticamente não mudam. O "cima" saiu torto (1º muito à direita, 2º já solto).
-- Nos globais de entrada (game+0x1059000+):
-  - `+0x476` (s16) = **X do analógico esquerdo**, `+0x478` (s16) = **Y** (bruto −32768..32767):
-    direita 32732/−1499, baixo 644/−32760, esquerda −32362/5126, neutro 0/0.
-  - cópia em `+0x64a/+0x64c` = **registro do controle 0** (game+0x1059634) **+0x14/+0x18** ->
-    cada registro tem o seu analógico; o controle 2 deve estar em game+0x1059d30 (registro 1 + 0x14).
-  - `+0x474` = game+0x1059080 + 0x3f4: estado **mesclado** que o jogo usa.
-  - bits de direção em +0x6d0..+0x6d8 (direita 8, baixo 2, esquerda 4) e contadores em +0x690..+0x698.
-- Quem lê: nenhuma referência direta a esses endereços; game+0x1059080 só é usado por SozApp,
-  AppSetupTask (preparação), PadTask@Peripheral::vf12 (atualização por quadro = quem **preenche**) e o
-  construtor do PadTask (game+0x75bf90). Nenhum objeto capturado guarda ponteiro para essa área.
-  O consumidor (movimento do líder) não aparece na estática.
-- v0.22: F5 = rastreio por página-guarda (2 s) da página game+0x1059000: cada acesso cai no VEH, que
-  registra (instrução, deslocamento, leitura/escrita), deixa a instrução rodar com TF e rearma a guarda
-  no passo seguinte; depois restaura a proteção. Sem suspender threads, sem ptrace, sem gravar dados.
-  Autoteste no Wine local (página da própria sonda, 400 leituras): 400 acessos, 2 instruções -> funciona.
+### Run 22 (v0.21) - notes/run22_v0.21 — **stick found in the globals**
+- 7 of 10 captures (neutral, up, right, down, left, neutral, up); leader Edge; no freeze.
+  Before that there was a short launch (03:42, ~30 s), and the game closed ~30 s after the 7th capture.
+- diff_stick.py (strict criterion) found no axis in the character, the WindowsPads, PadTask or CBtlPad:
+  the 2 WindowsPads hardly change. "Up" came out skewed (1st far to the right, 2nd already released).
+- In the input globals (game+0x1059000+):
+  - `+0x476` (s16) = **left stick X**, `+0x478` (s16) = **Y** (raw −32768..32767):
+    right 32732/−1499, down 644/−32760, left −32362/5126, neutral 0/0.
+  - copy at `+0x64a/+0x64c` = **controller 0 record** (game+0x1059634) **+0x14/+0x18** ->
+    each record has its own stick; controller 2 should be at game+0x1059d30 (record 1 + 0x14).
+  - `+0x474` = game+0x1059080 + 0x3f4: **merged** state that the game uses.
+  - direction bits at +0x6d0..+0x6d8 (right 8, down 2, left 4) and counters at +0x690..+0x698.
+- Who reads it: no direct reference to those addresses; game+0x1059080 is only used by SozApp,
+  AppSetupTask (setup), PadTask@Peripheral::vf12 (per-frame update = the one that **fills it in**) and
+  PadTask's constructor (game+0x75bf90). No captured object holds a pointer to that area.
+  The consumer (leader movement) does not show up in static analysis.
+- v0.22: F5 = guard-page trace (2 s) of page game+0x1059000: each access lands in the VEH, which
+  records it (instruction, offset, read/write), lets the instruction run with TF and rearms the guard
+  on the next step; then restores the protection. No suspending threads, no ptrace, no writing data.
+  Self-test on local Wine (a page of the probe itself, 400 reads): 400 accesses, 2 instructions -> works.
 
-### Execução 23 (v0.22) - notes/run23_v0.22 — **página-guarda derrubou o jogo**
-- F5 ligou a guarda na página game+0x1059000 (proteção 0x8); o log para em "GUARD TRACE ON" (sem OFF,
-  sem relatório, sem heartbeat) e o jogo terminou às 04:01:27: morreu dentro da janela de 2 s.
-- Causa provável: código fora do tratamento de exceções do Windows (o lado nativo do Steam Input /
-  lsteamclient escrevendo nos registros de controle) tocou a página guardada. **Não usar F5 da v0.22.**
-- Busca estática por deslocamentos 0x3f4/0x3f6/0x3f8 (campo do analógico a partir de game+0x1059080):
-  ruído demais (offsets comuns e instruções mal decodificadas no código ofuscado).
-- Objeto do líder (CPlayerEdge, 256 KB) na execução 22: nenhum float ~0 no neutro e diferente em
-  direita/baixo/esquerda -> a intenção de movimento não fica nos primeiros 256 KB do personagem.
+### Run 23 (v0.22) - notes/run23_v0.22 — **guard page crashed the game**
+- F5 turned on the guard on page game+0x1059000 (protection 0x8); the log stops at "GUARD TRACE ON" (no OFF,
+  no report, no heartbeat) and the game ended at 04:01:27: it died within the 2 s window.
+- Probable cause: code outside Windows exception handling (the native side of Steam Input /
+  lsteamclient writing to the controller records) touched the guarded page. **Do not use v0.22's F5.**
+- Static search by displacements 0x3f4/0x3f6/0x3f8 (stick field from game+0x1059080):
+  too much noise (common offsets and badly decoded instructions in the obfuscated code).
+- Leader object (CPlayerEdge, 256 KB) in run 22: no float ~0 at neutral and different at
+  right/down/left -> movement intent is not in the character's first 256 KB.
 
-## Retomada (após a execução 23)
-- v0.23 instalada (F5 desligado). Commit 6333dec.
-- PadTask@Peripheral::vf12 (game+0x4e594d0) chama game+0x75c1b0 = **atualização de um controle**
-  (notes/pad_poll.txt): o objeto tem o dispositivo em [obj], botões OR em +0x5bc/+0x5be/+0x5c2,
-  analógicos em +0x5ca/+0x5cc (esquerdo) e +0x5ce/+0x5d0 (direito), gatilhos +0x5d2/+0x5d3.
-  Com obj = game+0x1059080 isso bate com o analógico do controle 0 (game+0x105964a): existem **dois
-  objetos de controle** de 0x6e8 bytes, em **game+0x1059080** e **game+0x1059768**; os "registros" são
-  a seção de estado deles em +0x5b4; o "mesclado" game+0x1059474 = objeto 0 + 0x3f4.
-- Nenhum global aponta para esses objetos; o cabeçalho game+0x1059000..0x105907f tem dezenas de campos
-  pequenos lidos por muitas classes, nenhum claramente base do analógico.
-- Busca frouxa em tudo da execução 22 (1221 objetos + 24 classes + globais): nenhum float ~0 no neutro
-  e não nulo em direita/baixo/esquerda. Estática e diff esgotados para "quem lê o analógico".
-- Próxima ferramenta proposta: **ponto de parada de software** (int3) em GetLeader/IsLeader, com o
-  manipulador da sonda registrando endereços de retorno e pilha por 1 s, parado vs andando; mexe no
-  código do jogo em memória (proteção da página de código), pedir autorização.
+## Resuming (after run 23)
+- v0.23 installed (F5 disabled). Commit 6333dec.
+- PadTask@Peripheral::vf12 (game+0x4e594d0) calls game+0x75c1b0 = **update of one controller**
+  (notes/pad_poll.txt): the object has the device at [obj], ORed buttons at +0x5bc/+0x5be/+0x5c2,
+  sticks at +0x5ca/+0x5cc (left) and +0x5ce/+0x5d0 (right), triggers +0x5d2/+0x5d3.
+  With obj = game+0x1059080 this matches controller 0's stick (game+0x105964a): there are **two
+  controller objects** of 0x6e8 bytes, at **game+0x1059080** and **game+0x1059768**; the "records" are
+  their state section at +0x5b4; the "merged" game+0x1059474 = object 0 + 0x3f4.
+- No global points to those objects; the header game+0x1059000..0x105907f has dozens of small
+  fields read by many classes, none clearly the base of the stick.
+- Loose search over everything from run 22 (1221 objects + 24 classes + globals): no float ~0 at neutral
+  and nonzero at right/down/left. Static analysis and diffs exhausted for "who reads the stick".
+- Next tool proposed: **software breakpoint** (int3) on GetLeader/IsLeader, with the probe's
+  handler recording return addresses and stack for 1 s, standing still vs walking; it touches the
+  game's code in memory (code page protection), ask for authorization.
 
-## Modo tag-team (v0.24) — primeiro mod jogável
-- src/tagteam.c: cada jogador "é dono" de uma posição do grupo (padrão: jogador 1 = 0, jogador 2 = 1;
-  so4coop.ini opcional com p1_position= / p2_position=). **L3 no seu controle** (ou F3 / F4 no teclado)
-  torna o seu personagem o líder, gravando o byte do bloco do líder (como na execução 21).
-- Controles lidos pelo XInput real (sondagem própria a cada 30 ms, slots 0-3); os dois primeiros slots
-  conectados = jogador 1 e 2; o log mostra os slots vistos.
-- Checagens antes de gravar, sem varredura completa: CBattleMainTask em cache (verificado por RTTI),
-  bloco do líder válido, *(main+0x58) é CChrManager com membros[0..max] todos personagens, alvo existe.
-- Limite: o jogo ainda mescla os dois controles, então os dois movem quem for o líder.
-- Teste local (Wine do sistema): ini lido (2/3), slot 0 conectado (DualSense) -> jogador 1, sem jogador 2;
-  fora de batalha "no battle (nothing written)".
+## Tag-team mode (v0.24) — first playable mod
+- src/tagteam.c: each player "owns" a party position (default: player 1 = 0, player 2 = 1;
+  optional so4coop.ini with p1_position= / p2_position=). **L3 on your controller** (or F3 / F4 on the keyboard)
+  makes your character the leader, by writing the byte in the leader block (as in run 21).
+- Controllers read through the real XInput (own polling every 30 ms, slots 0-3); the first two connected
+  slots = players 1 and 2; the log shows the slots seen.
+- Checks before writing, without a full scan: cached CBattleMainTask (verified by RTTI),
+  valid leader block, *(main+0x58) is a CChrManager with members[0..max] all characters, target exists.
+- Limit: the game still merges the two controllers, so both move whoever is the leader.
+- Local test (system Wine): ini read (2/3), slot 0 connected (DualSense) -> player 1, no player 2;
+  outside battle "no battle (nothing written)".
 
-### Execução 24 (v0.24) - notes/run24_v0.24 — tag-team pelo teclado funciona
-- **F3/F4 funcionaram**: 7 trocas Edge <-> Sarah com todas as checagens, jogo rodou 6 min sem problema.
-- **L3 não pode funcionar ainda**: o XInput não vê nenhum controle no Proton ("slots connected" vazio).
-  O jogo lê os controles pela API do Steam Input; o Proton não os expõe ao XInput.
-- Correção: ler os botões dos **objetos de controle do próprio jogo** (game+0x1059080 e game+0x1059768,
-  palavras de botão em +0x5bc..+0x5c6; game+0x75c660 junta as 6 palavras do controle 2 no 1). Falta
-  saber qual bit é o L3: rodada de calibração registrando as mudanças dessas palavras.
-- v0.25: o tag-team lê os botões dos objetos de controle do jogo (6 palavras em +0x5bc de
-  game+0x1059080 / game+0x1059768) a cada 30 ms; registra toda mudança (até 600 linhas) para calibrar;
-  botão de troca configurável no so4coop.ini: take_word=<0-5>, take_mask=<hex>. XInput continua como
-  alternativa. Teste local: ini lido (word 2, mask 0x40); fora do jogo os objetos não existem e são ignorados.
+### Run 24 (v0.24) - notes/run24_v0.24 — tag-team by keyboard works
+- **F3/F4 worked**: 7 Edge <-> Sarah switches with all checks, the game ran 6 min without problems.
+- **L3 cannot work yet**: XInput sees no controller on Proton ("slots connected" empty).
+  The game reads controllers through the Steam Input API; Proton does not expose them to XInput.
+- Fix: read the buttons from the **game's own controller objects** (game+0x1059080 and game+0x1059768,
+  button words at +0x5bc..+0x5c6; game+0x75c660 merges the 6 words of controller 2 into 1). Still to
+  find out which bit is L3: a calibration round recording the changes in those words.
+- v0.25: tag-team reads the buttons from the game's controller objects (6 words at +0x5bc of
+  game+0x1059080 / game+0x1059768) every 30 ms; records every change (up to 600 lines) to calibrate;
+  switch button configurable in so4coop.ini: take_word=<0-5>, take_mask=<hex>. XInput remains as an
+  alternative. Local test: ini read (word 2, mask 0x40); outside the game the objects do not exist and are ignored.
 
-### Execução 25 (v0.25) - notes/run25_v0.25 — calibração
-- 237 mudanças de botão, **todas no objeto de controle 1** (pad1); o objeto 2 (game+0x1059768) nunca mudou.
-  Com Steam Input ligado, os dois controles físicos parecem cair no mesmo objeto do jogo (ou o 2º não foi usado).
-- Layout das 6 palavras: [0] = seguradas, [1] = quadro anterior, [3] e [5] = recém-pressionadas.
-  Bits pressionados: 0x0001 x3, 0x0004 x2, 0x0008 x1, 0x0080 x11, 0x0400 x8, 0x0800 x4, 0x1000 x8,
-  0x2000 x4, 0x4000 x36, 0x8000 x3 -> R3 não identificável (muitos outros botões na sessão).
-- L3 = trava de alvo; R3 = recentraliza a câmera no controlado (aceitável para trocar de jogador).
-- v0.26: o caminho XInput usa R3 (0x0080). Proposta: **desligar o Steam Input só para este jogo**; aí o
-  XInput do Proton vê cada controle num slot próprio e o mod distingue jogador 1 e 2.
+### Run 25 (v0.25) - notes/run25_v0.25 — calibration
+- 237 button changes, **all in controller object 1** (pad1); object 2 (game+0x1059768) never changed.
+  With Steam Input on, both physical controllers seem to land in the same game object (or the 2nd was not used).
+- Layout of the 6 words: [0] = held, [1] = previous frame, [3] and [5] = just pressed.
+  Bits pressed: 0x0001 x3, 0x0004 x2, 0x0008 x1, 0x0080 x11, 0x0400 x8, 0x0800 x4, 0x1000 x8,
+  0x2000 x4, 0x4000 x36, 0x8000 x3 -> R3 not identifiable (many other buttons in the session).
+- L3 = target lock; R3 = recenters the camera on the controlled one (acceptable for switching players).
+- v0.26: the XInput path uses R3 (0x0080). Proposal: **turn Steam Input off for this game only**; then
+  Proton's XInput sees each controller in its own slot and the mod can tell players 1 and 2 apart.
 
-### Execução 26 (v0.26) — Steam Input desligado
-- Jogo rodou 67 s; o XInput do mod continuou sem controles, o jogo não chamou GetState e os objetos de
-  controle do jogo não mudaram: **sem Steam Input o jogo não recebe controle** (religar).
-- O exe só referencia XINPUT1_3.dll (checagem/vibração) e "SteamController005": o jogo lê a entrada pela
-  **ISteamController**. Não há arquivo de ações do Steam para o jogo no disco; os nomes das ações não
-  aparecem no exe nem no código decifrado.
-- v0.27 (src/steamctl.c): pega a interface pelo steam_api64.dll do jogo (SteamClient ->
-  SteamAPI_ISteamClient_GetISteamController(..., "SteamController005")), lista os controles físicos
-  (GetConnectedControllers) e consulta as ações 1..32 em cada um (GetDigitalActionData) a cada 60 ms,
-  registrando cada mudança (calibração). take_action=<n> no so4coop.ini: ação n no controle k do Steam
-  -> jogador k assume.
+### Run 26 (v0.26) — Steam Input off
+- The game ran 67 s; the mod's XInput still had no controllers, the game did not call GetState and the game's
+  controller objects did not change: **without Steam Input the game gets no controller** (turn it back on).
+- The exe only references XINPUT1_3.dll (check/rumble) and "SteamController005": the game reads input through
+  **ISteamController**. There is no Steam action file for the game on disk; the action names do not
+  appear in the exe or in the decrypted code.
+- v0.27 (src/steamctl.c): gets the interface through the game's steam_api64.dll (SteamClient ->
+  SteamAPI_ISteamClient_GetISteamController(..., "SteamController005")), lists the physical controllers
+  (GetConnectedControllers) and queries actions 1..32 on each one (GetDigitalActionData) every 60 ms,
+  recording each change (calibration). take_action=<n> in so4coop.ini: action n on Steam controller k
+  -> player k takes over.
 
-### Execução 27 (v0.27) - notes/run27_v0.27 — Steam vê 3 controles
-- Interface SteamController005 obtida; **3 controles conectados** (handles 0x1C666D5EC4E5, 0x135371001869A2DE,
-  0x2D90895F4DC78F). 130 mudanças, **todas no controle 3 do Steam**: ação 1 x1, 2 x2, 3 x45, 4 x2, 10 x15.
-  Controles 1 e 2 não relataram nenhuma ação.
-- Hipótese: o Steam só relata ações onde o jogo ativou o seu conjunto de ações; o jogo parece usar só um
-  controle (o 3º), o que explica também tudo no objeto de controle 1 na execução 25.
-- Ação 10 = candidata a R3 (15 toques no fim); ação 3 = provável ataque.
-- Próximo: confirmar com o usuário a ordem e se o 2º controle mexia no jogo; se não, ativar o conjunto de
-  ações atual (GetCurrentActionSet do controle 3 -> ActivateActionSet nos outros) para lê-los.
-- Relato do usuário (exec. 27): R3 3x no DualSense, depois 3x no outro; saiu com Super+Q. O 3º "controle"
-  do Steam não é o teclado (F3/F4 são lidos pelo mod direto); provavelmente um dispositivo virtual/duplicado.
-- v0.28: horário em cada linha de ação; por controle, índice de gamepad e conjunto de ações; activate_all=1
-  (so4coop.ini criado no jogo só com essa linha): a cada 2 s o conjunto de ações do controle que tem um é
-  ativado nos outros. take_action agora é decimal (o teste pegou 10 -> 16 com o leitor hex).
+### Run 27 (v0.27) - notes/run27_v0.27 — Steam sees 3 controllers
+- SteamController005 interface obtained; **3 controllers connected** (handles 0x1C666D5EC4E5, 0x135371001869A2DE,
+  0x2D90895F4DC78F). 130 changes, **all on Steam controller 3**: action 1 x1, 2 x2, 3 x45, 4 x2, 10 x15.
+  Controllers 1 and 2 reported no actions.
+- Hypothesis: Steam only reports actions where the game activated its action set; the game seems to use only one
+  controller (the 3rd), which also explains everything being in controller object 1 in run 25.
+- Action 10 = candidate for R3 (15 presses at the end); action 3 = probable attack.
+- Next: confirm with the user the order and whether the 2nd controller did anything in the game; if not, activate the
+  current action set (GetCurrentActionSet of controller 3 -> ActivateActionSet on the others) to read them.
+- User's report (run 27): R3 3x on the DualSense, then 3x on the other; quit with Super+Q. Steam's 3rd
+  "controller" is not the keyboard (F3/F4 are read directly by the mod); probably a virtual/duplicate device.
+- v0.28: time on each action line; per controller, gamepad index and action set; activate_all=1
+  (so4coop.ini created in the game with only that line): every 2 s the action set of the controller that has one is
+  activated on the others. take_action is now decimal (the test caught 10 -> 16 with the hex reader).
 
-### Execução 28 (v0.28) - notes/run28_v0.28 — **cada controle separado pelo Steam**
-- 3 controles do Steam, todos já com o conjunto de ações 1 do jogo (activate_all não precisou ativar nada);
-  índice de gamepad -1 em todos.
-- **Ação 10 = R3**, vista em cada controle separadamente: controle 3 (61-72 s, 3x), controle 2 (77-98 s, 4x),
-  controle 1 (104-121 s, 4x). O DualSense (apertado primeiro) deve ser o controle 3; o outro controle físico
-  parece aparecer como duas entradas do Steam (2 e 1). Ação 3 x43 a cada ~0,3 s = botão segurado repetindo.
-- v0.29: p1_steam=<n> no so4coop.ini = controle do Steam do jogador 1; qualquer outro controle = jogador 2.
-  so4coop.ini proposto: take_action=10, p1_steam=3, activate_all=0, p1_position=0, p2_position=1.
-- Controles do usuário: **DualSense, GameSir G7 (estilo Xbox One) e DualShock 4 v1** = os 3 controles do Steam.
-  Na exec. 28 o R3 foi apertado nos três: controle 3 = DualSense; 2 e 1 = GameSir / DualShock 4 (ordem a confirmar).
-- v0.29 (final): steamN_position=<0-3> no so4coop.ini dá a cada controle do Steam a sua posição no grupo
-  (até 4 jogadores); sem essas linhas vale p1_steam (jogador 1) / todos os outros (jogador 2). tt_take dividido
-  em tt_take_pos(rótulo, posição). Teste local: posições lidas (3->0, 2->1, 1->2), recusa fora de batalha.
-  A ordem dos controles no Steam pode mudar entre sessões (o log lista a cada início).
+### Run 28 (v0.28) - notes/run28_v0.28 — **each controller separated by Steam**
+- 3 Steam controllers, all already with the game's action set 1 (activate_all did not need to activate anything);
+  gamepad index -1 on all of them.
+- **Action 10 = R3**, seen on each controller separately: controller 3 (61-72 s, 3x), controller 2 (77-98 s, 4x),
+  controller 1 (104-121 s, 4x). The DualSense (pressed first) should be controller 3; the other physical controller
+  seems to appear as two Steam entries (2 and 1). Action 3 x43 every ~0.3 s = held button repeating.
+- v0.29: p1_steam=<n> in so4coop.ini = player 1's Steam controller; any other controller = player 2.
+  Proposed so4coop.ini: take_action=10, p1_steam=3, activate_all=0, p1_position=0, p2_position=1.
+- User's controllers: **DualSense, GameSir G7 (Xbox One style) and DualShock 4 v1** = Steam's 3 controllers.
+  In run 28 R3 was pressed on all three: controller 3 = DualSense; 2 and 1 = GameSir / DualShock 4 (order to be confirmed).
+- v0.29 (final): steamN_position=<0-3> in so4coop.ini gives each Steam controller its party position
+  (up to 4 players); without those lines p1_steam (player 1) / all the others (player 2) applies. tt_take split
+  into tt_take_pos(label, position). Local test: positions read (3->0, 2->1, 1->2), refusal outside battle.
+  The order of the controllers in Steam can change between sessions (the log lists it on every launch).
 
-### Execução 29 (v0.29) - notes/run29_v0.29 — **tag-team pelos controles funcionando**
-- R3 (ação 10) em cada controle trocou o líder para o personagem configurado, duas voltas:
-  controle 3 -> Edge, controle 2 -> Sarah, controle 1 -> Arumat (6 apertos, todas as checagens ok, sem travar).
-- Falta o usuário dizer qual controle físico é o 2 e qual é o 1 (GameSir / DualShock 4) e se o R3 fez algo além
-  de recentralizar a câmera.
+### Run 29 (v0.29) - notes/run29_v0.29 — **tag-team by controller working**
+- R3 (action 10) on each controller switched the leader to the configured character, two rounds:
+  controller 3 -> Edge, controller 2 -> Sarah, controller 1 -> Arumat (6 presses, all checks ok, no freeze).
+- Still needed from the user: which physical controller is 2 and which is 1 (GameSir / DualShock 4), and whether R3 did
+  anything besides recentering the camera.
 
 ## Release: so4coop tag-team 1.0
-- build_release.sh compila as mesmas fontes com SO4COOP_RELEASE: só F3/F4 + R3 pelos controles do Steam,
-  log em so4coop.log. Pacote build/release/so4coop-tagteam-1.0.zip (xinput1_3.dll, so4coop.ini modelo,
-  README.txt, LEIA-ME.txt; arquivos-fonte do pacote em release/). Testado no Wine local.
-- Pedido do usuário: os outros controles jogarem com os outros membros **ao mesmo tempo** na batalha.
-  Ainda não é possível: o jogo só tem um personagem controlado (líder) e não sabemos como injetar comandos
-  na IA dos outros membros. Passo seguinte proposto: interceptar as chamadas do jogo à ISteamController
-  (tabela virtual da interface) para separar a entrada por controle (só o controle do líder dirige; a
-  entrada dos outros fica disponível para alimentar outro personagem) e então estudar o "pensar" da IA.
+- build_release.sh compiles the same sources with SO4COOP_RELEASE: only F3/F4 + R3 through Steam's controllers,
+  log in so4coop.log. Package build/release/so4coop-tagteam-1.0.zip (xinput1_3.dll, template so4coop.ini,
+  README.txt, LEIA-ME.txt; the package's source files in release/). Tested on local Wine.
+- User's request: the other controllers playing the other members **at the same time** in battle.
+  Not possible yet: the game has only one controlled character (leader) and we do not know how to inject commands
+  into the other members' AI. Proposed next step: intercept the game's calls to ISteamController
+  (the interface's virtual table) to separate input per controller (only the leader's controller drives; the
+  others' input stays available to feed another character) and then study the AI's "think".
 
-## Fase 4 - separar a entrada por controle
-- Release 1.0 instalada no jogo (xinput1_3.dll f244b3d6…), so4coop.ini do usuário mantido.
-- Desmontagem dos thunks planos do steam_api64.dll do jogo: RunFrame +0x10, GetConnectedControllers +0x18,
+## Phase 4 - separating input per controller
+- Release 1.0 installed in the game (xinput1_3.dll f244b3d6…), user's so4coop.ini kept.
+- Disassembly of the flat thunks in the game's steam_api64.dll: RunFrame +0x10, GetConnectedControllers +0x18,
   ActivateActionSet +0x30, GetCurrentActionSet +0x38, GetDigitalActionData +0x48, GetAnalogActionData +0x60.
-  Os dois "Get…Data" são métodos MSVC que devolvem struct por ponteiro oculto: (this=rcx, ret=rdx,
-  controle=r8, ação=r9) -> rax = ret. Analógico = {int modo; float x; float y; bool ativo} (16 bytes).
-- v0.30 (src/steamhook.c, hook_steam=1 no ini): copia a tabela virtual do objeto da interface, troca esses
-  6 métodos por invólucros que só contam e repassam, e aponta o objeto para a cópia (uma escrita de 8 bytes
-  no objeto do Steam; nenhum código alterado). Relatório a cada 10 s (2 min) e depois a cada 60 s: chamadas
-  por método, por handle de controle (ou "todos"), ações consultadas e quem chamou no jogo. Chamadas da
-  própria sonda não contam.
-- Autoteste no Wine local com um objeto falso de mesma ABI: contagens certas, repasse correto (digital e
-  analógico), chamadas próprias ignoradas. A release também tem o código, desligado por padrão.
+  The two "Get…Data" are MSVC methods that return a struct through a hidden pointer: (this=rcx, ret=rdx,
+  controller=r8, action=r9) -> rax = ret. Analog = {int mode; float x; float y; bool active} (16 bytes).
+- v0.30 (src/steamhook.c, hook_steam=1 in the ini): copies the interface object's virtual table, replaces those
+  6 methods with wrappers that only count and pass through, and points the object to the copy (one 8-byte write
+  to the Steam object; no code changed). Report every 10 s (2 min) and then every 60 s: calls
+  per method, per controller handle (or "all"), actions queried and who called in the game. Calls from the
+  probe itself do not count.
+- Self-test on local Wine with a fake object of the same ABI: correct counts, correct pass-through (digital and
+  analog), own calls ignored. The release also has the code, off by default.
 
-### Execução 30 (v0.30, hook_steam=1) - notes/run30_v0.30 — **o jogo pergunta por controle**
-- Gancho estável (~2,5 min, tag-team pelo R3 funcionando junto).
-- Em 100 s: RunFrame 30864, GetConnectedControllers 12346, **GetDigitalActionData 889056 = 296352 em cada um dos
-  3 handles**, **GetAnalogActionData 74088 = 24696 por handle**. Nenhuma chamada com "todos os controles".
-  Ações digitais 0..16, analógicas 1 e 2.
-- Chamadores no jogo (camada de entrada Aska): game+0x7a535a (GetConnected), 0x7a556d e 0x7a55a3 (digital),
-  0x7a55f8 (analógico), 0x7a5c59 (RunFrame). O jogo junta os controles depois.
-- Logo: o invólucro pode neutralizar os controles que não são do líder (estado solto, analógico zerado) e a
-  entrada de cada controle continua disponível para o mod (as consultas da própria sonda não são filtradas).
-- v0.31: leader_only_input=1 (com hook_steam=1): nos invólucros, as consultas do jogo num controle que não é
-  o do líder recebem "solto" / analógico zerado (bActive mantido); as consultas da própria sonda nunca são
-  filtradas (o R3 de todos continua funcionando). O controle do líder é recalculado a cada 60 ms: posição do
-  líder lida pelo global que o GetLeader do jogo usa ([game+0x1051838] -> CBattleMainTask, sem varredura) e
-  mapeada pelos steamN_position; fora de batalha, ou se o líder não tem controle mapeado, nada é filtrado.
-  tt_find_main também usa esse caminho rápido antes da varredura.
-- Autoteste (objeto falso): líder passa, outro controle zerado (botão e analógico), consulta da sonda não filtrada.
+### Run 30 (v0.30, hook_steam=1) - notes/run30_v0.30 — **the game queries per controller**
+- Hook stable (~2.5 min, with tag-team by R3 working alongside).
+- In 100 s: RunFrame 30864, GetConnectedControllers 12346, **GetDigitalActionData 889056 = 296352 on each of the
+  3 handles**, **GetAnalogActionData 74088 = 24696 per handle**. No calls with "all controllers".
+  Digital actions 0..16, analog 1 and 2.
+- Callers in the game (Aska input layer): game+0x7a535a (GetConnected), 0x7a556d and 0x7a55a3 (digital),
+  0x7a55f8 (analog), 0x7a5c59 (RunFrame). The game merges the controllers afterward.
+- So: the wrapper can neutralize the controllers that are not the leader's (released state, zeroed stick) and
+  each controller's input stays available to the mod (the probe's own queries are not filtered).
+- v0.31: leader_only_input=1 (with hook_steam=1): in the wrappers, the game's queries on a controller that is not
+  the leader's get "released" / zeroed stick (bActive kept); the probe's own queries are never
+  filtered (everyone's R3 keeps working). The leader's controller is recomputed every 60 ms: the leader's position
+  is read through the global that the game's GetLeader uses ([game+0x1051838] -> CBattleMainTask, no scan) and
+  mapped by steamN_position; outside battle, or if the leader has no mapped controller, nothing is filtered.
+  tt_find_main also uses that fast path before the scan.
+- Self-test (fake object): leader passes, other controller zeroed (button and stick), probe's query not filtered.
 
-### Execução 31 (v0.31, leader_only_input=1) - notes/run31_v0.31
-- Até a batalha (~45 s) handle do líder = 0 (sem filtro). Em batalha: Edge líder -> handle do DualSense; após R3 no
-  controle 1 -> handle 1 (Arumat); R3 no 2 -> Sarah; R3 no DualSense -> Edge; controle 1 -> Arumat.
-- ~6300 consultas neutralizadas por segundo = 2/3 do total (os dois controles que não são do líder). Sem travar.
-- **Usuário confirmou: funcionou** (só o controle do líder move o líder; R3 troca; menus ok).
+### Run 31 (v0.31, leader_only_input=1) - notes/run31_v0.31
+- Until the battle (~45 s) leader handle = 0 (no filter). In battle: Edge leader -> DualSense handle; after R3 on
+  controller 1 -> handle 1 (Arumat); R3 on 2 -> Sarah; R3 on the DualSense -> Edge; controller 1 -> Arumat.
+- ~6300 queries neutralized per second = 2/3 of the total (the two controllers that are not the leader's). No freeze.
+- **User confirmed: it worked** (only the leader's controller moves the leader; R3 switches; menus ok).
 
 ## Release: so4coop tag-team 1.1
-- Igual à 1.0 + hook_steam=1 e leader_only_input=1 ligados no so4coop.ini modelo: na batalha só o controle
-  do líder comanda o líder. README/LEIA-ME atualizados. Pacote build/release/so4coop-tagteam-1.1.zip.
-  Testado no Wine local (versão, ini, autotestes do filtro, recusa fora de batalha).
+- Same as 1.0 + hook_steam=1 and leader_only_input=1 on in the template so4coop.ini: in battle only the leader's
+  controller commands the leader. README/LEIA-ME updated. Package build/release/so4coop-tagteam-1.1.zip.
+  Tested on local Wine (version, ini, filter self-tests, refusal outside battle).
 
-## Fase 5 - co-op de verdade (pesquisa)
-- Dois caminhos: (1) o certo: achar onde a IA decide as ações de um membro que não é líder e trocar pela
-  entrada do controle 2 (engenharia reversa longa); (2) experimento rápido com peças já provadas:
-  alternar o líder entre dois personagens a cada N ms e, a cada troca, deixar passar só o controle daquele
-  personagem.
-- v0.32 (src/coopslice.c): F2 liga/desliga; coop_a/coop_b (posições, padrão 0 e 1), coop_slice_ms (padrão 50).
-  Cada fatia: valida a batalha, grava a posição do líder (mesmas checagens do tag-team) e põe o filtro no
-  controle daquela posição (steamN_position). Desligar devolve o líder para coop_a. Precisa de
-  leader_only_input=1 para separar a entrada. Teste local: recusa fora de batalha. Na release o código fica
-  inerte (F2 não existe lá).
-- Problemas esperados: câmera indo e voltando, animação de troca, IA assumindo na outra metade do tempo.
+## Phase 5 - real co-op (research)
+- Two paths: (1) the proper one: find where the AI decides the actions of a member that is not the leader and replace them
+  with controller 2's input (long reverse engineering); (2) a quick experiment with proven pieces:
+  alternate the leader between two characters every N ms and, on each switch, let through only that
+  character's controller.
+- v0.32 (src/coopslice.c): F2 toggles; coop_a/coop_b (positions, default 0 and 1), coop_slice_ms (default 50).
+  Each slice: validates the battle, writes the leader's position (same checks as tag-team) and sets the filter to
+  that position's controller (steamN_position). Turning it off returns the leader to coop_a. Needs
+  leader_only_input=1 to separate the input. Local test: refusal outside battle. In the release the code stays
+  inert (F2 does not exist there).
+- Expected problems: camera going back and forth, switch animation, AI taking over the other half of the time.
 
-### Execução 32 (v0.32) - notes/run32_v0.32 — fatias de co-op
-- F2 ligou, desligou após 16 fatias (~1 s, toque duplo?) e ligou de novo: ~20 s, 321 fatias, 0 puladas; o
-  filtro acompanhou (handle do líder alternando DualSense / controle 2). Desligou sozinho no fim da batalha.
-- Fatias de ~60 ms (~16 trocas/s), não 50 ms: o laço da sonda dorme 30 ms entre voltas.
-- Sem travar. Falta o relato do usuário (câmera, controle de cada personagem, fluidez).
-- **Relato do usuário (exec. 32):** câmera estável; Edge e Sarah seguiram cada um o seu controle; ações completas com
-  as próprias habilidades; a IA nunca assumiu; "quase jogável". Pedido: co-op de 4 jogadores.
-- v0.33 (coopslice.c reescrito): participantes = todo controle do Steam conectado com steamN_position (até 4);
-  só jogadores **ativos** ganham fatias (analógico > 0,25 ou botão nos últimos coop_idle_ms = 1500 ms; um só ativo
-  = 100% do controle; ninguém ativo = líder fica como está); thread própria com passo de ~1 ms, fatia
-  coop_slice_ms = 40; coop_auto=1 liga ao começar a batalha e pausa no fim (F2 continua alternando).
-  Atividade medida na thread principal da sonda (steamctl: ações digitais + analógicas 1 e 2 pelo Steam,
-  nunca filtradas). Teste local: ini lido, recusa fora de batalha.
+### Run 32 (v0.32) - notes/run32_v0.32 — co-op slices
+- F2 turned on, turned off after 16 slices (~1 s, double tap?) and turned on again: ~20 s, 321 slices, 0 skipped; the
+  filter kept up (leader handle alternating DualSense / controller 2). Turned off by itself at the end of the battle.
+- Slices of ~60 ms (~16 switches/s), not 50 ms: the probe's loop sleeps 30 ms between passes.
+- No freeze. User's report still needed (camera, control of each character, smoothness).
+- **User's report (run 32):** steady camera; Edge and Sarah each followed their own controller; complete actions with
+  their own skills; the AI never took over; "almost playable". Request: 4-player co-op.
+- v0.33 (coopslice.c rewritten): participants = every connected Steam controller with steamN_position (up to 4);
+  only **active** players get slices (stick > 0.25 or a button in the last coop_idle_ms = 1500 ms; a single active one
+  = 100% of control; nobody active = leader stays as is); own thread with a ~1 ms step, slice
+  coop_slice_ms = 40; coop_auto=1 turns on when the battle starts and pauses at the end (F2 still toggles).
+  Activity measured on the probe's main thread (steamctl: digital actions + analog 1 and 2 through Steam,
+  never filtered). Local test: ini read, refusal outside battle.
 
-### Execução 33 (v0.33) - notes/run33_v0.33 — co-op em 3 batalhas
-- coop_auto ligou no início de cada batalha e pausou no fim (3 batalhas, sem F2).
-- Fatias divididas conforme a atividade: momentos com 1, 2 e **3 jogadores ativos**; total no fim 1=608, 2=521,
-  3=906 fatias; ~20-25 trocas/s; 2 de 2099 fatias puladas (fim de batalha). Jogo rodou 6 min sem problema.
-- Falta o relato do usuário sobre 2 e 3 jogadores (câmera, controle, fluidez).
-- **Relato do usuário (exec. 33): joga bem.** 2 jogadores: perfeito. 3 jogadores: só falha visual — os cursores
-  brancos de cada personagem mapeado no minimapa da batalha piscam, e o personagem guiado por cada controle fica
-  piscando em branco (marcador de líder redesenhado a cada troca). L2/R2 (habilidades) funcionaram como no
-  single-player. 1 jogador: sem falhas.
+### Run 33 (v0.33) - notes/run33_v0.33 — co-op in 3 battles
+- coop_auto turned on at the start of each battle and paused at the end (3 battles, without F2).
+- Slices divided according to activity: moments with 1, 2 and **3 active players**; final total 1=608, 2=521,
+  3=906 slices; ~20-25 switches/s; 2 of 2099 slices skipped (end of battle). The game ran 6 min without problems.
+- User's report still needed on 2 and 3 players (camera, control, smoothness).
+- **User's report (run 33): plays well.** 2 players: perfect. 3 players: only a visual glitch — the white
+  cursors of each mapped character on the battle mini-map flicker, and the character driven by each controller keeps
+  flashing white (leader marker redrawn on every switch). L2/R2 (skills) worked as in
+  single-player. 1 player: no glitches.
 
 ## Release: so4coop co-op 1.2
-- Co-op na batalha para até 4 jogadores (fatias de líder para jogadores ativos), ligado no so4coop.ini modelo
+- Battle co-op for up to 4 players (leader slices for active players), on in the template so4coop.ini
   (coop_auto=1, coop_slice_ms=40, coop_idle_ms=1500, coop_active_only=1, hook_steam=1, leader_only_input=1,
-  steam1..4_position=0..3). README/LEIA-ME reescritos: como funciona, problemas conhecidos (marcador do líder e
-  cursores do minimapa piscando com 3+ jogadores), instalação, como achar o número de cada controle no log,
-  opções. Pacote build/release/so4coop-coop-1.2.zip; testado no Wine local (versão, ini, recusa fora de
-  batalha, autotestes do filtro).
+  steam1..4_position=0..3). README/LEIA-ME rewritten: how it works, known issues (leader marker and
+  mini-map cursors flickering with 3+ players), installation, how to find each controller's number in the log,
+  options. Package build/release/so4coop-coop-1.2.zip; tested on local Wine (version, ini, refusal outside
+  battle, filter self-tests).
 
-## Fase 6 - reduzir o pisca-pisca do co-op
-- Release 1.2 instalada no jogo (2c2afc44…), so4coop.ini do usuário mantido.
-- vtables (RTTI offline): CThisIs game+0xa3cd98 (19 métodos), CMinimapPlayerMarkerElement game+0xa3c288 (53),
+## Phase 6 - reducing the co-op flicker
+- Release 1.2 installed in the game (2c2afc44…), user's so4coop.ini kept.
+- vtables (offline RTTI): CThisIs game+0xa3cd98 (19 methods), CMinimapPlayerMarkerElement game+0xa3c288 (53),
   CMinimap game+0xa3c478, CTargetSign game+0xa3cb88, CArrowCursorManager game+0xa51910.
-- **CThisIs = popup "este é o seu personagem"**: vf12 (game+0x60cd40) lê o tempo do quadro (float em
-  game+0x105903c, por isso tanta classe de interface lê esse global) e roda uma máquina de estados em this+0x30
-  (tabela em game+0x60cf60): 0 cria recursos, 1 avança, 2 ocioso, 3 aparece (posição +0x44/+0x48, opacidade
-  +0x4c, chama "mostrar" pela vtable +0x178), 4 anima, 5 segura (tempo em +0x40), 6 some (opacidade até 0).
-  Reinicia em 3 a cada troca de líder -> no co-op (~25 trocas/s) pisca o tempo todo.
-- Quem chama GetLeader na interface: CMinimapPlayerMarkerElement vf41/vf42, CMinimapCharacterMarkerElement
-  vf41/vf42, CSightInCursor vf32, CTargetBoard vf29/vf32 -> cursores do minimapa piscam porque desenham o líder
-  do instante.
-- Correção 1 (v0.34, coop_quiet_marker=1): achar o CThisIs uma vez por batalha (varredura dos objetos de batalha
-  na thread principal da sonda) e, depois de cada fatia, se estiver em 3-5, pôr opacidade 0 e estado 6 (o próprio
-  jogo termina o sumiço). Só dados, sem mexer em código.
-- Correção 2 (proposta, pedir autorização): remendar o GetLeader do jogo na memória para que as funções de
-  interface acima vejam um "líder de exibição" estável (primeira alteração de código do jogo).
-- Correção 2 (v0.35, src/displayfix.c, coop_display_fix=1 / coop_display_pos=): 8 chamadas de interface a
-  GetLeader redirecionadas (só o alvo rel32 das instruções call; GetLeader e jogabilidade intocados):
+- **CThisIs = "this is your character" popup**: vf12 (game+0x60cd40) reads the frame time (float at
+  game+0x105903c, which is why so many UI classes read that global) and runs a state machine at this+0x30
+  (table at game+0x60cf60): 0 creates resources, 1 advances, 2 idle, 3 appears (position +0x44/+0x48, opacity
+  +0x4c, calls "show" through the vtable +0x178), 4 animates, 5 holds (time at +0x40), 6 fades (opacity down to 0).
+  Restarts at 3 on every leader switch -> in co-op (~25 switches/s) it flickers all the time.
+- Who calls GetLeader in the UI: CMinimapPlayerMarkerElement vf41/vf42, CMinimapCharacterMarkerElement
+  vf41/vf42, CSightInCursor vf32, CTargetBoard vf29/vf32 -> the mini-map cursors flicker because they draw the
+  leader of the moment.
+- Fix 1 (v0.34, coop_quiet_marker=1): find CThisIs once per battle (scan of the battle objects
+  on the probe's main thread) and, after each slice, if it is in 3-5, set opacity 0 and state 6 (the game
+  itself finishes the fade). Data only, without touching code.
+- Fix 2 (proposed, ask for authorization): patch the game's GetLeader in memory so that the UI functions
+  above see a stable "display leader" (first change to game code).
+- Fix 2 (v0.35, src/displayfix.c, coop_display_fix=1 / coop_display_pos=): 8 UI calls to
+  GetLeader redirected (only the rel32 target of the call instructions; GetLeader and gameplay untouched):
   0x6075e1/0x609372 CMinimapCharacterMarkerElement vf41/vf42, 0x6080bd/0x609e30 CMinimapPlayerMarkerElement
-  vf41/vf42, 0x6161f1/0x616911 CSightInCursor vf32, 0x61b150 CEftSightOutLine vf12, 0x6593a8 ajudante usado só
-  pelo CTargetBoard vf29/vf32. Destino: gl_display() = mesmo cálculo do GetLeader, mas com co-op ativo devolve o
-  membro de coop_display_pos (padrão: menor posição mapeada). CBattleCamp (menu) fica com o líder real.
-- Aplicação: salto de 14 bytes perto do jogo (alcance rel32), página com escrita liberada ANTES de pausar
-  threads, threads pausadas com SuspendThread (sem ptrace), handles guardados para retomar sem novo snapshot
-  (snapshot usa o heap; uma thread pausada pode ter a trava do heap), cada local conferido (E8 -> GetLeader)
-  antes e durante a pausa ou nada muda, cache de instruções descarregado, proteção restaurada. Uma vez por
-  sessão, quando o co-op liga.
-- Autoteste (chamada dentro da própria sonda): antes 4, depois 2002 -> funciona.
-- Rodada 35 (v0.35, 3 jogadores): correção 2 aplicada sem travar (60 threads pausadas, 8 locais), minimapa
-  ficou estável. Popup CThisIs nunca foi pego em 3-5 em ~2250 trocas -> não é ele que pisca (correção 1 sem
-  efeito). PROBLEMA NOVO relatado: com cada jogador movendo o seu personagem (lados diferentes, ou todos para
-  cima) os personagens travam/param e "parecem controlados pelo mesmo"; na rodada 33 (v0.33) isso não foi
-  notado. Duas hipóteses: (a) algum local remendado não é só visual (CSightInCursor vf32 chama métodos do
-  personagem: vf+0x530, 0x53d130; o ajudante do CTargetBoard só mede distância até o alvo, parece visual);
-  (b) fatias de 40 ms com 3 jogadores (40 de cada 120 ms; no resto a IA mexe o personagem).
-- v0.36 para separar: F5 alterna ao vivo TODOS os 8 locais -> SÓ MINIMAPA -> DESLIGADO (= v0.34) (os locais
-  continuam remendados; o bit desligado devolve o líder real); gl_display identifica o local pelo endereço de
-  retorno e conta chamadas por local (relatório [display] a cada 10 s); F6 alterna a fatia 40 -> 80 -> 150 ms.
-  Config opcional coop_display_sites= (hex, padrão ff).
-- Rodada 36 (v0.36, F5/F6 ao vivo; log em notes/run36_probe.log): batalha 1 = só minimapa + 80 ms (2 jogadores),
-  2-3 = correção desligada + 80/40 ms, 4 = desligada + 150 ms (3 jogadores). O usuário: movimento NORMAL em
-  todas; minimapa estável com "só minimapa"; o branco piscando nos personagens sumiu. Na rodada 35 (8 locais)
-  o sintoma era "personagens puxados de volta" -> o cursor de mira (CSightInCursor) e/ou o ajudante do
-  CTargetBoard alimentam a jogabilidade e precisam do líder real. O contorno de mira (CEftSightOutLine) nunca
-  foi chamado. Chamadas por quadro (~60/s): minimapa vf42 (os dois), cursor de mira (os dois), alvo; os vf41 do
-  minimapa quase nunca.
-- v0.37: só os 4 locais do minimapa são remendados; F5 liga/desliga a correção do minimapa; F6 continua
-  (fatia 40/80/150 ms); popup (coop_quiet_marker) desligado por padrão.
-- Rodada 37 (v0.37, 40 ms; log em notes/run37_probe.log): com só o minimapa remendado (948 de 948 chamadas
-  devolveram Edge) o minimapa AINDA piscou e o branco nos personagens voltou. Na rodada 35 (8 locais, 40 ms)
-  o minimapa ficou estável; na rodada 36 batalha 1 (minimapa, 80 ms) também -> os cursores brancos vêm do
-  cursor de mira e/ou do quadro de alvo, e a fatia mais longa (menos trocas/s) disfarça o pisca.
-  Controle 1 ficou sem uso até o R3 (nenhum botão/analógico antes). Usuário prefere fatia padrão de 40 ms.
-- v0.38: os 8 locais remendados de novo; F5 percorre MODO 1 MAPA -> 2 MAPA + QUADRO DE ALVO -> 3 MAPA +
-  CURSOR DE MIRA -> 4 DESLIGADO, para achar qual deles acalma o visual sem puxar os personagens.
-- Rodada 38 (v0.38, 40 ms, 3 jogadores; log em notes/run38_probe.log), respostas do usuário:
-  MODO 2 (mapa + quadro de alvo): minimapa pisca, movimento normal, **branco nos personagens sumiu**;
-  MODO 3 (mapa + cursor de mira): **minimapa estável**, movimento normal, branco continua.
-  -> o cursor de mira (CSightInCursor vf32) desenha os cursores brancos do minimapa; o quadro de alvo
-  (ajudante do CTargetBoard) causa o branco nos personagens. Nenhum dos dois sozinho puxa os personagens.
-- v0.39: liga os dois juntos (máscara 0xbf) por padrão; F5 = ligado/desligado. Testa se a combinação (como
-  na rodada 35) é o que puxava os personagens de volta.
-- Rodada 39 (v0.39, mapa + quadro de alvo + cursor de mira, 40 ms, 3 jogadores, 3 batalhas): movimento
-  normal, minimapa estável, sem branco nos personagens. O "puxado de volta" da rodada 35 não voltou (causa
-  não confirmada; se voltar, coop_display_sites= permite desligar partes).
-- Release 1.3: correção de exibição ligada (máscara bf), coop_display_fix/coop_display_pos/coop_display_sites
-  documentados no README/LEIA-ME e no so4coop.ini; pacote build/release/so4coop-coop-1.3.zip.
+  vf41/vf42, 0x6161f1/0x616911 CSightInCursor vf32, 0x61b150 CEftSightOutLine vf12, 0x6593a8 helper used only
+  by CTargetBoard vf29/vf32. Destination: gl_display() = same computation as GetLeader, but with co-op active returns the
+  member at coop_display_pos (default: lowest mapped position). CBattleCamp (menu) keeps the real leader.
+- Application: 14-byte jump near the game (rel32 range), page made writable BEFORE pausing
+  threads, threads paused with SuspendThread (no ptrace), handles kept to resume without a new snapshot
+  (a snapshot uses the heap; a paused thread may hold the heap lock), each site verified (E8 -> GetLeader)
+  before and during the pause or nothing changes, instruction cache flushed, protection restored. Once per
+  session, when co-op turns on.
+- Self-test (call inside the probe itself): before 4, after 2002 -> works.
+- Round 35 (v0.35, 3 players): fix 2 applied without freezing (60 threads paused, 8 sites), mini-map
+  became steady. The CThisIs popup was never caught in 3-5 in ~2250 switches -> it is not what flickers (fix 1 had no
+  effect). NEW PROBLEM reported: with each player moving their character (different directions, or all
+  upward) the characters get stuck/stop and "seem controlled by the same one"; in round 33 (v0.33) this was not
+  noticed. Two hypotheses: (a) some patched site is not purely visual (CSightInCursor vf32 calls methods of the
+  character: vf+0x530, 0x53d130; CTargetBoard's helper only measures distance to the target, looks visual);
+  (b) 40 ms slices with 3 players (40 of every 120 ms; the rest of the time the AI moves the character).
+- v0.36 to separate them: F5 toggles live ALL 8 sites -> MINI-MAP ONLY -> OFF (= v0.34) (the sites
+  stay patched; the cleared bit returns the real leader); gl_display identifies the site by the return
+  address and counts calls per site ([display] report every 10 s); F6 cycles the slice 40 -> 80 -> 150 ms.
+  Optional setting coop_display_sites= (hex, default ff).
+- Round 36 (v0.36, F5/F6 live; log in notes/run36_probe.log): battle 1 = mini-map only + 80 ms (2 players),
+  2-3 = fix off + 80/40 ms, 4 = off + 150 ms (3 players). The user: NORMAL movement in
+  all of them; mini-map steady with "mini-map only"; the white flashing on the characters was gone. In round 35 (8 sites)
+  the symptom was "characters pulled back" -> the sight cursor (CSightInCursor) and/or CTargetBoard's
+  helper feed gameplay and need the real leader. The sight outline (CEftSightOutLine) was never
+  called. Calls per frame (~60/s): mini-map vf42 (both), sight cursor (both), target; the mini-map's vf41
+  almost never.
+- v0.37: only the 4 mini-map sites are patched; F5 turns the mini-map fix on/off; F6 remains
+  (slice 40/80/150 ms); popup (coop_quiet_marker) off by default.
+- Round 37 (v0.37, 40 ms; log in notes/run37_probe.log): with only the mini-map patched (948 of 948 calls
+  returned Edge) the mini-map STILL flickered and the white on the characters came back. In round 35 (8 sites, 40 ms)
+  the mini-map was steady; in round 36 battle 1 (mini-map, 80 ms) too -> the white cursors come from the
+  sight cursor and/or the target board, and the longer slice (fewer switches/s) masks the flicker.
+  Controller 1 went unused until R3 (no button/stick before that). User prefers a default slice of 40 ms.
+- v0.38: all 8 sites patched again; F5 cycles MODE 1 MAP -> 2 MAP + TARGET BOARD -> 3 MAP +
+  SIGHT CURSOR -> 4 OFF, to find which of them calms the visuals without pulling the characters.
+- Round 38 (v0.38, 40 ms, 3 players; log in notes/run38_probe.log), user's answers:
+  MODE 2 (map + target board): mini-map flickers, normal movement, **white on the characters gone**;
+  MODE 3 (map + sight cursor): **mini-map steady**, normal movement, white continues.
+  -> the sight cursor (CSightInCursor vf32) draws the white cursors on the mini-map; the target board
+  (CTargetBoard's helper) causes the white on the characters. Neither of them alone pulls the characters.
+- v0.39: turns both on together (mask 0xbf) by default; F5 = on/off. Tests whether the combination (as
+  in round 35) is what pulled the characters back.
+- Round 39 (v0.39, map + target board + sight cursor, 40 ms, 3 players, 3 battles): normal
+  movement, steady mini-map, no white on the characters. Round 35's "pulled back" did not return (cause
+  not confirmed; if it returns, coop_display_sites= can turn parts off).
+- Release 1.3: display fix on (mask bf), coop_display_fix/coop_display_pos/coop_display_sites
+  documented in README/LEIA-ME and in so4coop.ini; package build/release/so4coop-coop-1.3.zip.
 
-## Fase 7 - ícones de botão do PlayStation (sem Special K)
-- Dados do jogo: 0000.bin (12,9 GB, cifrado) e 0001.bin (36,7 GB, pacotes "KCAP" com compressão SLZ da
-  tri-Ace, sem nomes legíveis). Trocar texturas no disco = engenharia reversa dos dois + regravar 36 GB.
-- O exe não importa d3d11/dxgi/xinput (carrega por LoadLibrary/GetProcAddress no código protegido); as
-  strings "PlayStation 4" etc. são uma lista de plataformas do áudio, não opção de ícones. Nenhum pacote do
-  Special K no disco.
-- Caminho escolhido: troca em tempo de execução dentro do nosso xinput1_3.dll, como o Special K faz: o jogo
-  desenha com D3D11 (DXVK no Proton) e todos os dispositivos da mesma implementação dividem a vtable; um
-  dispositivo descartável nosso dá a vtable e o CreateTexture2D (slot 5) é redirecionado.
-- v0.40 (src/texhook.c, só na versão de pesquisa): aos 45 s instala o gancho; toda textura criada com dados
-  vai para so4coop_textures/textures.txt (hash FNV-1a 64 do nível 0, tamanho, formato DXGI, flags) e cada
-  textura nova em formato de interface (RGBA/BGRA 8 bits, BC1/2/3/7) é salva uma vez como .dds (até 6000
-  arquivos / 3 GB). Só observa. Autoteste: gancho + textura 64x64 por um 2º dispositivo -> salva, o Pillow lê.
-- Próximo: achar a folha com os ícones do Xbox (cores A/B/X/Y), desenhar os ícones do PlayStation e trocar.
-- Rodada 40 (v0.40; lista em notes/run40_textures.txt): o gancho funcionou (553 texturas com dados, 762 sem),
-  mas 0 .dds salvos: o jogo cria em formatos TYPELESS (70 BC1, 73 BC2, 76 BC3, 27 RGBA8, 97 BC7, 83 BC5) e a
-  v0.40 só salvava os tipados. Todas imutáveis (usage 1). Candidatas a folhas de interface: 4x 8192x4096 e
-  2x 2048x4096 em BC3 (DXT5). Nada criado entre 45 s e ~60 s (tela de título antes do gancho).
-- v0.41: salva os TYPELESS (arquivo marcado como UNORM) e lista também as texturas criadas sem dados.
-  Autoteste com RGBA8 e BC3 TYPELESS: os dois salvos e lidos pelo Pillow.
-- Rodada 41 (v0.41): 513 .dds salvos (394 MB). O usuário tem o pacote "PlayStation Button Prompts.zip" (2017,
-  para o Special K): CEGUI do SK + uma textura, SK_Res/inject/textures/61a1af48.dds = 4096x4096 BC7 (98), 1 mip:
-  a folha principal da interface (L1/R1/L2/R2, OPTIONS, teclas do teclado, retratos). Ela NÃO estava entre as
-  salvas (carregada na tela de título, antes do gancho dos 45 s). Outra folha 4096x4096 BC7 do jogo (defd...)
-  já tem ○ ✕ △ □ e OPTIONS ao lado de A/B/X/Y (sobras da versão PS4).
-- v0.42: compatível com pacotes do Special K sem o Special K: nome = CRC-32C do nível 0 (como o crc32_tex do
-  SK: linhas de blocos, altura/4 + altura%4 no caminho rápido), instrução SSE4.2; se o jogo cria uma textura
-  cujo CRC tem arquivo em SK_Res\inject\textures\<crc>.dds, a textura é criada do arquivo (formato do jogo
-  mantido quando o bloco é igual; mips do arquivo). Gancho instalado na carga da DLL (thread que espera o
-  d3d11.dll; só kernel32 + d3d11), tex_hook=0 desliga. textures.txt ganhou a coluna special_k_name.
-- Autoteste (Wine do sistema): CRC-32C("123456789") = e3069283; 64x64 RGBA e 4096x4096 BC7 TYPELESS (2 mips) com
-  o arquivo REAL do pacote renomeado para o CRC dela -> INJECTED (4096x4096 fmt 97 mips 1). CRCs iguais aos de
-  uma implementação independente em Python.
-- Rodada 42 (v0.42; log em notes/run42_probe.log): o jogo TRAVOU antes da tela de título. Gancho instalado aos
-  5,8 s (dispositivo nosso criado ~270 ms depois de o jogo carregar o d3d11.dll), e depois 0 texturas, 0 chamadas
-  do Steam em 80 s (na rodada 41 eram ~600 RunFrame/s já aos 10 s) -> o laço principal nunca começou. Causa: criar
-  um dispositivo D3D11 nosso enquanto o jogo inicializa o dele.
-- v0.43: nenhum dispositivo nosso na partida. A thread carrega o d3d11.dll (só carrega) e põe um salto de 14 bytes
-  (jmp [rip]) no início de D3D11CreateDevice e D3D11CreateDeviceAndSwapChain (segue thunks E9/EB/FF25; no DXVK do
-  Proton 10 as duas começam com prólogo normal, 0x50 bytes uma da outra). A 1ª chamada do jogo devolve os bytes
-  originais, roda a função real e engancha a vtable do dispositivo devolvido, antes de qualquer textura. Se nada
-  for pego em 60 s: desarma e usa o jeito da v0.41 (dispositivo próprio, quando o do jogo já existe).
-- Autoteste (Wine do sistema): criação pega pelo export armado (hook aos 131 ms), 2 injeções (64x64 RGBA e
-  4096x4096 BC7 2 mips) -> funciona.
-- Rodada 43 (v0.43, na CÓPIA DE TESTE /mnt/STEAM/so4coop-test via launch.sh, junto com o SO4Fix do Lyall
-  (winmm.dll + SO4Fix.asi); log em notes/run43_probe.log): **funcionou**. Gancho armado aos 4 ms, dispositivo do
-  próprio jogo pego aos 2766 ms (D3D11CreateDeviceAndSwapChain), 61a1af48.dds INJETADA (jogo 4096x4096 BC7 2 mips
-  -> arquivo 1 mip), 0 falhas; tela de título normal (o travamento da rodada 42 sumiu). Usuário confirmou os ícones
-  do PlayStation na tela. Co-op na mesma sessão: 1 batalha, 364 fatias de 40 ms entre os controles 1 e 2, correção
-  de exibição 5852 de 5852 estáveis. so4coop e SO4Fix convivem (xinput1_3 + winmm, WINEDLLOVERRIDES com ";").
-- Próximo: levar o gancho de texturas para a versão de lançamento (só injeção; sem salvar .dds nem textures.txt,
-  que gastaram 606 MB) -> release 1.4.
-- Release 1.4 (código): texhook.c entra na versão de lançamento só com a troca (sem textures.txt, sem .dds, sem hash
-  FNV; o CRC só é calculado quando há pacote) e sem gancho nenhum se SK_Res\inject\textures não tiver .dds;
-  tex_hook=1 no so4coop.ini. Autoteste (Wine do sistema, caminho absoluto da DLL + WINEDLLOVERRIDES, senão o
-  rundll32 carrega o xinput1_3 embutido): com os 2 arquivos de teste -> 2 injeções, 0 salvos, nenhuma pasta
-  so4coop_textures; sem pacote -> "button prompts: off", nada armado. Versão de pesquisa: autoteste continua WORKS.
-- Rodada 44 (1.4 de lançamento na cópia; log em notes/run44_so4coop.log): ícones do PS e co-op funcionaram, mas o
-  usuário viu **aperto duplo de habilidade**: o L2/LT do GameSir (controle 1, Arumat) soltou Dragon Roar e a Sarah
-  (controle 2) soltou Solar Flare ao mesmo tempo. Observado no log: os dois controles são aparelhos distintos (a
-  maioria dos apertos aparece num só; o GameSir não aparece duas vezes). Nenhum evento das ações 13/14 nesta sessão,
-  então não dá para ver no log qual ação é o L2 do GameSir (unknown).
-  Deduzido (não confirmado): (1) cs_thread gravava o novo líder ANTES de trocar sh_leader_h, então por um instante o
-  controle do jogador anterior chegava ao novo líder; (2) o jogo lê o controle e age no quadro seguinte para quem é
-  líder naquele momento; uma troca nesse meio entrega o aperto ao próximo jogador.
-- v0.44 / 1.4.1: (a) durante a troca sh_leader_h = SH_NOBODY (nenhum controle passa) e só depois o do novo líder;
-  (b) sh_dig marca a hora de cada aperto novo no controle do líder (botão segurado não conta; líder novo = estado
-  zerado, porque para o jogo é um aperto novo); a vez não troca até coop_press_guard_ms (50) depois de um aperto,
-  com no máximo +120 ms de vez. Relatório [co-op] ganhou "held for a press". Autoteste (so4coop_hooktest, pesquisa
-  e lançamento): aperto visto, segurado não é aperto novo, durante a troca líder 0 e outro 0 -> WORKS.
-- Rodada 45 (1.4.1 na cópia; log em notes/run45_so4coop.log): **sem aperto duplo** (usuário). Controle 1 (GameSir,
-  Arumat) apertou as ações 13/14 (L2/R2, provável) 33 vezes; nenhum aperto pareado entre os controles; a proteção
-  segurou a troca em 127 de 159 vezes (vez média ~63 ms em vez de 40 com os dois jogadores ativos); o usuário não
-  relatou lentidão.
+## Phase 7 - PlayStation button icons (without Special K)
+- Game data: 0000.bin (12.9 GB, encrypted) and 0001.bin (36.7 GB, "KCAP" packages with tri-Ace's SLZ
+  compression, no readable names). Replacing textures on disk = reverse engineering both + rewriting 36 GB.
+- The exe does not import d3d11/dxgi/xinput (it loads them through LoadLibrary/GetProcAddress in the protected code); the
+  strings "PlayStation 4" etc. are a list of audio platforms, not an icon option. No Special K
+  pack on disk.
+- Chosen path: replacement at run time inside our xinput1_3.dll, as Special K does: the game
+  draws with D3D11 (DXVK on Proton) and all devices of the same implementation share the vtable; a
+  throwaway device of ours gives us the vtable and CreateTexture2D (slot 5) is redirected.
+- v0.40 (src/texhook.c, research version only): at 45 s it installs the hook; every texture created with data
+  goes to so4coop_textures/textures.txt (FNV-1a 64 hash of level 0, size, DXGI format, flags) and each
+  new texture in a UI format (RGBA/BGRA 8 bits, BC1/2/3/7) is saved once as .dds (up to 6000
+  files / 3 GB). Observes only. Self-test: hook + 64x64 texture through a 2nd device -> saved, Pillow reads it.
+- Next: find the sheet with the Xbox icons (A/B/X/Y colors), draw the PlayStation icons and replace them.
+- Round 40 (v0.40; list in notes/run40_textures.txt): the hook worked (553 textures with data, 762 without),
+  but 0 .dds saved: the game creates them in TYPELESS formats (70 BC1, 73 BC2, 76 BC3, 27 RGBA8, 97 BC7, 83 BC5) and
+  v0.40 only saved the typed ones. All immutable (usage 1). Candidates for UI sheets: 4x 8192x4096 and
+  2x 2048x4096 in BC3 (DXT5). Nothing created between 45 s and ~60 s (title screen before the hook).
+- v0.41: saves the TYPELESS ones (file marked as UNORM) and also lists the textures created without data.
+  Self-test with RGBA8 and BC3 TYPELESS: both saved and read by Pillow.
+- Round 41 (v0.41): 513 .dds saved (394 MB). The user has the pack "PlayStation Button Prompts.zip" (2017,
+  for Special K): SK's CEGUI + one texture, SK_Res/inject/textures/61a1af48.dds = 4096x4096 BC7 (98), 1 mip:
+  the main UI sheet (L1/R1/L2/R2, OPTIONS, keyboard keys, portraits). It was NOT among the
+  saved ones (loaded on the title screen, before the 45 s hook). Another 4096x4096 BC7 sheet of the game (defd...)
+  already has ○ ✕ △ □ and OPTIONS next to A/B/X/Y (leftovers from the PS4 version).
+- v0.42: compatible with Special K packs without Special K: name = CRC-32C of level 0 (like SK's
+  crc32_tex: block rows, height/4 + height%4 in the fast path), SSE4.2 instruction; if the game creates a texture
+  whose CRC has a file in SK_Res\inject\textures\<crc>.dds, the texture is created from the file (game's format
+  kept when the block is the same; mips from the file). Hook installed on DLL load (thread that waits for
+  d3d11.dll; only kernel32 + d3d11), tex_hook=0 turns it off. textures.txt gained the special_k_name column.
+- Self-test (system Wine): CRC-32C("123456789") = e3069283; 64x64 RGBA and 4096x4096 BC7 TYPELESS (2 mips) with
+  the pack's REAL file renamed to its CRC -> INJECTED (4096x4096 fmt 97 mips 1). CRCs equal to those of
+  an independent implementation in Python.
+- Round 42 (v0.42; log in notes/run42_probe.log): the game FROZE before the title screen. Hook installed at
+  5.8 s (our device created ~270 ms after the game loaded d3d11.dll), and then 0 textures, 0 Steam
+  calls in 80 s (in round 41 there were ~600 RunFrame/s already at 10 s) -> the main loop never started. Cause: creating
+  a D3D11 device of ours while the game initializes its own.
+- v0.43: no device of ours at startup. The thread loads d3d11.dll (only loads it) and puts a 14-byte jump
+  (jmp [rip]) at the start of D3D11CreateDevice and D3D11CreateDeviceAndSwapChain (follows E9/EB/FF25 thunks; in Proton
+  10's DXVK both start with a normal prologue, 0x50 bytes apart). The game's 1st call restores the original
+  bytes, runs the real function and hooks the vtable of the returned device, before any texture. If nothing
+  is caught in 60 s: it disarms and uses v0.41's way (own device, once the game's already exists).
+- Self-test (system Wine): creation caught through the armed export (hook at 131 ms), 2 injections (64x64 RGBA and
+  4096x4096 BC7 2 mips) -> works.
+- Round 43 (v0.43, in the TEST COPY /mnt/STEAM/so4coop-test via launch.sh, together with Lyall's SO4Fix
+  (winmm.dll + SO4Fix.asi); log in notes/run43_probe.log): **worked**. Hook armed at 4 ms, the game's own
+  device caught at 2766 ms (D3D11CreateDeviceAndSwapChain), 61a1af48.dds INJECTED (game 4096x4096 BC7 2 mips
+  -> file 1 mip), 0 failures; normal title screen (round 42's freeze is gone). User confirmed the PlayStation
+  icons on screen. Co-op in the same session: 1 battle, 364 slices of 40 ms between controllers 1 and 2, display
+  fix 5852 of 5852 steady. so4coop and SO4Fix coexist (xinput1_3 + winmm, WINEDLLOVERRIDES with ";").
+- Next: take the texture hook to the release version (injection only; without saving .dds or textures.txt,
+  which took up 606 MB) -> release 1.4.
+- Release 1.4 (code): texhook.c goes into the release version with replacement only (no textures.txt, no .dds, no FNV
+  hash; the CRC is only computed when there is a pack) and with no hook at all if SK_Res\inject\textures has no .dds;
+  tex_hook=1 in so4coop.ini. Self-test (system Wine, absolute DLL path + WINEDLLOVERRIDES, otherwise
+  rundll32 loads the builtin xinput1_3): with the 2 test files -> 2 injections, 0 saved, no
+  so4coop_textures folder; without a pack -> "button prompts: off", nothing armed. Research version: self-test still WORKS.
+- Round 44 (release 1.4 in the copy; log in notes/run44_so4coop.log): PS icons and co-op worked, but the
+  user saw a **double skill press**: the GameSir's L2/LT (controller 1, Arumat) fired Dragon Roar and Sarah
+  (controller 2) fired Solar Flare at the same time. Observed in the log: the two controllers are distinct devices (most
+  presses appear on only one; the GameSir does not appear twice). No events for actions 13/14 in this session,
+  so the log cannot show which action is the GameSir's L2 (unknown).
+  Deduced (not confirmed): (1) cs_thread wrote the new leader BEFORE switching sh_leader_h, so for an instant the
+  previous player's controller reached the new leader; (2) the game reads the controller and acts on the next frame for whoever
+  is the leader at that moment; a switch in between delivers the press to the next player.
+- v0.44 / 1.4.1: (a) during the switch sh_leader_h = SH_NOBODY (no controller gets through) and only then the new leader's;
+  (b) sh_dig marks the time of each new press on the leader's controller (a held button does not count; new leader = state
+  zeroed, because to the game it is a new press); the turn does not change until coop_press_guard_ms (50) after a press,
+  with at most +120 ms of turn. The [co-op] report gained "held for a press". Self-test (so4coop_hooktest, research
+  and release): press seen, held is not a new press, during the switch leader 0 and other 0 -> WORKS.
+- Round 45 (1.4.1 in the copy; log in notes/run45_so4coop.log): **no double press** (user). Controller 1 (GameSir,
+  Arumat) pressed actions 13/14 (L2/R2, probably) 33 times; no paired presses between the controllers; the guard
+  held the switch 127 of 159 times (average turn ~63 ms instead of 40 with both players active); the user did not
+  report any slowness.
 
-## 2026-11-21 (noite): SO4Fix nunca carregou; 4 jogadores com teclado
-- Achado: com o jogo aberto (instalação real), o winmm.dll mapeado era o interno do Proton, não o Ultimate ASI Loader
-  do Lyall; nenhum SO4Fix.log em lugar nenhum (nem na cópia de teste). O exe não importa winmm (importa advapi32,
-  gdi32, kernel32, msvcp110, msvcr110, ole32, shell32, shlwapi, steam_api64, user32, wininet); quem puxa o winmm são
-  DLLs internas do Wine -> vem a interna. A nota da rodada 43 ("so4coop e SO4Fix convivem") estava errada: só o
-  so4coop rodava. Sintoma: print da Steam 1914x1048 (janela com bordas, faixas pretas), alt+tab ruim.
-- Correção: winmm.dll -> wininet.dll (nome aceito pelo Ultimate ASI Loader, importado direto pelo exe) na real e na
-  cópia; WINEDLLOVERRIDES="xinput1_3=n,b;wininet=n,b". launch.sh da cópia atualizado. A confirmar: SO4Fix.log aparece.
-- 4o jogador sem 4o controle: tools/kbpad.py (python-evdev) cria um controle virtual de Xbox 360 (uinput, 045e:028e)
-  guiado pelo teclado, que fica agarrado (grab); teclas sem função passam por um teclado virtual; Scroll Lock/Pause
-  liga/desliga. A Steam o vê como mais um controle -> steam4_position=3, sem mudar o mod. tools/so4play.sh (opção de
-  inicialização) liga o kbpad 1 s antes do jogo e o desliga ao fechar; log em tools/so4play.log. Ler o teclado
-  precisa da regra udev tools/70-so4kbpad.rules (uaccess só para o teclado Telink 248a:16ab).
-- so4coop.ini da instalação real era o antigo de 17/11; agora é o da 1.4.1 com steam1=2, steam2=1, steam3=0, steam4=3
-  (antigo em real-install-backup-20261121/so4coop.ini.before-4p).
-- Rodada 46 (instalação real, 1.4.1 + SO4Fix + kbpad): o SO4Fix travava o jogo ~3 s depois de abrir (log do Proton:
-  page fault em msvcp140+0x18c34 chamado de SO4Fix.asi+0x165a0). O prefixo 609150 tem msvcp140 14.0.24215; o
-  SO4Fix (VS 2022 17.10+) precisa de 14.40+ (mudança do std::mutex). Correção: msvcp140/vcruntime140/vcruntime140_1
-  14.44 (do prefixo do app 595520) na pasta do jogo (real e cópia) + overrides n,b no so4play.sh. SO4Fix.log:
-  v0.9.0 carregado, todas as correções aplicadas (1920x1080 sem bordas, intro, HUD, FOV, sombras).
-  Co-op: a Steam listou 3 controles e o virtual do teclado veio como controle 1 (não 4): handles 000D9089..(kbpad),
-  00011C66..6D5EC4E5 (GameSir), 00245E28..E869A2DE (DualSense). Teclado foi para o Arumat (steam1=2) e a Myuria
-  (steam4) ficou parada. A Steam não numera pela ordem de conexão.
-- v0.45 / 1.4.2: xbox_position=P. A cada 1 s, até conhecer todos os controles, SteamAPI_ISteamController_
-  GetDigitalActionOrigins(handle, action set atual, ações 1..16) -> origem 114-191 (Xbox One/360) = Xbox, outra = outro.
-  Com todos conhecidos: o 1o Xbox fica com P, os outros recebem steam1.., steam2.. na ordem da Steam (sc_remap;
-  configurado em sc_cfg, em vigor em sc_pos). Handle novo num índice -> reclassifica. Sem xbox_position nada muda.
-  Autoteste so4coop_maptest (lançamento e pesquisa): tipos por origem OK, 5 casos (inclusive o da rodada 46) -> WORKS;
-  hooktest continua WORKS. Na cópia: 1.4.2 + ini steam1=1 (GameSir), steam2=0 (DualSense), steam3=2, xbox=3;
-  launch.sh agora passa pelo tools/so4play.sh (kbpad + SO4Fix). A confirmar: valores reais de origem no log.
-- Rodada 47 (1.4.2 na cópia; log em notes/run47_so4coop.log): detecção ERRADA. Origens: controle 1 (handle
-  ..5F4DC78F, só existe desde o kbpad = teclado) 246; controle 2 (..6D5EC4E5, GameSir) 40; controle 3 (..E869A2DE,
-  DualSense) 120 -> o DualSense foi classificado como Xbox e foi para a Myuria, o teclado para a Sarah. As faixas do
-  enum (PS4 50-113, Xbox 114-191) não valem para o que esta Steam devolve pela interface 005.
-- v0.46 (1.4.2 de novo): tipo pelo NOME do ícone da origem (GetGlyphForActionOrigin, reserva GetStringForActionOrigin):
-  contém "xbox" -> Xbox, outro nome -> outro, vazio -> desconhecido (fica a numeração do ini). Log: "controller kind"
-  com ação, origem, ícone e nome, e a lista ação:origem de cada controle. Autoteste maptest + hooktest -> WORKS.
-- v0.47 / 1.5: modo entrar (coop_join=1) para Remote Play Together e Sunshine/big-remote-play (BigLinux; Sunshine +
-  Moonlight, até 4 dispositivos convidados, controles virtuais do Sunshine via libvirtualhid, DualSense escolhido pelo
-  tipo do cliente). Os convidados chegam como mais controles da Steam, em ordem variável, e podem ser Xbox -> nem
-  steamN nem xbox_position servem. Agora: 1o aperto numa batalha pega a 1a posição livre, R3 (take_action) passa
-  para a próxima livre; posse guardada por handle (sc_jh/sc_jp, 16) a sessão toda; posição de controle desconectado
-  fica livre. SC_MAXCTL 4 -> 8 (steam5..8_position, relatório do co-op com 8). displayfix: sem posições -> 0.
-  Autoteste so4coop_jointest (5 controles, saída, ordem trocada, grupo cheio) WORKS; maptest/hooktest WORKS.
-  Na cópia: 1.5 + coop_join=1. Lado Linux: keyd passa a pegar só o teclado físico (ids 248a:16ab) — com '*' ele
-  agarrava também o teclado virtual dos convidados do Sunshine e o repasse do kbpad. Teclado de convidado chega ao
-  jogo como teclado comum (fora do filtro) -> convidados devem usar controle.
-- Rodada 48 (1.5 na cópia, coop_join=1; log em notes/run48_so4coop.log): **funcionou**. 3 controles; cada um entrou
-  no 1o aperto, na ordem dos apertos: controle 3 (DualSense) -> Edge, controle 1 (teclado/kbpad) -> Sarah, controle 2
-  (GameSir) -> Arumat. Os três receberam vezes (294 / 93 / 223 fatias). R3 para trocar não foi usado. Sem convidados
-  remotos ainda (Remote Play Together / big-remote-play a testar).
+## 2026-11-21 (night): SO4Fix never loaded; 4 players with a keyboard
+- Finding: with the game open (real install), the mapped winmm.dll was Proton's builtin, not Lyall's Ultimate ASI
+  Loader; no SO4Fix.log anywhere (not even in the test copy). The exe does not import winmm (it imports advapi32,
+  gdi32, kernel32, msvcp110, msvcr110, ole32, shell32, shlwapi, steam_api64, user32, wininet); what pulls in winmm are
+  Wine's builtin DLLs -> the builtin one comes in. Round 43's note ("so4coop and SO4Fix coexist") was wrong: only
+  so4coop was running. Symptom: Steam screenshot 1914x1048 (window with borders, black bars), bad alt+tab.
+- Fix: winmm.dll -> wininet.dll (a name accepted by Ultimate ASI Loader, imported directly by the exe) in the real one and in the
+  copy; WINEDLLOVERRIDES="xinput1_3=n,b;wininet=n,b". The copy's launch.sh updated. To be confirmed: SO4Fix.log appears.
+- 4th player without a 4th controller: tools/kbpad.py (python-evdev) creates a virtual Xbox 360 controller (uinput, 045e:028e)
+  driven by the keyboard, which stays grabbed (grab); keys with no function go through a virtual keyboard; Scroll Lock/Pause
+  turns it on/off. Steam sees it as one more controller -> steam4_position=3, without changing the mod. tools/so4play.sh (launch
+  option) starts kbpad 1 s before the game and stops it on exit; log in tools/so4play.log. Reading the keyboard
+  needs the udev rule tools/70-so4kbpad.rules (uaccess only for the Telink keyboard 248a:16ab).
+- The real install's so4coop.ini was the old one from 11/17; it is now 1.4.1's with steam1=2, steam2=1, steam3=0, steam4=3
+  (old one in real-install-backup-20261121/so4coop.ini.before-4p).
+- Round 46 (real install, 1.4.1 + SO4Fix + kbpad): SO4Fix crashed the game ~3 s after launch (Proton log:
+  page fault in msvcp140+0x18c34 called from SO4Fix.asi+0x165a0). Prefix 609150 has msvcp140 14.0.24215;
+  SO4Fix (VS 2022 17.10+) needs 14.40+ (std::mutex change). Fix: msvcp140/vcruntime140/vcruntime140_1
+  14.44 (from app 595520's prefix) in the game folder (real and copy) + n,b overrides in so4play.sh. SO4Fix.log:
+  v0.9.0 loaded, all fixes applied (1920x1080 borderless, intro, HUD, FOV, shadows).
+  Co-op: Steam listed 3 controllers and the keyboard's virtual one came as controller 1 (not 4): handles 000D9089..(kbpad),
+  00011C66..6D5EC4E5 (GameSir), 00245E28..E869A2DE (DualSense). The keyboard went to Arumat (steam1=2) and Myuria
+  (steam4) stood still. Steam does not number by connection order.
+- v0.45 / 1.4.2: xbox_position=P. Every 1 s, until all controllers are known, SteamAPI_ISteamController_
+  GetDigitalActionOrigins(handle, current action set, actions 1..16) -> origin 114-191 (Xbox One/360) = Xbox, other = other.
+  Once all are known: the 1st Xbox gets P, the others get steam1.., steam2.. in Steam's order (sc_remap;
+  configured in sc_cfg, in effect in sc_pos). New handle at an index -> reclassify. Without xbox_position nothing changes.
+  Self-test so4coop_maptest (release and research): types by origin OK, 5 cases (including round 46's) -> WORKS;
+  hooktest still WORKS. In the copy: 1.4.2 + ini steam1=1 (GameSir), steam2=0 (DualSense), steam3=2, xbox=3;
+  launch.sh now goes through tools/so4play.sh (kbpad + SO4Fix). To be confirmed: real origin values in the log.
+- Round 47 (1.4.2 in the copy; log in notes/run47_so4coop.log): WRONG detection. Origins: controller 1 (handle
+  ..5F4DC78F, exists only since kbpad = keyboard) 246; controller 2 (..6D5EC4E5, GameSir) 40; controller 3 (..E869A2DE,
+  DualSense) 120 -> the DualSense was classified as Xbox and went to Myuria, the keyboard to Sarah. The enum's
+  ranges (PS4 50-113, Xbox 114-191) do not hold for what this Steam returns through interface 005.
+- v0.46 (1.4.2 again): type by the NAME of the origin's icon (GetGlyphForActionOrigin, fallback GetStringForActionOrigin):
+  contains "xbox" -> Xbox, another name -> other, empty -> unknown (the ini numbering stays). Log: "controller kind"
+  with action, origin, icon and name, and each controller's action:origin list. Self-test maptest + hooktest -> WORKS.
+- v0.47 / 1.5: join mode (coop_join=1) for Remote Play Together and Sunshine/big-remote-play (BigLinux; Sunshine +
+  Moonlight, up to 4 guest devices, Sunshine's virtual controllers via libvirtualhid, DualSense chosen by the
+  client's type). Guests arrive as more Steam controllers, in varying order, and may be Xbox -> neither
+  steamN nor xbox_position works. Now: the 1st press in a battle takes the 1st free position, R3 (take_action) moves
+  to the next free one; ownership kept by handle (sc_jh/sc_jp, 16) for the whole session; a disconnected controller's position
+  becomes free. SC_MAXCTL 4 -> 8 (steam5..8_position, co-op report with 8). displayfix: no positions -> 0.
+  Self-test so4coop_jointest (5 controllers, leaving, changed order, full party) WORKS; maptest/hooktest WORKS.
+  In the copy: 1.5 + coop_join=1. Linux side: keyd now takes only the physical keyboard (ids 248a:16ab) — with '*' it
+  also grabbed the Sunshine guests' virtual keyboard and kbpad's passthrough. A guest's keyboard reaches the
+  game as a plain keyboard (outside the filter) -> guests must use a controller.
+- Round 48 (1.5 in the copy, coop_join=1; log in notes/run48_so4coop.log): **worked**. 3 controllers; each one joined
+  on its 1st press, in the order of the presses: controller 3 (DualSense) -> Edge, controller 1 (keyboard/kbpad) -> Sarah, controller 2
+  (GameSir) -> Arumat. All three got turns (294 / 93 / 223 slices). R3 to switch was not used. No remote
+  guests yet (Remote Play Together / big-remote-play to be tested).

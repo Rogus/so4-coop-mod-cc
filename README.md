@@ -186,7 +186,7 @@ build writes only its own log, `so4coop.log`.
 | `release/` | Settings file and player documentation |
 | `tools/` | Linux launcher and keyboard controller |
 | `analysis/`, `recon/` | Research scripts |
-| `notes/` | Research log ([`estudo.md`](notes/estudo.md), in Portuguese) and playtest logs |
+| `notes/` | Research log ([`estudo.md`](notes/estudo.md)) and playtest logs |
 
 ## Credits
 - [SO4Fix](https://github.com/Lyall/SO4Fix) by Lyall: the fix this mod is tested alongside.
