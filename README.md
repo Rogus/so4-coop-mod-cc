@@ -144,8 +144,7 @@ the overrides for so4coop and SO4Fix:
 ```
 
 The launcher starts the keyboard controller with the game and stops it afterward. To launch without
-the keyboard controller, put `SO4_KBPAD=0` before the path. Messages from these two tools are in
-Portuguese.
+the keyboard controller, put `SO4_KBPAD=0` before the path.
 
 | Keys | Controller |
 | --- | --- |
