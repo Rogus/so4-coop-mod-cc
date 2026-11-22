@@ -8,14 +8,20 @@ Tested on: Steam build 2501532, `StarOceanTheLastHope.exe` SHA-256
 `284b237259c73c4b02545a2e985eba739b3a68ea365384ebed6666ea2a01a4aa`, Linux with Proton 10.
 Windows has not been tested.
 
-## What works (release 1.4)
+## What works (release 1.5)
 - Battle co-op for 2 to 4 players: every active player moves, attacks and uses their own skills at
   the same time.
 - The mini-map, sight cursor and target board stay steady during co-op (no flicker).
 - Tag-team mode (`coop_auto=0`): R3 makes that controller's character the leader.
 - PlayStation button prompts without Special K (1.4): Special K texture packs in
   `SK_Res\inject\textures\<crc32c>.dds` are loaded by the mod itself (the pack is not included).
-- Works alongside Lyall's SO4Fix (`WINEDLLOVERRIDES="xinput1_3=n,b;winmm=n,b"`).
+- Join mode (1.5, `coop_join=1`): in a battle each controller takes the first free character at its
+  first button press; R3 moves it to the next free one (not yet tried in game). Up to 8 connected
+  controllers.
+- Keyboard as a virtual Xbox 360 pad on Linux (1.5): `tools/kbpad.py`, started by the Steam launch
+  option `tools/so4play.sh`.
+- Works alongside Lyall's SO4Fix, renamed from `winmm.dll` to `wininet.dll` and with a 14.40+ C++
+  runtime; see [release/README.txt](release/README.txt).
 
 ## How it works
 The game only lets one character, the leader, take player input; the others are AI. The mod
@@ -30,8 +36,10 @@ The research log, in Portuguese, is in `notes/estudo.md`.
 - During co-op the mini-map, sight cursor and target board follow one character
   (`coop_display_pos`).
 - The mod starts acting about 45 seconds after the game launches.
-- Online play only works through remote-play tools such as Steam Remote Play Together (untested).
-- QA: manual playtests only (rounds 1-42). There is no automated test yet.
+- Online play only works through remote-play tools such as Steam Remote Play Together or Sunshine.
+  Join mode is made for this, but it has only been tested with local controllers so far.
+- QA: manual playtests (rounds 1-48) and self-tests of the controller logic. There is no automated
+  in-game test yet.
 
 ## Install
 See [release/README.txt](release/README.txt) (English) or [release/LEIA-ME.txt](release/LEIA-ME.txt)

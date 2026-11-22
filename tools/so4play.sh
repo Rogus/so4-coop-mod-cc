@@ -1,14 +1,14 @@
 #!/bin/bash
 # Opcao de inicializacao da Steam para jogar o co-op (instalacao real):
-#   /home/rogus/Projects/so4-coop/tools/so4play.sh %command%
+#   "/caminho/para/so4-coop/tools/so4play.sh" %command%
 # - carrega o so4coop (xinput1_3.dll) e o SO4Fix do Lyall (Ultimate ASI Loader renomeado para wininet.dll:
 #   como winmm.dll o Proton carregava o winmm interno e o SO4Fix nunca rodava). O SO4Fix (2024) precisa do
 #   msvcp140 >= 14.40; o prefixo tem 14.0 (crash em msvcp140+0x18c34), entao msvcp140/vcruntime140(_1) 14.44
 #   ficam na pasta do jogo e sao forcados como nativos;
 # - liga o teclado como controle virtual de Xbox 360 (kbpad.py) enquanto o jogo roda (4o jogador).
 #   Os controles fisicos devem estar conectados ANTES de abrir o jogo, para o virtual ser o ultimo (controle 4).
-LOG="/home/rogus/Projects/so4-coop/tools/so4play.log"
 DIR="$(cd "$(dirname "$0")" && pwd)"
+LOG="$DIR/so4play.log"
 export WINEDLLOVERRIDES="${WINEDLLOVERRIDES:+$WINEDLLOVERRIDES;}xinput1_3=n,b;wininet=n,b;msvcp140=n,b;vcruntime140=n,b;vcruntime140_1=n,b"
 { echo; echo "$(date -Is) so4play: $*"; } >> "$LOG"
 # diagnostico: com o arquivo tools/proton_log presente, o Proton grava steam-609150.log em tools/
